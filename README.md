@@ -1,7 +1,7 @@
 # tfc
 
 TFG DAM 2023/2024
-Joshua Winn, Victor Curiel y Javier Alexander Paltan 
+Joshua Winn, Victor Curiel y Javier Alexander Paltan.
 
 ## Getting Started
 
