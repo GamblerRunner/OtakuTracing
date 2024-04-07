@@ -1,6 +1,6 @@
 # tfc
 
-TFG de DAM Joshua Winn, Javier Paltan y  Victor Curiel.
+TFG de DAM Joshua Winn, Javier Paltan y  Victor Curiel
 
 ## Getting Started
 
