@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "504187737977",
+    "project_id": "otakutracing",
+    "storage_bucket": "otakutracing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504187737977:android:aa43f0d3927ae76dd281a8",
+        "android_client_info": {
+          "package_name": "com.example.tfc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMX2T1QQ3DyJNSJybXTnevYm4PYaPIzDQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
