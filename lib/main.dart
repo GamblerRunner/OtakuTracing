@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login.dart';
+import 'package:tfc/login.dart';
+import 'register.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -11,9 +12,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         title: Text(
-          'Otaku Tracing',
+          'OTAKU TRACING',
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
@@ -24,20 +26,48 @@ class HomePage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.black,
       ),
+
       body: Center(
         child: Text('Bienvenido'),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navegar a la segunda página al presionar el botón
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => LoginPage()),
-          );
-        },
-        child: Text('click'),
-        backgroundColor: Colors.black,
+
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: 100,
+            height: 50,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterPage()),
+                );
+              },
+              child: Text('Registrarse'),
+              backgroundColor: Colors.white,
+            ),
+          ),
+          SizedBox(width: 10),
+
+          SizedBox(
+            width: 100,
+            height: 50,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
+              child: Text('Iniciar Sesión'),
+              backgroundColor: Colors.white,
+            ),
+          ),
+
+        ],
       ),
     );
   }
+
 }
