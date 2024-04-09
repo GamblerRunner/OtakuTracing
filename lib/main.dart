@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tfc/login.dart';
 import 'register.dart';
+//Firebase
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() {
   runApp(MaterialApp(
