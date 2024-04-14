@@ -1,15 +1,35 @@
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
+import 'Firebase_Manager.dart';
+
+
+class LoginPage extends StatefulWidget {
+  @override
+  Login createState() => Login();
+}
+
+class Login extends State<LoginPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // VARIABLES
   String? email = '';
   String? contrasenia = '';
   bool recordarUsuario = false;
 
-  // METODOS
-  void iniciarSesion(){
+  late FirebaseManager fm;
 
+  // METODOS
+  @override
+  void initState() {
+    super.initState();
+    fm = FirebaseManager();
+  }
+
+  void iniciarSesion() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save(); // Guardar los valores del formulario
+      fm.loginUser(email!, contrasenia!);
+    }
   }
 
   // MAIN
@@ -17,102 +37,86 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(
-            'INICIAR SESIÓN',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white
-            ),
+        title: Text(
+          'INICIAR SESIÓN',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
-          backgroundColor: Colors.black
+        ),
+        backgroundColor: Colors.black,
       ),
-
       body: Container(
-          padding: EdgeInsets.all(16.100),
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
           child: ListView(
             children: <Widget>[
-
-              Card(
-                margin: EdgeInsets.all(5.0),
-                elevation: 4.0,
-
-                child: Container(
-                  margin: EdgeInsets.all(16.0),
-
-                  child: Form(
-
-                    child: Column(
-                      children: <Widget>[
-
-                        TextFormField(
-                          decoration: InputDecoration(
-                              labelText: 'Email',
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.0)
-                              )
-                          ),
-                          validator: ( String? value ) {
-                            if( value!.isEmpty ) {
-                              return 'El campo Email esta vacio';
-                            } else {
-                              return null;
-                            }
-                          },
-                          onSaved: ( String? value ) => email = value,
-                        ),
-                        SizedBox(height: 15),
-
-                        TextFormField(
-                          decoration: InputDecoration(
-                              labelText: 'Contraseña',
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.0)
-                              )
-                          ),
-                          validator: ( String? value ) {
-                            if( value!.isEmpty ) {
-                              return 'El campo Contraseña esta vacio';
-                            } else {
-                              return null;
-                            }
-                          },
-                          onSaved: ( String? value ) => contrasenia = value,
-                        ),
-                        SizedBox(height: 15),
-
-                        Row(
-                          children: <Widget>[
-                            Checkbox(
-                              value: recordarUsuario,
-                              onChanged: (bool? value) {
-                                recordarUsuario = value!;
-                              },
-                            ),
-                            Text('Recordar contraseña'),
-                          ],
-                        ),
-                        SizedBox(height: 50),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            ElevatedButton(
-                              child: Text('Iniciar Sesión', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                              onPressed: () => iniciarSesion(),
-                            ),
-                          ],
-                        )
-
-                      ],
-                    ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0),
                   ),
                 ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'El campo Email está vacío';
+                  }
+                  return null;
+                },
+                onSaved: (value) => email = value,
+              ),
+              SizedBox(height: 15),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Contraseña',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'El campo Contraseña está vacío';
+                  }
+                  return null;
+                },
+                onSaved: (value) => contrasenia = value,
+              ),
+              SizedBox(height: 15),
+              Row(
+                children: <Widget>[
+                  Checkbox(
+                    value: recordarUsuario,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        recordarUsuario = value!;
+                      });
+                    },
+                  ),
+                  Text('Recordar contraseña'),
+                ],
+              ),
+              SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: iniciarSesion,
+                    child: Text(
+                      'Iniciar Sesión',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               )
             ],
-          )
+          ),
+        ),
       ),
-
     );
   }
-
 }

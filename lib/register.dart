@@ -4,10 +4,10 @@ import 'package:tfc/Firebase_Manager.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  Register createState() => Register();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class Register extends State<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   //VARIABLES
   String? usuario;
