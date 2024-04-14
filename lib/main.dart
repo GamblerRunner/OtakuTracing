@@ -8,21 +8,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 //void main() {runApp(MaterialApp(home: HomePage(),));}
 //void main() => runApp(const HomePage());
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  try{
-    UserCredential usertCredential= await FirebaseAuth.instance.createUserWithEmailAndPassword(email: 'prueba@gmail.com', password:'123456');
-  }catch(e){
-    print(e);
-  }
-
-
-  runApp(MaterialApp(home: HomePage(),));
+void main() {
+  runApp(MaterialApp(
+    home: HomePage(),
+  ));
 }
+
 
 class HomePage extends StatelessWidget {
   //const  HomePage({super.key});//Borrar mas tarde
