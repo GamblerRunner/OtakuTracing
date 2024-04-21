@@ -37,7 +37,7 @@ class FirebaseManager {
     try {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: emailUser, password: passwordUser);
       create=true;
-      print("Usuario ${userCredential.user?.email} ha iniciado sesión");
+      print("Usuario ${userCredential.user?.uid} ha iniciado sesión");
     } catch (e) {
       print(e);
     }

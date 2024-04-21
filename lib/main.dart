@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tfc/login.dart';
 import 'register.dart';
+//Reproductor video
+import 'dart:async';
+import 'package:video_player/video_player.dart';
 //Firebase
 import 'package:firebase_core/firebase_core.dart';
 import 'package:tfc/firebase_options.dart';
@@ -13,7 +16,7 @@ void main() {
     home: HomePage(),
   ));
 }
-
+VideoPlayerController _videoController = VideoPlayerController.network('https://www.yourupload.com/watch/MlK7Jm0oo1S6');
 
 class HomePage extends StatelessWidget {
   //const  HomePage({super.key});//Borrar mas tarde
@@ -73,7 +76,21 @@ class HomePage extends StatelessWidget {
               backgroundColor: Colors.white,
             ),
           ),
+          SizedBox(
 
+            width: 100,
+            height: 50,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => VideoPlayer(_videoController)),
+                );
+              },
+              child: Text('Reproducir Video'),
+              backgroundColor: Colors.white,
+            ),
+          ),
         ],
       ),
     );
