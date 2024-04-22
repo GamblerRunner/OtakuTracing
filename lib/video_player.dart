@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 //Reproductor video
 import 'dart:async';
 import 'package:video_player/video_player.dart';
-//Firebase
-import 'package:firebase_core/firebase_core.dart';
-import 'package:tfc/firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 void main() {
   runApp(const MyApp());
 }
