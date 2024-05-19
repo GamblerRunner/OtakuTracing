@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tfc/Profile.dart';
 import 'package:tfc/login.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
@@ -80,7 +81,10 @@ class _HomePageState extends State<HomePage> {
               title: Text('Perfil'),
               onTap: () {
                 print('Messages clicked');
-                Navigator.pop(context); // Cierra el Drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
               },
             ),
             ListTile(
@@ -94,6 +98,10 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Settings'),
+            ),
+            ListTile(
+              leading: Icon(Icons.account_balance_wallet),
+              title: Text('Log out'),
             ),
           ],
         ),
