@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tfc/infoAnimeManga.dart';
 import 'package:tfc/login.dart';
+import 'AnimeData.dart';
+import 'AnimeModel.dart';
 import 'register.dart';
 
 void main() {
@@ -16,54 +17,35 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _showOptions = false;
-  List<InfoAnimeManga> AnimeManga = [
-    InfoAnimeManga(
-      titulo: "Nombre 1",
-      imagenUrl: "assets/img/animeimg.jpg",
-      anio: 2020,
-      genero: "Acción",
-    ),
-    InfoAnimeManga(
-      titulo: "Nombre 2",
-      imagenUrl: "assets/img/animeimg.jpg",
-      anio: 2019,
-      genero: "Comedia",
-    ),
-    InfoAnimeManga(
-      titulo: "Nombre 3",
-      imagenUrl: "assets/img/animeimg.jpg",
-      anio: 2021,
-      genero: "Drama",
-    ),
-    InfoAnimeManga(
-      titulo: "Nombre 1",
-      imagenUrl: "assets/img/animeimg.jpg",
-      anio: 2020,
-      genero: "Acción",
-    ),
-    InfoAnimeManga(
-      titulo: "Nombre 2",
-      imagenUrl: "assets/img/animeimg.jpg",
-      anio: 2019,
-      genero: "Comedia",
-    ),
-    InfoAnimeManga(
-      titulo: "Nombre 3",
-      imagenUrl: "assets/img/animeimg.jpg",
-      anio: 2021,
-      genero: "Drama",
-    ),
-    InfoAnimeManga(
-      titulo: "Nombre 3",
-      imagenUrl: "assets/img/animeimg.jpg",
-      anio: 2021,
-      genero: "Drama",
-    ),
-  ];
+
+  List<Media> fetchedData=[];
+  final AnimeData data = AnimeData();
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData(); // Llama a la función para obtener los datos al inicializar el widget
+  }
+
+  Future<void> fetchData() async {
+  fetchedData = await data.getPageData();
+  print(fetchedData?[0].coverImageUrl.toString());
+  if (fetchedData != null) {
+  setState(() {
+  //pageData = fetchedData as Map<String, dynamic>;
+  });
+  } else {
+    print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
+  }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'OTAKU TRACING',
@@ -76,6 +58,45 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(//Parte del menu Lateral
+              decoration: BoxDecoration(
+                color: Colors.redAccent,
+              ),
+              child: Text(
+                'User Name',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.account_circle),
+              title: Text('Perfil'),
+              onTap: () {
+                print('Messages clicked');
+                Navigator.pop(context); // Cierra el Drawer
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.account_balance_outlined),
+              title: Text('Siguiendo'),
+            ),
+            ListTile(
+              leading: Icon(Icons.message),
+              title: Text('Foros'),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+            ),
+          ],
+        ),
       ),
       body: Stack(
         children: [
@@ -94,7 +115,12 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Row(
                   children: [
-                    ClipOval(
+                  GestureDetector(
+                    onTap: () {
+                      print('Image clicked!');
+                      _scaffoldKey.currentState?.openDrawer();
+                    },
+                    child: ClipOval(
                       child: Image.network(
                         'https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg',
                         width: 50,
@@ -102,6 +128,7 @@ class _HomePageState extends State<HomePage> {
                         fit: BoxFit.cover,
                       ),
                     ),
+            ),
                     SizedBox(width: 10),
                     SizedBox(
                       width: 150, // Ajusta el ancho del campo de entrada aquí
@@ -175,8 +202,8 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: EdgeInsets.only(top: 100),
             child: ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 8),
-              itemCount: (AnimeManga.length / 2).ceil(),
+              padding: EdgeInsets.symmetric(vertical: 25, horizontal: 30),
+              itemCount: (fetchedData!.length / 2).ceil(),
               itemBuilder: (context, index) {
                 int firstIndex = index * 2;
                 int secondIndex = firstIndex + 1;
@@ -186,13 +213,23 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: _buildPeliculaCard(AnimeManga[firstIndex]),
+                        child: GestureDetector(
+                          onTap: () {
+                            print('Tapped on ${fetchedData![firstIndex].romajiTitle}');
+                          },
+                          child: buildAnimeCard(fetchedData![firstIndex]),
+                        ),
                       ),
                       SizedBox(width: 8),
-                      if (secondIndex < AnimeManga.length)
+                      if (secondIndex < fetchedData!.length)
                         Expanded(
-                          child:
-                          _buildPeliculaCard(AnimeManga[secondIndex]),
+                          child: GestureDetector(
+                            onTap: () {
+                              // Manejar el evento onTap aquí para el segundo elemento
+                              print('Tapped on ${fetchedData![secondIndex].romajiTitle}');
+                            },
+                            child: buildAnimeCard(fetchedData![secondIndex]),
+                          ),
                         ),
                     ],
                   ),
@@ -203,34 +240,32 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 100,
-            height: 50,
+            width: 40,
+            height: 30,
             child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RegisterPage()),
-                );
+              onPressed: () async {
+                setState(() async {
+                  fetchedData = (await data.fetchNextPage(false))!;
+                });
               },
-              child: Text('Registrarse'),
+              child: Text('<'),
               backgroundColor: Colors.white,
             ),
           ),
-          SizedBox(width: 10),
+          SizedBox(width: 50),
           SizedBox(
-            width: 100,
-            height: 50,
+            width: 40,
+            height: 30,
             child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
+              onPressed: () async {
+                setState(() async {
+                  fetchedData = (await data.fetchNextPage(true))!;
+                });
               },
-              child: Text('Iniciar Sesión'),
+              child: Text('>'),
               backgroundColor: Colors.white,
             ),
           ),
@@ -239,33 +274,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildPeliculaCard(InfoAnimeManga pelicula) {
+  Widget buildAnimeCard(Media AnimeManga) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.asset(
-          pelicula.imagenUrl,
+        Image.network(
+          AnimeManga.coverImageUrl ?? 'assets/img/animeimg.jpg',
           width: 150,
           height: 200,
           fit: BoxFit.cover,
         ),
         SizedBox(height: 8),
         Text(
-          pelicula.titulo,
+          AnimeManga.romajiTitle ?? 'Loading',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         SizedBox(height: 4),
-        Text(
-          'Año: ${pelicula.anio}',
-          style: TextStyle(fontSize: 16),
-        ),
-        Text(
-          'Género: ${pelicula.genero}',
-          style: TextStyle(fontSize: 16),
-        ),
       ],
     );
   }
