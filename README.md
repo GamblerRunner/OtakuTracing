@@ -1,7 +1,9 @@
-# TFG - DAM [23/24]
+# OTAKU TRACING - TFG
 
-TFG DAM 2023/2024
-Joshua Winn, Victor Curiel y Javier Alexander Paltan.
+
+
+
+Proyecto desarrollado por Joshua Winn, Victor Curiel y Javier Alexander Paltan.
 
 ## Getting Started
 
