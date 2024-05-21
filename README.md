@@ -3,7 +3,7 @@
 
 
 
-Proyecto desarrollado por Joshua Winn, Victor Curiel y Javier Alexander Paltan para la FP de DAM del año 23/24 
+Proyecto desarrollado por Joshua Winn, Victor Curiel y Javier Alexander Paltan para la FP de DAM [23/24]
 
 ## Getting Started
 
