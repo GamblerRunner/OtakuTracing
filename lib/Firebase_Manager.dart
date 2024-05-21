@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tfc/main.dart';
 import 'package:tfc/login.dart';
@@ -20,10 +21,12 @@ class FirebaseManager {
 
     //AUTHFirebase
 
-  Future<bool> registerNewUser(String emailUser, String passwordUser) async{
+  Future<bool> registerNewUser(String emailUser, String passwordUser, String userName) async{
     bool create=false;
     try {
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailUser, password: passwordUser);
+      String? uid = userCredential.user?.uid.toString();
+      CrearUsuarioCloud(userName, uid!);
       create=true;
       // Hacer algo con userCredential si es necesario
   } catch (e) {
@@ -44,24 +47,26 @@ class FirebaseManager {
     return create;
   }
 
-    //RealTimeDatabase
+    //Cloud Storage
+  Future<void> CrearUsuarioCloud(String userName, String uid) async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    FirebaseFirestore db = FirebaseFirestore.instance;
 
+    final newUserCloud = {
+      "username": userName,
+      "userimg": "https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg",
+      "favourites": [],
+      "comunitiesFollow": []
+    };
 
-}
+    db
+        .collection("users")
+        .doc(uid)
+        .set(newUserCloud)
+        .onError((e, _) => print("Error writing document: $e"));
 
-
-
-/*
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  try{
-    UserCredential usertCredential= await FirebaseAuth.instance.createUserWithEmailAndPassword(email: 'prueba@gmail.com', password:'123456');
-  }catch(e){
-    print(e);
   }
-  runApp(MaterialApp(home: Firebase_Manager(),));
+
 }
- */

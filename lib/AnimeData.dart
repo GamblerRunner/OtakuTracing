@@ -31,6 +31,32 @@ class AnimeData {
       }
     }
   ''';
+
+  static const String _animeSearchQuery = r'''
+    query ($page: Int, $perPage: Int, $search: String) {
+      Page (page: $page, perPage: $perPage) {
+        pageInfo {
+          total
+          currentPage
+          lastPage
+          hasNextPage
+          perPage
+        }
+        media (search: $search){
+          id
+          coverImage{
+            extraLarge
+          }
+          title {
+            english
+            romaji
+          }
+          description
+        }
+      }
+    }
+  ''';
+
   static const int _perPage = 20;
   List<Media> _animeList = [];
   var _currentPage = 1;
@@ -41,6 +67,31 @@ class AnimeData {
       final result = await client.query(
         _animeQuery, // Use the static query string
         variables: {'page': _currentPage, 'perPage': _perPage},
+      );
+      //print(result);
+      if (result.hasException) {
+        throw Exception("Error cogiendo los datos");
+      }
+
+      final AnimeModel animeData =
+      AnimeModel.fromJson(result.data?['Page'] ?? {});
+      _totalPages = animeData.pageInfo.total;
+      _animeList.addAll(animeData.media);
+      print('HOLIIIIIIIIIIIII');
+      print(_currentPage);
+      print(_animeList[0].romajiTitle);
+      return _animeList;
+    } catch (e) {
+      throw Exception("Error cogiendo los datos");
+    }
+
+  }
+
+  Future<List<Media>> getPageSearchData(String search) async {
+    try {
+      final result = await client.query(
+        _animeSearchQuery, // Use the static query string
+        variables: {'page': _currentPage, 'perPage': _perPage, 'search': search},
       );
       //print(result);
       if (result.hasException) {

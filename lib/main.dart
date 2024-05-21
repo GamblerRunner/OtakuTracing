@@ -1,14 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tfc/Profile.dart';
 import 'package:tfc/login.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
+import 'firebase_options.dart';
 import 'register.dart';
-import 'settings.dart';
 
-void main() {
+Future<void> main() async {
   runApp(MaterialApp(
-    home: LoginPage(),
+    home: HomePage(),
   ));
 }
 
@@ -24,23 +26,75 @@ class _HomePageState extends State<HomePage> {
   final AnimeData data = AnimeData();
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  String? search = '';
 
   @override
   void initState() {
     super.initState();
     fetchData(); // Llama a la función para obtener los datos al inicializar el widget
+    obtenerFirebaseCloud();
   }
 
-  Future<void> fetchData() async {
-  fetchedData = await data.getPageData();
-  print(fetchedData?[0].coverImageUrl.toString());
-  if (fetchedData != null) {
-  setState(() {
-  //pageData = fetchedData as Map<String, dynamic>;
-  });
-  } else {
-    print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
+  //Borrar una vez funcione
+
+  Future<void> obtenerFirebaseCloud() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    final city = <String, String>{
+      "name": "Los Angeles",
+      "state": "CA",
+      "country": "USA"
+    };
+
+    db
+        .collection("cities")
+        .doc("LA")
+        .set(city)
+        .onError((e, _) => print("Error writing document: $e"));
+
+
+    final data = {"capital": true};
+
+    db.collection("cities").doc("BJ").set(data, SetOptions(merge: true));
+
   }
+
+  //Hasta aqui
+
+  Future<void> fetchData() async {
+    fetchedData = await data.getPageData();
+    print(fetchedData?[0].coverImageUrl.toString());
+    if (fetchedData != null) {
+      setState(() {
+        //pageData = fetchedData as Map<String, dynamic>;
+      });
+    } else {
+      print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
+    }
+  }
+
+  Future<void> fetchSearchData() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save(); // Guardar los valores del formulario
+      if(search!.isEmpty){
+        return;
+      }
+      fetchedData.clear();
+      fetchedData = await data.getPageSearchData(search!);
+      print(fetchedData?[0].coverImageUrl.toString());
+      if (fetchedData != null) {
+        setState(() {
+          //pageData = fetchedData as Map<String, dynamic>;
+        });
+      } else {
+        print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
+      }
+    }
   }
 
 
@@ -81,7 +135,6 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.account_circle),
               title: Text('Perfil'),
               onTap: () {
-                print('Messages clicked');
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ProfilePage()),
@@ -103,6 +156,12 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: Icon(Icons.account_balance_wallet),
               title: Text('Log out'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterPage()),
+                );
+              },
             ),
           ],
         ),
@@ -124,29 +183,39 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Row(
                   children: [
-                  GestureDetector(
-                    onTap: () {
-                      print('Image clicked!');
-                      _scaffoldKey.currentState?.openDrawer();
-                    },
-                    child: ClipOval(
-                      child: Image.network(
-                        'https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg',
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () {
+                        print('Image clicked!');
+                        _scaffoldKey.currentState?.openDrawer();
+                      },
+                      child: ClipOval(
+                        child: Image.network(
+                          'https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg',
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-            ),
                     SizedBox(width: 10),
                     SizedBox(
                       width: 150, // Ajusta el ancho del campo de entrada aquí
-                      child: TextFormField(
-                        style: TextStyle(fontSize: 14), // Tamaño del texto
-                        decoration: InputDecoration(
-                          labelText: 'search',
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 10), // Padding interno del campo de entrada
+                      child: Form(
+                        key: _formKey,
+                        child: TextFormField(
+                          style: TextStyle(fontSize: 14), // Tamaño del texto
+                          decoration: InputDecoration(
+                            labelText: 'search',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 10), // Padding interno del campo de entrada
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'El campo Buscar está vacío';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => search = value,
                         ),
                       ),
                     ),
@@ -167,10 +236,12 @@ class _HomePageState extends State<HomePage> {
                       height: 50,
                       child: FloatingActionButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SettingsPage()),
-                          );
+                          setState(() async {
+                            print("jddddd");
+                            await fetchSearchData();
+                            print(search);
+                            print("Pues xd no");
+                          });
                         },
                         child: Text('Buscar'),
                         backgroundColor: Colors.white,
