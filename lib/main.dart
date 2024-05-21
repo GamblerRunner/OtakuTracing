@@ -4,10 +4,11 @@ import 'package:tfc/login.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'register.dart';
+import 'settings.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: HomePage(),
+    home: LoginPage(),
   ));
 }
 
@@ -168,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
+                            MaterialPageRoute(builder: (context) => SettingsPage()),
                           );
                         },
                         child: Text('Buscar'),

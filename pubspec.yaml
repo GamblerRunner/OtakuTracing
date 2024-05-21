@@ -34,6 +34,7 @@ dependencies:
     sdk: flutter
   #video_player: ^2.8.6
   flutter_bloc: ^8.1.4
+  fluttertoast: ^8.0.8
   graphql: ^5.1.3
 
 
