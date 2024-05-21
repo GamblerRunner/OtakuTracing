@@ -10,7 +10,7 @@ import 'register.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
-    home: HomePage(),
+    home: RegisterPage(),
   ));
 }
 
