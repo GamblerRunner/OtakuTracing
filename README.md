@@ -1,4 +1,4 @@
-# tfc
+# TFG
 
 TFG DAM 2023/2024
 Joshua Winn, Victor Curiel y Javier Alexander Paltan.
