@@ -7,10 +7,16 @@ import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'firebase_options.dart';
 import 'register.dart';
+import 'settings.dart';
+import 'mangas.dart';
+import 'community.dart';
+import 'myMangas.dart';
+import 'myAnimes.dart';
+import 'help.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
-    home: RegisterPage(),
+    home: LoginPage(),
   ));
 }
 
@@ -21,8 +27,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _showOptions = false;
+  int _selectedIndex = 0;
 
-  List<Media> fetchedData=[];
+  List<Media> fetchedData = [];
   final AnimeData data = AnimeData();
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -33,11 +40,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    fetchData(); // Llama a la función para obtener los datos al inicializar el widget
+    fetchData();
     obtenerFirebaseCloud();
   }
-
-  //Borrar una vez funcione
 
   Future<void> obtenerFirebaseCloud() async {
     await Firebase.initializeApp(
@@ -51,27 +56,19 @@ class _HomePageState extends State<HomePage> {
       "country": "USA"
     };
 
-    db
-        .collection("cities")
-        .doc("LA")
-        .set(city)
-        .onError((e, _) => print("Error writing document: $e"));
-
+    db.collection("cities").doc("LA").set(city).onError((e, _) => print("Error writing document: $e"));
 
     final data = {"capital": true};
 
     db.collection("cities").doc("BJ").set(data, SetOptions(merge: true));
-
   }
-
-  //Hasta aqui
 
   Future<void> fetchData() async {
     fetchedData = await data.getPageData();
     print(fetchedData?[0].coverImageUrl.toString());
     if (fetchedData != null) {
       setState(() {
-        //pageData = fetchedData as Map<String, dynamic>;
+        // pageData = fetchedData as Map<String, dynamic>;
       });
     } else {
       print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
@@ -80,8 +77,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchSearchData() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // Guardar los valores del formulario
-      if(search!.isEmpty){
+      _formKey.currentState!.save();
+      if (search!.isEmpty) {
         return;
       }
       fetchedData.clear();
@@ -89,7 +86,7 @@ class _HomePageState extends State<HomePage> {
       print(fetchedData?[0].coverImageUrl.toString());
       if (fetchedData != null) {
         setState(() {
-          //pageData = fetchedData as Map<String, dynamic>;
+          // pageData = fetchedData as Map<String, dynamic>;
         });
       } else {
         print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
@@ -97,6 +94,26 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+        break;
+
+      case 1:
+      // VICTOR LO HACE
+        Navigator.push(context, MaterialPageRoute(builder: (context) => CommunityPage()));
+        break;
+
+      case 2:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => MangasPage()));
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,66 +121,109 @@ class _HomePageState extends State<HomePage> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
-          'OTAKU TRACING',
+          'ANIMES',
           style: TextStyle(
-            fontSize: 20.0,
             fontWeight: FontWeight.bold,
-            letterSpacing: 2.0,
             color: Colors.white,
           ),
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(//Parte del menu Lateral
-              decoration: BoxDecoration(
-                color: Colors.redAccent,
-              ),
-              child: Text(
-                'User Name',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+      drawer: SizedBox(
+        width: 225,
+        child: Drawer(
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 125,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                ),
+                child: DrawerHeader(
+                  margin: EdgeInsets.zero,
+                  padding: EdgeInsets.zero,
+                  child: Center(
+                    child: Text(
+                      'User Name',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Perfil'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.account_balance_outlined),
-              title: Text('Siguiendo'),
-            ),
-            ListTile(
-              leading: Icon(Icons.message),
-              title: Text('Foros'),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-            ),
-            ListTile(
-              leading: Icon(Icons.account_balance_wallet),
-              title: Text('Log out'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RegisterPage()),
-                );
-              },
-            ),
-          ],
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    ListTile(
+                      leading: Icon(Icons.account_circle),
+                      title: Text('Perfil'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ProfilePage()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.tv),
+                      title: Text('Mis Animes'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => myAnimesPage()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.menu_book),
+                      title: Text('Mis Mangas'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => myMangasPage()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Ajustes'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.help_outline),
+                title: Text('Ayuda'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HelpPage()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.account_balance_wallet),
+                title: Text('Cerrar Sesión'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
       body: Stack(
@@ -171,8 +231,8 @@ class _HomePageState extends State<HomePage> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/img/backgroundTwo.jpg'), // Ruta de la imagen de fondo
-                fit: BoxFit.cover, // Ajuste de la imagen de fondo
+                image: AssetImage('assets/img/backgroundTwo.jpg'),
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -350,6 +410,27 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.grey,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.tv_rounded, color: Colors.white),
+            label: 'Animes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message, color: Colors.white),
+            label: 'Comunidades',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu_book, color: Colors.white),
+            label: 'Mangas',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.black,
+        onTap: _onItemTapped,
       ),
     );
   }

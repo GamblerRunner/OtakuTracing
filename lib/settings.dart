@@ -27,6 +27,7 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
         backgroundColor: Colors.black,
+        centerTitle: true,
       ),
       body: SettingsForm(),
     );

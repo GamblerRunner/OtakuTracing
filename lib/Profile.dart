@@ -17,7 +17,7 @@ class Profile extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'OTAKU TRACING',
+          'PERFIL',
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,

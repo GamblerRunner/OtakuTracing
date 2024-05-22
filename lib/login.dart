@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // Importar Fluttertoast
+import 'package:fluttertoast/fluttertoast.dart';
 import 'Firebase_Manager.dart';
-import 'register.dart'; // Importa la pantalla de registro
-import 'main.dart'; // Importa la pantalla principal
+import 'register.dart';
+import 'main.dart';
+import 'Profile.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -26,24 +27,31 @@ class Login extends State<LoginPage> {
     fm = FirebaseManager();
   }
 
-  void iniciarSesion() {
+  void iniciarSesion() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-      fm.loginUser(email!, contrasenia!);
-
-      Fluttertoast.showToast(
-        msg: "Inicio de sesión exitoso",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.white,
-        textColor: Colors.black,
-      );
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      bool success = await fm.loginUser(email!, contrasenia!);
+      if (success) {
+        Fluttertoast.showToast(
+          msg: "Inicio de sesion existosa \nBienvenido Otaku",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: "Usuario o contraseña incorrectos \nPor favor, inténtelo de nuevo",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+        );
+      }
     }
   }
 
@@ -154,7 +162,7 @@ class Login extends State<LoginPage> {
                     SizedBox(height: 25),
                     Center(
                       child: SizedBox(
-                        width: 200.0, // Ajusta el ancho según sea necesario
+                        width: 200.0,
                         child: ElevatedButton(
                           onPressed: iniciarSesion,
                           child: Text(
