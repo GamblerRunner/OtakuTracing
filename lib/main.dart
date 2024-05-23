@@ -12,9 +12,11 @@ import 'community.dart';
 import 'myMangas.dart';
 import 'myAnimes.dart';
 import 'help.dart';
+import 'readManga.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: LoginPage(),
   ));
 }
@@ -355,6 +357,8 @@ class _HomePageState extends State<HomePage> {
                         child: GestureDetector(
                           onTap: () {
                             print('Tapped on ${fetchedData![firstIndex].romajiTitle}');
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => readMangaPage()));
+
                           },
                           child: buildAnimeCard(fetchedData![firstIndex]),
                         ),
@@ -366,6 +370,7 @@ class _HomePageState extends State<HomePage> {
                             onTap: () {
                               // Manejar el evento onTap aquí para el segundo elemento
                               print('Tapped on ${fetchedData![secondIndex].romajiTitle}');
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => readMangaPage()));
                             },
                             child: buildAnimeCard(fetchedData![secondIndex]),
                           ),
