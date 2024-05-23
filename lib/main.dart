@@ -6,7 +6,6 @@ import 'package:tfc/login.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'firebase_options.dart';
-import 'register.dart';
 import 'settings.dart';
 import 'mangas.dart';
 import 'community.dart';
