@@ -30,7 +30,7 @@ class MangasPage extends StatefulWidget {
 }
 
 class _MangasPageState extends State<MangasPage> {
-  int _selectedIndex = 2; // Índice seleccionado del elemento actual ('Mangas')
+  int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
     setState(() {

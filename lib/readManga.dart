@@ -25,8 +25,11 @@ class _readMangaPageState extends State<readMangaPage> {
 
   // CARGAMOS LAS IMAGENES AQUI
   final List<String> images = [
-    'assets/img/jjk1.png',
-    'assets/img/jjk2.png',
+    'assets/img/fotoMangaStock1.png',
+    'assets/img/fotoMangaStock2.png',
+    'assets/img/fotoMangaStock3.png',
+    'assets/img/fotoMangaStock4.png',
+    'assets/img/fotoMangaStock5.png',
   ];
 
   final PageController _pageController = PageController();
