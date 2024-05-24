@@ -35,16 +35,16 @@ class FirebaseManager {
   return create;
 }
 
-  Future<bool> loginUser(String emailUser, String passwordUser) async{
-    bool create=false;
+  Future<String?> loginUser(String emailUser, String passwordUser) async{
+    String? uid='';
     try {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: emailUser, password: passwordUser);
-      create=true;
-      print("Usuario ${userCredential.user?.uid} ha iniciado sesión");
+      uid = userCredential.user?.uid.toString() ;
+      print(uid);
     } catch (e) {
       print(e);
     }
-    return create;
+    return uid;
   }
 
     //Cloud Storage

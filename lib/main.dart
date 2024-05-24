@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Profile.dart';
 import 'package:tfc/login.dart';
 import 'AnimeData.dart';
@@ -42,26 +43,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     fetchData();
-    obtenerFirebaseCloud();
-  }
-
-  Future<void> obtenerFirebaseCloud() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    final city = <String, String>{
-      "name": "Los Angeles",
-      "state": "CA",
-      "country": "USA"
-    };
-
-    db.collection("cities").doc("LA").set(city).onError((e, _) => print("Error writing document: $e"));
-
-    final data = {"capital": true};
-
-    db.collection("cities").doc("BJ").set(data, SetOptions(merge: true));
   }
 
   Future<void> fetchData() async {
@@ -216,7 +197,12 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: Icon(Icons.account_balance_wallet),
                 title: Text('Cerrar Sesión'),
-                onTap: () {
+                onTap: () async {
+                  SharedPreferences preferences = await SharedPreferences.getInstance();
+                  await preferences.remove('rememberEmailPassword');
+                  await preferences.remove("email");
+                  await preferences.remove("contrasenia");
+                  await preferences.remove("uid");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginPage()),

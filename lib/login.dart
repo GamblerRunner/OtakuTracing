@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Firebase_Manager.dart';
 import 'register.dart';
 import 'main.dart';
-import 'Profile.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -18,6 +18,8 @@ class Login extends State<LoginPage> {
   String? contrasenia = '';
   bool obscureText = true;
 
+  bool rememberEmailPassword = false;
+
   late FirebaseManager fm;
 
   // METODOS
@@ -25,13 +27,14 @@ class Login extends State<LoginPage> {
   void initState() {
     super.initState();
     fm = FirebaseManager();
+    loadUser();
   }
 
-  void iniciarSesion() async {
+  Future<void> iniciarSesion() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      bool success = await fm.loginUser(email!, contrasenia!);
-      if (success) {
+      String? success = await fm.loginUser(email!, contrasenia!);
+      if (success!='') {
         Fluttertoast.showToast(
           msg: "Inicio de sesion existosa \nBienvenido Otaku",
           toastLength: Toast.LENGTH_SHORT,
@@ -39,6 +42,19 @@ class Login extends State<LoginPage> {
           backgroundColor: Colors.black,
           textColor: Colors.white,
         );
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        if(rememberEmailPassword){
+          await preferences.setBool('rememberEmailPassword', true);
+          await preferences.setString("email", email!);
+          await preferences.setString("contrasenia", contrasenia!);
+          await preferences.setString("uid", success!);
+        }else{
+          await preferences.remove('rememberEmailPassword');
+          await preferences.remove("email");
+          await preferences.remove("contrasenia");
+          await preferences.remove("uid");
+        }
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
@@ -51,6 +67,29 @@ class Login extends State<LoginPage> {
           backgroundColor: Colors.black,
           textColor: Colors.white,
         );
+      }
+    }
+  }
+
+  Future<void> loadUser() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    bool remember = preferences.getBool("rememberEmailPassword") ?? false;
+    if (remember) {
+      email = preferences.getString("email") ?? '';
+      contrasenia = preferences.getString("contrasenia") ?? '';
+
+      await Future.delayed(Duration(seconds: 1));
+
+      String? success = await fm.loginUser(email!, contrasenia!);
+      print('jd que putada $success');
+      if (success != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }else{
+        await preferences.remove("uid");
       }
     }
   }
@@ -193,6 +232,20 @@ class Login extends State<LoginPage> {
                           ),
                         ),
                       ),
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rememberEmailPassword,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              rememberEmailPassword = value ?? false;
+                            });
+                          },
+                        ),
+                        Text('Recuérdame'),
+                      ],
                     ),
                   ],
                 ),

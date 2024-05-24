@@ -17,7 +17,7 @@ class AnimeData {
           hasNextPage
           perPage
         }
-        media {
+        media (type: ANIME){
           id
           coverImage{
             extraLarge
@@ -77,9 +77,8 @@ class AnimeData {
       AnimeModel.fromJson(result.data?['Page'] ?? {});
       _totalPages = animeData.pageInfo.total;
       _animeList.addAll(animeData.media);
-      print('HOLIIIIIIIIIIIII');
-      print(_currentPage);
-      print(_animeList[0].romajiTitle);
+      //print(_currentPage);
+      //print(_animeList[0].romajiTitle);
       return _animeList;
     } catch (e) {
       throw Exception("Error cogiendo los datos");
@@ -102,9 +101,8 @@ class AnimeData {
       AnimeModel.fromJson(result.data?['Page'] ?? {});
       _totalPages = animeData.pageInfo.total;
       _animeList.addAll(animeData.media);
-      print('HOLIIIIIIIIIIIII');
-      print(_currentPage);
-      print(_animeList[0].romajiTitle);
+      //print(_currentPage);
+      //print(_animeList[0].romajiTitle);
       return _animeList;
     } catch (e) {
       throw Exception("Error cogiendo los datos");
