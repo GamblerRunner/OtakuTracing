@@ -198,7 +198,21 @@ class Login extends State<LoginPage> {
                       },
                       onSaved: (value) => contrasenia = value,
                     ),
-                    SizedBox(height: 25),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rememberEmailPassword,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              rememberEmailPassword = value ?? false;
+                            });
+                          },
+                        ),
+                        Text('Recuérdame'),
+                      ],
+                    ),
+                    SizedBox(height: 5),
                     Center(
                       child: SizedBox(
                         width: 200.0,
@@ -234,19 +248,7 @@ class Login extends State<LoginPage> {
                       ),
                     ),
                     SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: rememberEmailPassword,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              rememberEmailPassword = value ?? false;
-                            });
-                          },
-                        ),
-                        Text('Recuérdame'),
-                      ],
-                    ),
+
                   ],
                 ),
               ),

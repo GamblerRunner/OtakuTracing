@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Profile.dart';
-import 'package:tfc/ProfileImg.dart';
 import 'package:tfc/login.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
@@ -15,11 +14,12 @@ import 'myMangas.dart';
 import 'myAnimes.dart';
 import 'help.dart';
 import 'readManga.dart';
+import 'interfaceManga.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: ProfileImgPage(),
+    home: LoginPage(),
   ));
 }
 
@@ -31,12 +31,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _showOptions = false;
   int _selectedIndex = 0;
-
   List<Media> fetchedData = [];
   final AnimeData data = AnimeData();
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final ScrollController _scrollController = ScrollController();
 
   String? search = '';
 
@@ -50,9 +49,7 @@ class _HomePageState extends State<HomePage> {
     fetchedData = await data.getPageData();
     print(fetchedData?[0].coverImageUrl.toString());
     if (fetchedData != null) {
-      setState(() {
-        // pageData = fetchedData as Map<String, dynamic>;
-      });
+      setState(() {});
     } else {
       print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
     }
@@ -68,9 +65,7 @@ class _HomePageState extends State<HomePage> {
       fetchedData = await data.getPageSearchData(search!);
       print(fetchedData?[0].coverImageUrl.toString());
       if (fetchedData != null) {
-        setState(() {
-          // pageData = fetchedData as Map<String, dynamic>;
-        });
+        setState(() {});
       } else {
         print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
       }
@@ -88,7 +83,6 @@ class _HomePageState extends State<HomePage> {
         break;
 
       case 1:
-      // VICTOR LO HACE
         Navigator.push(context, MaterialPageRoute(builder: (context) => CommunityPage()));
         break;
 
@@ -96,6 +90,22 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(context, MaterialPageRoute(builder: (context) => MangasPage()));
         break;
     }
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0.0,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  Future<void> _fetchNextPage(bool next) async {
+    final data = await this.data.fetchNextPage(next);
+    setState(() {
+      fetchedData = data!;
+      _scrollToTop();
+    });
   }
 
   @override
@@ -219,7 +229,7 @@ class _HomePageState extends State<HomePage> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/img/backgroundTwo.jpg'),
+                image: AssetImage('assets/img/fondoPantalla.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -247,15 +257,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(width: 10),
                     SizedBox(
-                      width: 150, // Ajusta el ancho del campo de entrada aquí
+                      width: 150,
                       child: Form(
                         key: _formKey,
                         child: TextFormField(
-                          style: TextStyle(fontSize: 14), // Tamaño del texto
+                          style: TextStyle(fontSize: 14),
                           decoration: InputDecoration(
                             labelText: 'search',
                             border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 10), // Padding interno del campo de entrada
+                            contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -283,13 +293,8 @@ class _HomePageState extends State<HomePage> {
                       width: 50,
                       height: 50,
                       child: FloatingActionButton(
-                        onPressed: () {
-                          setState(() async {
-                            print("jddddd");
-                            await fetchSearchData();
-                            print(search);
-                            print("Pues xd no");
-                          });
+                        onPressed: () async {
+                          await fetchSearchData();
                         },
                         child: Text('Buscar'),
                         backgroundColor: Colors.white,
@@ -330,6 +335,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: EdgeInsets.only(top: 100),
             child: ListView.builder(
+              controller: _scrollController,
               padding: EdgeInsets.symmetric(vertical: 25, horizontal: 30),
               itemCount: (fetchedData!.length / 2).ceil(),
               itemBuilder: (context, index) {
@@ -344,8 +350,7 @@ class _HomePageState extends State<HomePage> {
                         child: GestureDetector(
                           onTap: () {
                             print('Tapped on ${fetchedData![firstIndex].romajiTitle}');
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => readMangaPage()));
-
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceMangaPage()));
                           },
                           child: buildAnimeCard(fetchedData![firstIndex]),
                         ),
@@ -357,7 +362,7 @@ class _HomePageState extends State<HomePage> {
                             onTap: () {
                               // Manejar el evento onTap aquí para el segundo elemento
                               print('Tapped on ${fetchedData![secondIndex].romajiTitle}');
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => readMangaPage()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceMangaPage()));
                             },
                             child: buildAnimeCard(fetchedData![secondIndex]),
                           ),
@@ -370,39 +375,38 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 40,
-            height: 30,
-            child: FloatingActionButton(
-              onPressed: () async {
-                setState(() async {
-                  fetchedData = (await data.fetchNextPage(false))!;
-                });
-              },
-              child: Text('<'),
-              backgroundColor: Colors.white,
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 40,
+              height: 30,
+              child: FloatingActionButton(
+                onPressed: () async {
+                  await _fetchNextPage(false);
+                },
+                child: Text('<'),
+                backgroundColor: Colors.white,
+              ),
             ),
-          ),
-          SizedBox(width: 50),
-          SizedBox(
-            width: 40,
-            height: 30,
-            child: FloatingActionButton(
-              onPressed: () async {
-                setState(() async {
-                  fetchedData = (await data.fetchNextPage(true))!;
-                });
-              },
-              child: Text('>'),
-              backgroundColor: Colors.white,
+            SizedBox(width: 50),
+            SizedBox(
+              width: 40,
+              height: 30,
+              child: FloatingActionButton(
+                onPressed: () async {
+                  await _fetchNextPage(true);
+                },
+                child: Text('>'),
+                backgroundColor: Colors.white,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey,
         items: const <BottomNavigationBarItem>[
@@ -430,18 +434,26 @@ class _HomePageState extends State<HomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.network(
-          AnimeManga.coverImageUrl ?? 'assets/img/animeimg.jpg',
-          width: 150,
-          height: 200,
-          fit: BoxFit.cover,
+        AspectRatio(
+          aspectRatio: 3 / 4,
+          child: Image.network(
+            AnimeManga.coverImageUrl ?? 'assets/img/animeimg.jpg',
+            width: 150,
+            height: 200,
+            fit: BoxFit.cover,
+          ),
         ),
         SizedBox(height: 8),
-        Text(
-          AnimeManga.romajiTitle ?? 'Loading',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+        Container(
+          width: 150, // Ancho fijo para limitar el tamaño del texto
+          child: Text(
+            AnimeManga.romajiTitle ?? 'Loading',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 1, // Limita a una línea para que no afecte la altura de la imagen
+            overflow: TextOverflow.ellipsis, // Añade puntos suspensivos si el texto es demasiado largo
           ),
         ),
         SizedBox(height: 4),

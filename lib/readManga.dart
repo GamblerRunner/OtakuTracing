@@ -39,7 +39,7 @@ class _readMangaPageState extends State<readMangaPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'CAPITULO 1',
+          'CAPITULO X',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -54,7 +54,7 @@ class _readMangaPageState extends State<readMangaPage> {
           // Fondo de la imagen
           Positioned.fill(
             child: Image.asset(
-              'assets/img/backgroundTwo.jpg',
+              'assets/img/fondoPantalla.jpg',
               fit: BoxFit.cover,
             ),
           ),
