@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Profile.dart';
+import 'package:tfc/ProfileImg.dart';
 import 'package:tfc/login.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
@@ -18,7 +19,7 @@ import 'readManga.dart';
 Future<void> main() async {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: LoginPage(),
+    home: ProfileImgPage(),
   ));
 }
 

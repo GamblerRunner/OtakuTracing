@@ -69,4 +69,8 @@ class FirebaseManager {
 
   }
 
+  Future<void> changeImgProfile(String img) async {
+
+  }
+
 }
