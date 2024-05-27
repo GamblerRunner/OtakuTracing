@@ -13,7 +13,7 @@ class LoginPage extends StatefulWidget {
 class Login extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // VARIABLES
+
   String? email = '';
   String? contrasenia = '';
   bool obscureText = true;

@@ -1,9 +1,15 @@
 class Otaku {
-  Otaku(this._id, this._user, this._email, this._password);
-  int _id;
-  String _user;
-  String _email;
-  String _password;
+  Otaku(this.userName, this.userImg);
+  String userName;
+  String userImg;
+
+
+
+
+
+
+
+
 
   /*
   Otaku.map(dynamic obj) {

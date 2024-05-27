@@ -3,9 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Profile.dart';
+import 'package:tfc/ProfileImg.dart';
 import 'package:tfc/login.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
+import 'Firebase_Manager.dart';
 import 'firebase_options.dart';
 import 'settings.dart';
 import 'mangas.dart';
@@ -19,7 +21,7 @@ import 'interfaceManga.dart';
 Future<void> main() async {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: LoginPage(),
+    home: HomePage(),
   ));
 }
 
@@ -29,6 +31,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late FirebaseManager fm;
+
+  late String userName = 'user' ;
+  late String userImg = 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg' ;
   bool _showOptions = false;
   int _selectedIndex = 0;
   List<Media> fetchedData = [];
@@ -42,7 +48,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    fm = FirebaseManager();
     fetchData();
+    fetchUserData();
   }
 
   Future<void> fetchData() async {
@@ -53,6 +61,24 @@ class _HomePageState extends State<HomePage> {
     } else {
       print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
     }
+  }
+
+  Future<void> fetchUserData() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await Future.delayed(Duration(seconds: 1));
+
+    await fm.getUser();
+
+    String fetchedUserName = preferences.getString("userName") ?? '';
+    String fetchedUserImg = preferences.getString("ImgProfile") ?? '';
+
+    setState(() {
+      userName = fetchedUserName;
+      userImg = fetchedUserImg;
+    });
+
+
+
   }
 
   Future<void> fetchSearchData() async {
@@ -138,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.zero,
                   child: Center(
                     child: Text(
-                      'User Name',
+                      userName,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -248,7 +274,7 @@ class _HomePageState extends State<HomePage> {
                       },
                       child: ClipOval(
                         child: Image.network(
-                          'https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg',
+                          userImg,
                           width: 50,
                           height: 50,
                           fit: BoxFit.cover,

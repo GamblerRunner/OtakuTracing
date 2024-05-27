@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tfc/Firebase_Manager.dart';
+
+import 'ProfileImg.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -12,6 +16,42 @@ class ProfilePage extends StatefulWidget {
 }
 
 class Profile extends State<ProfilePage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  late String urlImg;
+  String? userName='';
+
+  late FirebaseManager fm;
+
+@override
+void initState() {
+  super.initState();
+  loadImage();
+  fm = FirebaseManager();
+}
+
+Future<void> loadImage() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  String? newImgProfile = preferences.getString("ImgProfile");
+
+  setState(() {
+    urlImg = newImgProfile!;
+  });
+}
+
+Future<void> changeUserName() async {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+    fm.changeUserName(userName!, urlImg);
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    await preferences.setString("userName", userName!);
+
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +89,8 @@ class Profile extends State<ProfilePage> {
                     color: Color.fromARGB(128, 0, 0, 255),
                     borderRadius: BorderRadius.circular(15),
                   ),
+                  child: Form(
+                    key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -58,10 +100,14 @@ class Profile extends State<ProfilePage> {
                           GestureDetector(
                             onTap: () {
                               print('Image clicked!');
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => ProfileImgPage()),
+                              );
                             },
                             child: ClipOval(
                               child: Image.network(
-                                'https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg', //Imagen del usuario
+                                urlImg, //Imagen del usuario
                                 width: 300,
                                 height: 300,
                                 fit: BoxFit.cover,
@@ -83,6 +129,13 @@ class Profile extends State<ProfilePage> {
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 10), // Padding interno del campo de entrada
                               ),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'El campo Email está vacío';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) => userName = value,
                             ),
                           ),
                           SizedBox(width: 40),
@@ -90,7 +143,9 @@ class Profile extends State<ProfilePage> {
                             width: 70,
                             height: 50,
                             child: FloatingActionButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                changeUserName();
+                              },
                               child: Text('Guardar'),
                               backgroundColor: Colors.white,
                             ),
@@ -98,6 +153,7 @@ class Profile extends State<ProfilePage> {
                         ],
                       ),
                     ],
+                  ),
                   ),
                 ),
                 SizedBox(height: 20),

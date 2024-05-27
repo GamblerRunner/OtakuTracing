@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Firebase_Manager.dart';
 import 'login.dart'; // Importar la pantalla de inicio de sesión
 
@@ -40,7 +41,7 @@ class Register extends State<RegisterPage> {
         return;
       }
 
-      fm.registerNewUser(correo!, contrasenia1!, usuario!).then((success) {
+      fm.registerNewUser(correo!, contrasenia1!, usuario!).then((success) async {
         if (success == true) {
           Fluttertoast.showToast(
             msg: 'Usuario registrado correctamente',
@@ -49,6 +50,9 @@ class Register extends State<RegisterPage> {
             backgroundColor: Colors.black,
             textColor: Colors.white,
           );
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+
+          await preferences.setString("newImgProfile", "https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg");
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => LoginPage()),
