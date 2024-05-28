@@ -1,14 +1,12 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 //Reproductor video
 import 'dart:async';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 void main() {
-  runApp(const MyApp());
+  runApp(const PlayerAnime());
 }
 
-class MyApp extends StatelessWidget {
+class PlayerAnime extends StatelessWidget {
   static const customSwatch = MaterialColor(
     0xFFFF5252,
     <int, Color>{
@@ -25,7 +23,7 @@ class MyApp extends StatelessWidget {
     },
   );
 
-  const MyApp({Key? key}) : super(key: key);
+  const PlayerAnime({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     _controller = YoutubePlayerController(
-      initialVideoId: '6Q9w2433UvQ',// https://youtu.be/6Q9w2433UvQ
+      initialVideoId: 'OhNwckCLzis',// https://youtu.be/6Q9w2433UvQ
       flags: YoutubePlayerFlags(
         autoPlay: false,
         mute: true,
