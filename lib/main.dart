@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Profile.dart';
 import 'package:tfc/ProfileImg.dart';
 import 'package:tfc/login.dart';
+import 'package:tfc/video_player.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'Firebase_Manager.dart';
@@ -214,6 +215,16 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                     ),
+                    ListTile(
+                      leading: Icon(Icons.menu_book),
+                      title: Text('Video'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyApp()),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -325,6 +336,7 @@ class _HomePageState extends State<HomePage> {
                       width: 50,
                       height: 50,
                       child: FloatingActionButton(
+                        heroTag: "nose1",
                         onPressed: () async {
                           await fetchSearchData();
                         },
@@ -415,6 +427,7 @@ class _HomePageState extends State<HomePage> {
               width: 40,
               height: 30,
               child: FloatingActionButton(
+                heroTag: "nose2",
                 onPressed: () async {
                   await _fetchNextPage(false);
                 },
@@ -427,6 +440,7 @@ class _HomePageState extends State<HomePage> {
               width: 40,
               height: 30,
               child: FloatingActionButton(
+                heroTag: "nose3",
                 onPressed: () async {
                   await _fetchNextPage(true);
                 },

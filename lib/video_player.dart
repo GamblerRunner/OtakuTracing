@@ -1,95 +1,90 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 //Reproductor video
 import 'dart:async';
-import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  static const customSwatch = MaterialColor(
+    0xFFFF5252,
+    <int, Color>{
+      50: Color(0xFFFFEBEE),
+      100: Color(0xFFFFCDD2),
+      200: Color(0xFFEF9A9A),
+      300: Color(0xFFE57373),
+      400: Color(0xFFEF5350),
+      500: Color(0xFFFF5252),
+      600: Color(0xFFE53935),
+      700: Color(0xFFD32F2F),
+      800: Color(0xFFC62828),
+      900: Color(0xFFB71C1C),
+    },
+  );
 
-  // This widget is the root of your application.
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: customSwatch,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  late VideoPlayerController _videoController;
-  late Future<void> _initializeVideoPlayerFuture;
+  YoutubePlayerController? _controller;
 
   @override
-  void initState(){
-    _videoController = VideoPlayerController.network('https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4');
-    _initializeVideoPlayerFuture = _videoController.initialize();
-    _videoController.setLooping(true);
+  void initState() {
     super.initState();
-  }
 
-  @override
-  void dispose() {
-    _videoController.dispose();
-    super.dispose();
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+    _controller = YoutubePlayerController(
+      initialVideoId: '6Q9w2433UvQ',// https://youtu.be/6Q9w2433UvQ
+      flags: YoutubePlayerFlags(
+        autoPlay: false,
+        mute: true,
+        isLive: false,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Video'),
-      ),
-      body: FutureBuilder(
-        future: _initializeVideoPlayerFuture,
-        builder: (context, snapshot){
-          if(snapshot.connectionState ==ConnectionState.done){
-            return AspectRatio(aspectRatio: _videoController.value.aspectRatio,
-            child: VideoPlayer(_videoController));
-          }else{
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          _videoController.value.isPlaying ? Icons.pause : Icons.play_arrow,
+    return YoutubePlayerBuilder(
+      player: YoutubePlayer(
+        controller: _controller!,
+        showVideoProgressIndicator: true,
+        progressIndicatorColor: Colors.amber,
+        progressColors: ProgressBarColors(
+          playedColor: Colors.amber,
+          handleColor: Colors.amberAccent,
         ),
-        onPressed: (){
-          setState(() {
-            if(_videoController.value.isPlaying){
-              _videoController.pause();
-            }else{
-              _videoController.play();
-            }
-          });
-        },
-        tooltip: 'Increment',
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      builder: (context, player) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Youtube Player"),
+          ) ,
+          body: player,
+        );
+      },
     );
   }
+
 }
