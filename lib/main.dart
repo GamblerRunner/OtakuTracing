@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ProfilePage()),
+                          MaterialPageRoute(builder: (context) => PlayerAnime()),
                         );
                       },
                     ),
@@ -212,16 +212,6 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => myMangasPage()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.menu_book),
-                      title: Text('Video'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MyApp()),
                         );
                       },
                     ),
@@ -336,7 +326,6 @@ class _HomePageState extends State<HomePage> {
                       width: 50,
                       height: 50,
                       child: FloatingActionButton(
-                        heroTag: "nose1",
                         onPressed: () async {
                           await fetchSearchData();
                         },
@@ -427,7 +416,6 @@ class _HomePageState extends State<HomePage> {
               width: 40,
               height: 30,
               child: FloatingActionButton(
-                heroTag: "nose2",
                 onPressed: () async {
                   await _fetchNextPage(false);
                 },
@@ -440,7 +428,6 @@ class _HomePageState extends State<HomePage> {
               width: 40,
               height: 30,
               child: FloatingActionButton(
-                heroTag: "nose3",
                 onPressed: () async {
                   await _fetchNextPage(true);
                 },
