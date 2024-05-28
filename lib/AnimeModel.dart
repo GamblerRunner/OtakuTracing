@@ -69,3 +69,67 @@ class Media {
   final String? romajiTitle;
   final String? description;
 }
+
+class Anime {
+  Anime({
+    required this.id,
+    this.coverImageUrl,
+    this.englishTitle,
+    this.romajiTitle,
+    this.description,
+  });
+
+  static List<Anime> fromListJson(List<Object?> jsonList) {
+    return jsonList
+        .map((item) => Anime.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  factory Anime.fromJson(Map<String, dynamic> json) {
+    return Anime(
+      id: json['id'] as int,
+      coverImageUrl: json['coverImage']['extraLarge'] as String?,
+      englishTitle: json['title']['english'] as String?,
+      romajiTitle: json['title']['romaji'] as String?,
+      description: json['description'] as String?,
+    );
+  }
+
+  final int id;
+  final String? coverImageUrl;
+  final String? romajiTitle;
+  final String? description;
+  final String? englishTitle;
+}
+
+class Manga {
+  Manga({
+    required this.id,
+    this.coverImageUrl,
+    this.romajiTitle,
+    this.description,
+    this.englishTitle,
+  });
+
+  static List<Manga> fromListJson(List<Object?> jsonList) {
+    return jsonList
+        .map((item) => Manga.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  factory Manga.fromJson(Map<String, dynamic> json) {
+    return Manga(
+      id: json['id'] as int,
+      coverImageUrl: json['coverImage']['extraLarge'] as String?,
+      englishTitle: json['title']['english'] as String?,
+      romajiTitle: json['title']['romaji'] as String?,
+      description: json['description'] as String?,
+    );
+  }
+
+  final int id;
+  final String? coverImageUrl;
+  final String? englishTitle;
+  final String? romajiTitle;
+  final String? description;
+}

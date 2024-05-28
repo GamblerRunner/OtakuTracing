@@ -77,8 +77,6 @@ class _HomePageState extends State<HomePage> {
       userImg = fetchedUserImg;
     });
 
-
-
   }
 
   Future<void> fetchSearchData() async {
@@ -132,6 +130,14 @@ class _HomePageState extends State<HomePage> {
       fetchedData = data!;
       _scrollToTop();
     });
+  }
+
+  Future<void> saveID(int id) async {
+    SharedPreferences preferences= await SharedPreferences.getInstance();
+
+    await preferences.setInt("idMedia", id);
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceMangaPage()));
   }
 
   @override
@@ -375,9 +381,9 @@ class _HomePageState extends State<HomePage> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
+                            saveID(fetchedData![firstIndex].id);
                             print('Tapped on ${fetchedData![firstIndex].romajiTitle}');
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceMangaPage()));
-                          },
+                            },
                           child: buildAnimeCard(fetchedData![firstIndex]),
                         ),
                       ),
@@ -386,9 +392,8 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              // Manejar el evento onTap aquí para el segundo elemento
-                              print('Tapped on ${fetchedData![secondIndex].romajiTitle}');
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceMangaPage()));
+                              saveID(fetchedData![firstIndex].id);
+                              print('Tapped on ${fetchedData![firstIndex].romajiTitle}');
                             },
                             child: buildAnimeCard(fetchedData![secondIndex]),
                           ),
