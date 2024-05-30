@@ -17,7 +17,7 @@ import 'myMangas.dart';
 import 'myAnimes.dart';
 import 'help.dart';
 import 'readManga.dart';
-import 'interfaceManga.dart';
+import 'InterfaceManga.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
@@ -46,6 +46,8 @@ class _HomePageState extends State<HomePage> {
 
   String? search = '';
 
+  bool animemanga = false;
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +57,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchData() async {
-    fetchedData = await data.getPageData();
+    fetchedData = await data.getPageData(animemanga);
     print(fetchedData?[0].coverImageUrl.toString());
     if (fetchedData != null) {
       setState(() {});
@@ -104,7 +106,10 @@ class _HomePageState extends State<HomePage> {
 
     switch (index) {
       case 0:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+        fetchedData.clear();
+          animemanga=false;
+          fetchData();
+          print(true);
         break;
 
       case 1:
@@ -112,7 +117,10 @@ class _HomePageState extends State<HomePage> {
         break;
 
       case 2:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => MangasPage()));
+        fetchedData.clear();
+          animemanga=true;
+          fetchData();
+          print(false);
         break;
     }
   }
@@ -191,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => PlayerAnime()),
+                          MaterialPageRoute(builder: (context) => ProfilePage()),
                         );
                       },
                     ),

@@ -1,30 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:tfc/Firebase_Manager.dart';
+import 'AnimeData.dart';
+import 'AnimeModel.dart';
 import 'readManga.dart';
 
-void main() {
-  runApp(InterfaceMangaApp());
+Future<void> main() async {
+  runApp(MaterialApp(
+    home: InterfaceMangaPage(),
+  ));
 }
 
-class InterfaceMangaApp extends StatelessWidget {
+class InterfaceMangaPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: InterfaceMangaPage(),
-    );
+  InterfaceManga createState() => InterfaceManga();
+}
+
+class InterfaceManga extends State<InterfaceMangaPage> {
+  late FirebaseManager fm;
+
+  List<Manga> fetchedMangaData = [];
+
+  final AnimeData data = AnimeData();
+
+  @override
+  void initState() {
+    super.initState();
+    fm = FirebaseManager();
+    fetchMangaData();
   }
-}
 
-class InterfaceMangaPage extends StatelessWidget {
+  Future<void> fetchMangaData() async {
+    List<Manga> fetchedMangaData2 = await data.getIdManga();
+    print(fetchedMangaData2?[0].coverImageUrl.toString());
+    if (fetchedMangaData != null) {
+      setState(() {
+        fetchedMangaData = fetchedMangaData2;
+      });
+    } else {
+      print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
+    }
+  }
+
+  String getFormattedDate() {
+    if (fetchedMangaData[0].startDate == null || fetchedMangaData[0].startDate == 0) return 'Unknown';
+    final year = (fetchedMangaData[0].startDate! ~/ 10000).toString().padLeft(4, '0');
+    final month = ((fetchedMangaData[0].startDate! % 10000) ~/ 100).toString().padLeft(2, '0');
+    final day = (fetchedMangaData[0].startDate! % 100).toString().padLeft(2, '0');
+    return '$year-$month-$day';
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    String title = 'Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2';
-    String formattedTitle = formatTitle(title);
+    //String title = 'Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2';
+    //String formattedTitle = formatTitle(title);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          formattedTitle,
+          fetchedMangaData[0].romajiTitle ?? 'Loading...',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -50,8 +84,8 @@ class InterfaceMangaPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
-                    child: Image.asset(
-                      'assets/img/MushokuIndice1.jpg',
+                    child: Image.network(
+                      fetchedMangaData[0].coverImageUrl ?? 'assets/img/MushokuIndice1.jpg',
                       height: 300,
                     ),
                   ),
@@ -66,7 +100,7 @@ class InterfaceMangaPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Sinopsis Anime',
+                    fetchedMangaData[0].description ?? 'Loading...',
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -94,7 +128,7 @@ class InterfaceMangaPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'En emisión/Finalizado/Hiatus',
+                    fetchedMangaData[0].status.toString() ?? 'FINISHED',
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -108,7 +142,7 @@ class InterfaceMangaPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Acción, Aventura, Fantasía',
+                    fetchedMangaData[0].genres.toString().substring(1, fetchedMangaData[0].genres.toString().length-1),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -122,7 +156,7 @@ class InterfaceMangaPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    '01/01/2022',
+                      getFormattedDate(),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 24),
@@ -143,7 +177,7 @@ class InterfaceMangaPage extends StatelessWidget {
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: 10,
+                      itemCount: fetchedMangaData[0].chapters,
                       itemBuilder: (context, index) {
                         return Container(
                           margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
