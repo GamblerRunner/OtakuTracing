@@ -143,6 +143,84 @@ class AnimeData {
     }
   ''';
 
+  static const String idAnimeSearchQuery = r'''
+    query ($id: Int) {
+      Page (page: 1, perPage: 1) {
+        pageInfo {
+          total
+          currentPage
+          lastPage
+          hasNextPage
+          perPage
+        }
+        media (id: $id){
+          id
+          coverImage{
+            extraLarge
+          }
+          bannerImage
+          title {
+            english
+            romaji
+          }
+          description
+          startDate{
+            year
+            month
+            day
+          }
+          status
+          episodes
+          trailer{
+            id
+          }
+          genres
+        }
+      }
+    }
+  ''';
+
+  static const String idAnimeSearchQueryAlter = r'''
+    query ($id: Int) {
+      Page (page: 1, perPage: 1) {
+        pageInfo {
+          total
+          currentPage
+          lastPage
+          hasNextPage
+          perPage
+        }
+        media (id: $id){
+          id
+          coverImage{
+            extraLarge
+          }
+          bannerImage
+          title {
+            english
+            romaji
+          }
+          description
+          startDate{
+            year
+            month
+            day
+          }
+          status
+          episodes
+          relations{
+            nodes{
+              trailer{
+                id
+              }
+            }
+          }
+          genres
+        }
+      }
+    }
+  ''';
+
   static const int _perPage = 20;
   List<Media> _animeList = [];
   List<Manga> manga = [];
@@ -249,7 +327,7 @@ class AnimeData {
 
       final result = await client.query(
         idMangaSearchQuery, // Use the static query string
-        variables: {'id': id+1},
+        variables: {'id': id},
       );
       //print(result);
       if (result.hasException) {
@@ -265,6 +343,38 @@ class AnimeData {
       print('patata');
       print(manga[0]);
       return manga;
+    } catch (e) {
+      throw Exception("Error cogiendo los datos");
+    }
+
+  }
+
+  Future<List<Anime>> getIdAnime() async {
+    try {
+      SharedPreferences preferences= await SharedPreferences.getInstance();
+      int? id=await preferences.getInt("idMedia") ?? 1;
+
+      print(id);
+      await Future.delayed(Duration(seconds: 1));
+
+      final result = await client.query(
+        idAnimeSearchQuery, // Use the static query string
+        variables: {'id': id},
+      );
+      //print(result);
+      if (result.hasException) {
+        throw Exception("Error cogiendo los datos");
+      }
+
+      final AnimeModel animeData =
+      AnimeModel.fromJson(result.data?['Page'] ?? {});
+      _totalPages = animeData.pageInfo.total;
+      anime.addAll(animeData.media);
+      //print(_currentPage);
+      //print(_animeList[0].romajiTitle);
+      print('patata');
+      print(anime[0]);
+      return anime;
     } catch (e) {
       throw Exception("Error cogiendo los datos");
     }

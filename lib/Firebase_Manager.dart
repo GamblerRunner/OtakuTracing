@@ -100,13 +100,14 @@ class FirebaseManager {
   }
 
   Future<void> getUser() async {
+    await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    //uid = (await preferences.getString("uid"))!;
+    uid = (await preferences.getString("uid"))!;
 
 
     List<String> imgData = [];
-    final docRef = db.collection("users").doc("Fju5xzk0VzdGk3902Gx8QeKfdsG2");
+    final docRef = db.collection("users").doc(uid);
 
     try {
       // Esperar a que se complete la operación de obtener el documento
@@ -130,10 +131,12 @@ class FirebaseManager {
 
   Future<void> changeUserName(String userName, String userImg) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    uid = (await preferences.getString("uid"))!;
 
     final data = {"username": userName, "userimg": userImg};
 
-    db.collection("users").doc("Fju5xzk0VzdGk3902Gx8QeKfdsG2").set(data, SetOptions(merge: true));
+    db.collection("users").doc(uid).set(data, SetOptions(merge: true));
 
   }
 

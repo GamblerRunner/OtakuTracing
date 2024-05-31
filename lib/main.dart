@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Profile.dart';
 import 'package:tfc/ProfileImg.dart';
+import 'package:tfc/interfaceAnime.dart';
 import 'package:tfc/login.dart';
 import 'package:tfc/video_player.dart';
 import 'AnimeData.dart';
@@ -146,7 +147,12 @@ class _HomePageState extends State<HomePage> {
 
     await preferences.setInt("idMedia", id);
 
-    Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceMangaPage()));
+    if(animemanga){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceMangaPage()));
+    }else{
+      Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceAnimePage()));
+    }
+
   }
 
   @override
@@ -401,8 +407,8 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              saveID(fetchedData![firstIndex].id);
-                              print('Tapped on ${fetchedData![firstIndex].romajiTitle}');
+                              saveID(fetchedData![secondIndex].id);
+                              print('Tapped on ${fetchedData![secondIndex].romajiTitle}');
                             },
                             child: buildAnimeCard(fetchedData![secondIndex]),
                           ),

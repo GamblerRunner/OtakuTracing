@@ -102,15 +102,15 @@ class Anime {
   Anime({
     required this.id,
     this.coverImageUrl,
-    this.englishTitle,
     this.romajiTitle,
     this.description,
     this.startDate,
+    this.englishTitle,
     this.status,
-    this.episodes,
-    this.nextAiringEpisode,
-    this.suggestions,
     this.imageUrlTitle,
+    this.episodes,
+    this.mediaPlay,
+    this.genres,
   });
 
   static List<Anime> fromListJson(List<Object?> jsonList) {
@@ -123,9 +123,15 @@ class Anime {
     return Anime(
       id: json['id'] as int,
       coverImageUrl: json['coverImage']['extraLarge'] as String?,
+      imageUrlTitle: json['bannerImage'] as String?,
       englishTitle: json['title']['english'] as String?,
       romajiTitle: json['title']['romaji'] as String?,
+      startDate: _parseStartDate(json['startDate']),
       description: json['description'] as String?,
+      status: _statusFromString(json['status'] as String?),
+      episodes: json['episodes'] as int?,
+      mediaPlay: json['trailer']['id'] as String?,
+      genres: (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
   }
 
@@ -135,11 +141,37 @@ class Anime {
   final String? romajiTitle;
   final String? description;
   final String? englishTitle;
-  final DateTime? startDate;
-  final String? status;
-  final String? episodes;
-  final String? nextAiringEpisode;
-  final String? suggestions;
+  final int? startDate;
+  final Status? status;
+  final int? episodes;
+  final String? mediaPlay;
+  final List<String>? genres;
+  //final String? suggestions;
+
+  // Método helper para convertir String a MangaStatus
+  static Status? _statusFromString(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'releasing':
+        return Status.RELEASING;
+      case 'finished':
+        return Status.FINISHED;
+      case 'hiatus':
+        return Status.HIATUS;
+      case 'cancelled':
+        return Status.CANCELLED;
+      case 'not_yet_released':
+        return Status.NOT_YET_RELEASING;
+      default:
+        return null;
+    }
+  }
+  static int? _parseStartDate(Map<String, dynamic>? startDate) {
+    if (startDate == null) return null;
+    final int year = startDate['year'] ?? 0;
+    final int month = startDate['month'] ?? 0;
+    final int day = startDate['day'] ?? 0;
+    return year * 10000 + month * 100 + day;
+  }
 }
 
 class Manga {
