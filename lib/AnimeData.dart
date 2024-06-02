@@ -221,6 +221,31 @@ class AnimeData {
     }
   ''';
 
+  static const String myMediaQuery = r'''
+    query ($page: Int, $perPage: Int, $id_in: [Int!]) {
+      Page (page: $page, perPage: $perPage) {
+        pageInfo {
+          total
+          currentPage
+          lastPage
+          hasNextPage
+          perPage
+        }
+        media (id_in:$id_in){
+          id
+          coverImage{
+            extraLarge
+          }
+          title {
+            english
+            romaji
+          }
+          description
+        }
+      }
+    }
+  ''';
+
   static const int _perPage = 20;
   List<Media> _animeList = [];
   List<Manga> manga = [];
@@ -378,6 +403,29 @@ class AnimeData {
     } catch (e) {
       throw Exception("Error cogiendo los datos");
     }
-
   }
+
+  Future<List<Media>> getMyMedia(List<int> medias) async {
+      try {
+        final result = await client.query(
+          myMediaQuery, // Use the static query string
+          variables: {'page': _currentPage, 'perPage': _perPage, 'id_in': medias},
+        );
+        //print(result);
+        if (result.hasException) {
+          throw Exception("Error cogiendo los datos");
+        }
+
+        final MediaModel animeData =
+        MediaModel.fromJson(result.data?['Page'] ?? {});
+        _totalPages = animeData.pageInfo.total;
+        _animeList.addAll(animeData.media);
+        //print(_currentPage);
+        //print(_animeList[0].romajiTitle);
+        return _animeList;
+      } catch (e) {
+        throw Exception("Error cogiendo los datos");
+      }
+    }
+
 }

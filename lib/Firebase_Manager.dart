@@ -106,7 +106,6 @@ class FirebaseManager {
     uid = (await preferences.getString("uid"))!;
 
 
-    List<String> imgData = [];
     final docRef = db.collection("users").doc(uid);
 
     try {
@@ -138,6 +137,65 @@ class FirebaseManager {
 
     db.collection("users").doc(uid).set(data, SetOptions(merge: true));
 
+  }
+
+  Future<void> addFavourite(int id, bool type) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    uid = (await preferences.getString("uid"))!;
+    DocumentReference animeInstance = db.collection("users").doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc("media");
+
+    if(type){
+      final data = {
+        "animes": FieldValue.arrayUnion([id])
+      };
+
+      animeInstance.set(data, SetOptions(merge: true));
+
+      return;
+    }
+    final data = {
+      "mangas": FieldValue.arrayUnion([id])
+    };
+
+    animeInstance.set(data, SetOptions(merge: true));
+  }
+
+  Future<List<int>> getMyAnimes(bool mediaAM) async {
+    await Future.delayed(Duration(seconds: 1));
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    List<int> userMedia = [];
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    uid = (await preferences.getString("uid"))!;
+    String am='';
+    if(!mediaAM){
+      am='animes';
+    }else{
+      am='mangas';
+    }
+
+    final docRef = db.collection("users").doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc("media");
+
+    try {
+      // Esperar a que se complete la operación de obtener el documento
+      DocumentSnapshot doc = await docRef.get();
+
+      final data = doc.data() as Map<String, dynamic>;
+      print('testeando $data');
+
+      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
+      if (data[am] is List<dynamic>) {
+        userMedia = (data[am] as List<dynamic>).map((item) => item as int).toList();
+      } else {
+        userMedia = [];
+      }
+
+      print(userMedia);
+    } catch (e) {
+      // Manejar errores al obtener el documento
+      print("Error getting document: $e");
+    }
+    return await userMedia;
   }
 
 }

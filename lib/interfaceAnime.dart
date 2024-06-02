@@ -107,7 +107,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Autor:',
+                    'Accede:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -115,9 +115,22 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Text(
-                    'Nombre del autor',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          fm.addFavourite(fetchedAnimeData[0].id , true);
+                        },
+                        child: Text('Seguir'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          print('hola');
+                        },
+                        child: Text('Ir a comunidad(foro)'),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 16),
                   Text(

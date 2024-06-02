@@ -113,7 +113,7 @@ class _MangasPageState extends State<MangasPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myAnimesPage()),
+                          MaterialPageRoute(builder: (context) => myAnimes()),
                         );
                       },
                     ),

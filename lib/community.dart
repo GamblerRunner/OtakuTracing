@@ -113,7 +113,7 @@ class _CommunityPageState extends State<CommunityPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myAnimesPage()),
+                          MaterialPageRoute(builder: (context) => myAnimes()),
                         );
                       },
                     ),
