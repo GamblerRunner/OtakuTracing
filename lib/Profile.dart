@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Firebase_Manager.dart';
+import 'package:tfc/settings.dart';
 
 import 'ProfileImg.dart';
+import 'help.dart';
+import 'login.dart';
+import 'main.dart';
+import 'myAnimes.dart';
+import 'animation.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -19,7 +25,8 @@ class Profile extends State<ProfilePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   late String urlImg;
-  String? userName='';
+  String? newUserName='';
+  String? userName='user name';
 
   late FirebaseManager fm;
 
@@ -28,6 +35,7 @@ void initState() {
   super.initState();
   loadImage();
   fm = FirebaseManager();
+  fetchUserData();
 }
 
 Future<void> loadImage() async {
@@ -40,14 +48,28 @@ Future<void> loadImage() async {
   });
 }
 
+  Future<void> fetchUserData() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await Future.delayed(Duration(seconds: 1));
+
+    await fm.getUser();
+
+    String fetchedUserName = preferences.getString("userName") ?? '';
+
+    setState(() {
+      userName = fetchedUserName;
+    });
+
+  }
+
 Future<void> changeUserName() async {
   if (_formKey.currentState!.validate()) {
     _formKey.currentState!.save();
-    fm.changeUserName(userName!, urlImg);
+    fm.changeUserName(newUserName!, urlImg);
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
-    await preferences.setString("userName", userName!);
+    await preferences.setString("userName", newUserName!);
 
   }
 }
@@ -67,6 +89,118 @@ Future<void> changeUserName() async {
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
+      ),
+      drawer: SizedBox(
+        width: 225,
+        child: Drawer(
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 125,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                ),
+                child: DrawerHeader(
+                  margin: EdgeInsets.zero,
+                  padding: EdgeInsets.zero,
+                  child: Center(
+                    child: Text(
+                      userName!,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    ListTile(
+                      leading: Icon(Icons.home),
+                      title: Text('Home'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.account_circle),
+                      title: Text('Perfil'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ProfilePage()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.tv),
+                      title: Text('Mis Animes'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => myAnimes()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.menu_book),
+                      title: Text('Mis Mangas'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => myAnimes()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Ajustes'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.help_outline),
+                title: Text('Ayuda'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HelpPage()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.account_balance_wallet),
+                title: Text('Cerrar Sesión'),
+                onTap: () async {
+                  SharedPreferences preferences = await SharedPreferences
+                      .getInstance();
+                  await preferences.remove('rememberEmailPassword');
+                  await preferences.remove("email");
+                  await preferences.remove("contrasenia");
+                  await preferences.remove("uid");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
       body: Stack(
         children: [
@@ -135,7 +269,7 @@ Future<void> changeUserName() async {
                                 }
                                 return null;
                               },
-                              onSaved: (value) => userName = value,
+                              onSaved: (value) => newUserName = value,
                             ),
                           ),
                           SizedBox(width: 40),

@@ -9,7 +9,8 @@ import 'community.dart';
 import 'help.dart';
 import 'interfaceAnime.dart';
 import 'login.dart';
-import 'myMangas.dart';
+import 'main.dart';
+import 'animation.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
@@ -26,7 +27,7 @@ class myAnimesPage extends State<myAnimes> {
   late FirebaseManager fm;
 
 
-  late String userName = 'user' ;
+  late String userName = 'user name' ;
   late String userImg = 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg' ;
   List<int> medias = [];
 
@@ -137,7 +138,7 @@ class myAnimesPage extends State<myAnimes> {
                   padding: EdgeInsets.zero,
                   child: Center(
                     child: Text(
-                      "userName",
+                      userName,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -151,6 +152,16 @@ class myAnimesPage extends State<myAnimes> {
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: <Widget>[
+                    ListTile(
+                      leading: Icon(Icons.home),
+                      title: Text('Home'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      },
+                    ),
                     ListTile(
                       leading: Icon(Icons.account_circle),
                       title: Text('Perfil'),
@@ -180,7 +191,7 @@ class myAnimesPage extends State<myAnimes> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) =>
-                              myMangasPage()),
+                              myAnimes()),
                         );
                       },
                     ),

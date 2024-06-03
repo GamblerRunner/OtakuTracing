@@ -14,7 +14,7 @@ import 'firebase_options.dart';
 import 'settings.dart';
 import 'mangas.dart';
 import 'community.dart';
-import 'myMangas.dart';
+import 'animation.dart';
 import 'myAnimes.dart';
 import 'help.dart';
 import 'readManga.dart';
@@ -200,6 +200,16 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.zero,
                   children: <Widget>[
                     ListTile(
+                      leading: Icon(Icons.home),
+                      title: Text('Home'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      },
+                    ),
+                    ListTile(
                       leading: Icon(Icons.account_circle),
                       title: Text('Perfil'),
                       onTap: () {
@@ -225,7 +235,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myMangasPage()),
+                          MaterialPageRoute(builder: (context) => myAnimes()),
                         );
                       },
                     ),

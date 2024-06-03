@@ -5,6 +5,7 @@ import 'package:tfc/video_player.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'readManga.dart';
+import 'animation.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
@@ -23,6 +24,8 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
   List<Anime> fetchedAnimeData = [];
 
   final AnimeData data = AnimeData();
+
+  bool following = false;
 
   @override
   void initState() {
@@ -118,11 +121,12 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
+                      AnimatedFavouriteButton(
                         onPressed: () {
-                          fm.addFavourite(fetchedAnimeData[0].id , true);
+                          following!=following;
+                          fm.addFavourite(fetchedAnimeData[0].id, following);
                         },
-                        child: Text('Seguir'),
+                      isInitiallyFavoured: following, // puedes ajustar este valor basado en tu lógica
                       ),
                       ElevatedButton(
                         onPressed: () {

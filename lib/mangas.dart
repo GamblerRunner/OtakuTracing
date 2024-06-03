@@ -6,7 +6,7 @@ import 'mangas.dart';
 import 'community.dart';
 import 'Profile.dart';
 import 'login.dart';
-import 'myMangas.dart';
+import 'animation.dart';
 import 'myAnimes.dart';
 import 'help.dart';
 
@@ -123,7 +123,7 @@ class _MangasPageState extends State<MangasPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myMangasPage()),
+                          MaterialPageRoute(builder: (context) => myAnimes()),
                         );
                       },
                     ),
