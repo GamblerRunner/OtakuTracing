@@ -154,7 +154,7 @@ class FirebaseManager {
       // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
       if (data[am] is List<dynamic>) {
         favouriteList = (data[am] as List<dynamic>).map((item) => item as int).toList();
-        print("menos cosas");
+        print("menos cosas $favouriteList");
         if(favouriteList.contains(id)){
           print("cosas");
           return await true;
