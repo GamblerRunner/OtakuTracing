@@ -127,6 +127,46 @@ class FirebaseManager {
       print("Error getting document: $e");
     }
   }
+  Future<bool> getUserFavourite(int id,bool type) async {
+    print("holapapapa");
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    uid = (await preferences.getString("uid"))!;
+
+    String am="animes";
+    if(type){
+      am="mangas";
+    }
+    print("holapapapa2");
+    final docRef = db.collection("users").doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc("media");
+    print("BRUUUUUUUUUUUH");
+    try {
+      // Esperar a que se complete la operación de obtener el documento
+      DocumentSnapshot doc = await docRef.get();
+      print("holapapapa3");
+      List<int> favouriteList = [];
+      final data = doc.data() as Map<String, dynamic>;
+      print('testeando $data');
+
+      if(data.isEmpty){
+        return false;
+      }
+      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
+      if (data[am] is List<dynamic>) {
+        favouriteList = (data[am] as List<dynamic>).map((item) => item as int).toList();
+        print("menos cosas");
+        if(favouriteList.contains(id)){
+          print("cosas");
+          return await true;
+        }
+      }
+
+    } catch (e) {
+      // Manejar errores al obtener el documento
+      print("Error getting document: $e");
+    }
+    return await false;
+  }
 
   Future<void> changeUserName(String userName, String userImg) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -139,27 +179,33 @@ class FirebaseManager {
 
   }
 
-  Future<void> addFavourite(int id, bool type) async {
+  Future<void> addRemoveFavourite(int id, bool type, bool addOrRemove) async {
+    print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
     SharedPreferences preferences = await SharedPreferences.getInstance();
     uid = (await preferences.getString("uid"))!;
     DocumentReference animeInstance = db.collection("users").doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc("media");
 
+    print("BRUUUUUUUUUUUH");
+
+    String typeMedia="mangas";
     if(type){
-      final data = {
-        "animes": FieldValue.arrayUnion([id])
-      };
-
-      animeInstance.set(data, SetOptions(merge: true));
-
-      return;
+      typeMedia="animes";
     }
-    final data = {
-      "mangas": FieldValue.arrayUnion([id])
-    };
+    print(addOrRemove);
+    if(addOrRemove) {
+      final data = {
+        typeMedia: FieldValue.arrayUnion([id])
+      };
+      await animeInstance.set(data, SetOptions(merge:true));
+      return;
+      }
+      final data = {
+        typeMedia: FieldValue.arrayRemove([id])
+      };
+      await animeInstance.set(data, SetOptions(merge:true));
 
-    animeInstance.set(data, SetOptions(merge: true));
-  }
+    }
 
   Future<List<int>> getMyAnimes(bool mediaAM) async {
     await Future.delayed(Duration(seconds: 1));
@@ -179,7 +225,6 @@ class FirebaseManager {
     try {
       // Esperar a que se complete la operación de obtener el documento
       DocumentSnapshot doc = await docRef.get();
-
       final data = doc.data() as Map<String, dynamic>;
       print('testeando $data');
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tfc/Firebase_Manager.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
+import 'animation.dart';
 import 'readManga.dart';
 
 Future<void> main() async {
@@ -22,6 +23,8 @@ class InterfaceManga extends State<InterfaceMangaPage> {
 
   final AnimeData data = AnimeData();
 
+  bool following=false;
+
   @override
   void initState() {
     super.initState();
@@ -30,11 +33,14 @@ class InterfaceManga extends State<InterfaceMangaPage> {
   }
 
   Future<void> fetchMangaData() async {
-    List<Manga> fetchedMangaData2 = await data.getIdManga();
+    List<Manga> fetchedMangaData2 = await data.getIdManga(); //aqui mirar
+    //await Future.delayed(Duration(seconds: 1));
+    bool following2 = await fm.getUserFavourite(fetchedMangaData2[0].id, true);
     print(fetchedMangaData2?[0].coverImageUrl.toString());
     if (fetchedMangaData != null) {
       setState(() {
         fetchedMangaData = fetchedMangaData2;
+        following = following2;
       });
     } else {
       print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
@@ -116,11 +122,12 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
+                      AnimatedFavouriteButton(
                         onPressed: () {
-                          fm.addFavourite(fetchedMangaData[0].id , false);
+                          following=!following;
+                          fm.addRemoveFavourite(fetchedMangaData[0].id, false, following);
                         },
-                        child: Text('Seguir'),
+                        isInitiallyFavoured: following, // puedes ajustar este valor basado en tu lógica
                       ),
                       ElevatedButton(
                         onPressed: () {

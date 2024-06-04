@@ -36,14 +36,17 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
 
   Future<void> fetchMangaData() async {
     List<Anime> fetchedMangaData2 = await data.getIdAnime();
+    bool following2 = await fm.getUserFavourite(fetchedMangaData2[0].id, true);
     print(fetchedMangaData2?[0].coverImageUrl.toString());
     if (fetchedAnimeData != null) {
       setState(() {
         fetchedAnimeData = fetchedMangaData2;
+        following = following2;
       });
     } else {
       print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
     }
+    following =await fm.getUserFavourite(fetchedAnimeData[0].id, false);
   }
 
   String getFormattedDate() {
@@ -124,7 +127,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                       AnimatedFavouriteButton(
                         onPressed: () {
                           following!=following;
-                          fm.addFavourite(fetchedAnimeData[0].id, following);
+                          fm.addRemoveFavourite(fetchedAnimeData[0].id, true, following);
                         },
                       isInitiallyFavoured: following, // puedes ajustar este valor basado en tu lógica
                       ),
