@@ -218,10 +218,14 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => readMangaPage(),
+                                  builder: (context) => ReadMangaPage(
+                                    totalChapters: fetchedMangaData[0].chapters ?? 0,
+                                    selectedChapter: index + 1, // Pasar el número del capítulo seleccionado
+                                  ),
                                 ),
                               );
                             },
+
                           ),
                         );
                       },

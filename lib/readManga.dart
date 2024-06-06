@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(readMangaApp());
+  runApp(ReadMangaApp());
 }
 
-class readMangaApp extends StatelessWidget {
+class ReadMangaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: readMangaPage(),
+      home: ReadMangaPage(totalChapters: 5, selectedChapter: 1),
     );
   }
 }
 
-class readMangaPage extends StatefulWidget {
+class ReadMangaPage extends StatefulWidget {
+  final int totalChapters;
+  int selectedChapter; // Número del capítulo seleccionado
+
+  ReadMangaPage({required this.totalChapters, required this.selectedChapter}); // Modificar el constructor
+
   @override
-  _readMangaPageState createState() => _readMangaPageState();
+  _ReadMangaPageState createState() => _ReadMangaPageState();
 }
 
-class _readMangaPageState extends State<readMangaPage> {
+class _ReadMangaPageState extends State<ReadMangaPage> {
   bool isCascada = true;
   int currentPage = 0;
 
@@ -33,13 +38,14 @@ class _readMangaPageState extends State<readMangaPage> {
   ];
 
   final PageController _pageController = PageController();
+  final ScrollController _cascadaController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'CAPITULO X',
+          'CAPITULO ${widget.selectedChapter}', // Mostrar el número del capítulo seleccionado
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -104,17 +110,53 @@ class _readMangaPageState extends State<readMangaPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Container(
                     margin: EdgeInsets.only(bottom: 20),
-                    /*
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1.5),
-                    ),
-                    */
                     child: isCascada ? _buildCascadaView() : _buildPageView(),
                   ),
                 ),
               ),
             ],
           ),
+          // Botones de flecha
+          if (widget.selectedChapter > 1) // Verifica si el capítulo actual es mayor que 1
+            Positioned(
+              left: 10,
+              bottom: 80,
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    if (widget.selectedChapter > 1) {
+                      widget.selectedChapter--;
+                      if (isCascada) {
+                        _cascadaController.jumpTo(0);
+                      } else {
+                        _pageController.jumpTo(0);
+                      }
+                    }
+                  });
+                },
+                child: Text('Anterior'),
+              ),
+            ),
+          if (widget.selectedChapter < widget.totalChapters)
+            Positioned(
+              right: 10,
+              bottom: 80,
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    if (widget.selectedChapter < widget.totalChapters) {
+                      widget.selectedChapter++;
+                      if (isCascada) {
+                        _cascadaController.jumpTo(0);
+                      } else {
+                        _pageController.jumpTo(0);
+                      }
+                    }
+                  });
+                },
+                child: Text('Siguiente'),
+              ),
+            ),
         ],
       ),
     );
@@ -122,6 +164,7 @@ class _readMangaPageState extends State<readMangaPage> {
 
   Widget _buildCascadaView() {
     return ListView.builder(
+      controller: _cascadaController, // Controlador de desplazamiento para la vista en cascada
       itemCount: images.length,
       itemBuilder: (context, index) {
         return _buildImageContainer(images[index], BoxFit.cover);

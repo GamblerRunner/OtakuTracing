@@ -57,12 +57,8 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
     return '$year-$month-$day';
   }
 
-
   @override
   Widget build(BuildContext context) {
-    //String title = 'Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2';
-    //String formattedTitle = formatTitle(title);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -127,10 +123,10 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                     children: [
                       AnimatedFavouriteButton(
                         onPressed: () {
-                          following=!following;
+                          following = !following;
                           fm.addRemoveFavourite(fetchedAnimeData[0].id, true, following);
                         },
-                      isInitiallyFavoured: following, // puedes ajustar este valor basado en tu lógica
+                        isInitiallyFavoured: following, // puedes ajustar este valor basado en tu lógica
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -165,7 +161,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    fetchedAnimeData[0].genres.toString().substring(1, fetchedAnimeData[0].genres.toString().length-1),
+                    fetchedAnimeData[0].genres.toString().substring(1, fetchedAnimeData[0].genres.toString().length - 1),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -216,12 +212,15 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                               style: TextStyle(color: Colors.white),
                             ),
                             onTap: () async {
-                              SharedPreferences preferences= await SharedPreferences.getInstance();
+                              SharedPreferences preferences = await SharedPreferences.getInstance();
                               await preferences.setString("videoId", fetchedAnimeData[0].mediaPlay ?? '1');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => PlayerAnime(),
+                                  builder: (context) => PlayerAnime(
+                                    totalEpisodes: fetchedAnimeData[0].episodes ?? 0,
+                                    currentEpisode: index + 1,
+                                  ),
                                 ),
                               );
                             },
