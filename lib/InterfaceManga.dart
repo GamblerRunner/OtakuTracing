@@ -89,10 +89,12 @@ class InterfaceManga extends State<InterfaceMangaPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
+                  Container(
+                    width: double.infinity,
+                    height: 150, // Half the height of the main image
                     child: Image.network(
-                      fetchedMangaData[0].coverImageUrl ?? 'assets/img/MushokuIndice1.jpg',
-                      height: 300,
+                      fetchedMangaData[0].imageUrlTitle ?? fetchedMangaData[0].coverImageUrl ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+                      fit: BoxFit.cover,
                     ),
                   ),
                   SizedBox(height: 16),

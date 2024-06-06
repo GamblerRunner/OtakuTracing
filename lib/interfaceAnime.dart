@@ -91,10 +91,11 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
+                  Container(
+                    width: double.infinity,
                     child: Image.network(
-                      fetchedAnimeData[0].coverImageUrl ?? 'assets/img/MushokuIndice1.jpg',
-                      height: 300,
+                      fetchedAnimeData[0].imageUrlTitle ?? fetchedAnimeData[0].coverImageUrl ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+                      fit: BoxFit.cover,
                     ),
                   ),
                   SizedBox(height: 16),

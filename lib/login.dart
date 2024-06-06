@@ -43,16 +43,15 @@ class Login extends State<LoginPage> {
           textColor: Colors.white,
         );
         SharedPreferences preferences = await SharedPreferences.getInstance();
+        await preferences.setString("uid", success!);
         if(rememberEmailPassword){
           await preferences.setBool('rememberEmailPassword', true);
           await preferences.setString("email", email!);
           await preferences.setString("contrasenia", contrasenia!);
-          await preferences.setString("uid", success!);
         }else{
           await preferences.remove('rememberEmailPassword');
           await preferences.remove("email");
           await preferences.remove("contrasenia");
-          await preferences.remove("uid");
         }
 
         Navigator.pushReplacement(

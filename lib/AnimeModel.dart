@@ -122,18 +122,19 @@ class Anime {
   factory Anime.fromJson(Map<String, dynamic> json) {
     return Anime(
       id: json['id'] as int,
-      coverImageUrl: json['coverImage']['extraLarge'] as String?,
-      imageUrlTitle: json['bannerImage'] as String?,
-      englishTitle: json['title']['english'] as String?,
-      romajiTitle: json['title']['romaji'] as String?,
+      coverImageUrl: json['coverImage']?['extraLarge'] as String? ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+      imageUrlTitle: json['bannerImage'] as String? ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+      englishTitle: json['title']?['english'] as String? ?? 'No title',
+      romajiTitle: json['title']?['romaji'] as String? ?? 'No title',
       startDate: _parseStartDate(json['startDate']),
-      description: json['description'] as String?,
+      description: json['description'] as String? ?? 'No description available',
       status: _statusFromString(json['status'] as String?),
-      episodes: json['episodes'] as int?,
-      mediaPlay: json['trailer']['id'] as String?,
-      genres: (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      episodes: json['episodes'] as int? ?? 0,
+      mediaPlay: json['trailer']?['id'] as String? ?? 'Mr7QgUfjdvQ',
+      genres: (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList() ?? ['Unknown Genre'],
     );
   }
+
 
   final int id;
   final String? coverImageUrl;
@@ -198,18 +199,19 @@ class Manga {
   factory Manga.fromJson(Map<String, dynamic> json) {
     return Manga(
       id: json['id'] as int,
-      coverImageUrl: json['coverImage']['extraLarge'] as String?,
-      imageUrlTitle: json['bannerImage'] as String?,
-      englishTitle: json['title']['english'] as String?,
-      romajiTitle: json['title']['romaji'] as String?,
+      coverImageUrl: json['coverImage']?['extraLarge'] as String? ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+      imageUrlTitle: json['bannerImage'] as String? ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+      englishTitle: json['title']?['english'] as String? ?? 'No title',
+      romajiTitle: json['title']?['romaji'] as String? ?? 'No title',
       startDate: _parseStartDate(json['startDate']),
-      description: json['description'] as String?,
+      description: json['description'] as String? ?? 'No description available',
       status: _statusFromString(json['status'] as String?),
-      volumes: json['volumes'] as int?,
-      chapters: json['chapters'] as int?,
-      genres: (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      volumes: json['volumes'] as int? ?? 0,
+      chapters: json['chapters'] as int? ?? 0,
+      genres: (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList() ?? ['Unknown Genre'],
     );
   }
+
 
   final int id;
   final String? coverImageUrl;
@@ -238,7 +240,7 @@ class Manga {
       case 'not_yet_released':
         return Status.NOT_YET_RELEASING;
       default:
-        return null;
+        return Status.HIATUS;
     }
   }
   static int? _parseStartDate(Map<String, dynamic>? startDate) {
