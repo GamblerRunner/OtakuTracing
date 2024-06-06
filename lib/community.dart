@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/chat_page.dart';
 import 'Firebase_Manager.dart';
 import 'main.dart';
@@ -20,6 +21,8 @@ void main() {
 }
 FirebaseManager fm = FirebaseManager();
 FirebaseFirestore db = FirebaseFirestore.instance;
+late String userName ="Paco";
+late String userId ="BACNUaEwrHNhsd7HV3eDHRt8s6s2";
 class CommmunityApp extends StatelessWidget {
 
   @override
@@ -60,7 +63,6 @@ class CommunityPage extends StatefulWidget {
     //add it to database
     await db.collection('chat_rooms').doc(chatRoomId).collection('messages').add(newMessage.toMap());
   }
-
   //Get Messages
   Stream<QuerySnapshot> getMessage(String userId, String otherUserId){
     //construct chat room id
@@ -74,6 +76,19 @@ class CommunityPage extends StatefulWidget {
 class _CommunityPageState extends State<CommunityPage> {
   int _selectedIndex = 1; // Índice seleccionado del elemento actual ('Comunidades')
 
+  void init() async{
+    super.initState();
+    fm.getUser();
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String fetchedUserName = sharedPreferences.getString("userName") ?? '';
+    String fetchedUserId = sharedPreferences.getString("uid") ?? '';
+
+    setState(() {
+      userName = fetchedUserName;
+      userId = fetchedUserId;
+    });
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -86,7 +101,7 @@ class _CommunityPageState extends State<CommunityPage> {
 
       case 1:
       // VICTOR LO HACE
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(receiverUserName: fm.userName,receiverUserId: fm.uid,)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(receiverUserName: userName,receiverUserId: userId,)));
         break;
 
       case 2:

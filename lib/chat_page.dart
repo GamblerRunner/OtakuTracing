@@ -36,7 +36,7 @@ FirebaseManager fm = FirebaseManager();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Nombre')),
+      appBar: AppBar(title: Text(widget.receiverUserName)),
       body: Column(
         children: [
           //messages
@@ -79,7 +79,7 @@ FirebaseManager fm = FirebaseManager();
       alignment: alignment,
       child: Column(
         children: [
-          Text('Paco'),
+          Text(data['senderName']),
           Text(data['message']),
         ],
       )
