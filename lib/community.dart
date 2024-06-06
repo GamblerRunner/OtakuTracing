@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tfc/chat_page.dart';
+import 'Firebase_Manager.dart';
 import 'main.dart';
+import 'message.dart';
 import 'register.dart';
 import 'settings.dart';
 import 'mangas.dart';
@@ -13,8 +18,10 @@ import 'help.dart';
 void main() {
   runApp(CommmunityApp());
 }
-
+FirebaseManager fm = FirebaseManager();
+FirebaseFirestore db = FirebaseFirestore.instance;
 class CommmunityApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,6 +34,41 @@ class CommmunityApp extends StatelessWidget {
 class CommunityPage extends StatefulWidget {
   @override
   _CommunityPageState createState() => _CommunityPageState();
+  //Send Message
+  Future<void>sendMessage(String receiverId, String message) async{
+    //get cuurrent info
+    final String currentUserId = fm.uid;
+    final String currentUserName = fm.userName;
+    final Timestamp timestamp = Timestamp.now();
+
+    //create the message
+    Message newMessage = Message(
+      senderId: currentUserId,
+      senderName: currentUserName,
+      receiverId: receiverId,
+      timestamp: timestamp,
+      message: message,
+    );
+
+    //chat room
+    List<String> ids = [currentUserId,receiverId];
+    ids.sort();
+    String chatRoomId = ids.join(
+        "_"
+    );
+
+    //add it to database
+    await db.collection('chat_rooms').doc(chatRoomId).collection('messages').add(newMessage.toMap());
+  }
+
+  //Get Messages
+  Stream<QuerySnapshot> getMessage(String userId, String otherUserId){
+    //construct chat room id
+    List<String> ids = [userId, otherUserId];
+    ids.sort();
+    String chatRoomId = ids.join("_");
+    return db.collection('chat_rooms').doc(chatRoomId).collection('messages').orderBy('timestamp', descending: false).snapshots();
+  }
 }
 
 class _CommunityPageState extends State<CommunityPage> {
@@ -44,7 +86,7 @@ class _CommunityPageState extends State<CommunityPage> {
 
       case 1:
       // VICTOR LO HACE
-        Navigator.push(context, MaterialPageRoute(builder: (context) => CommunityPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(receiverUserName: fm.userName,receiverUserId: fm.uid,)));
         break;
 
       case 2:
