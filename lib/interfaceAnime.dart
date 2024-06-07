@@ -105,9 +105,10 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    fetchedAnimeData[0].description ?? 'Loading...',
+                    cambiosSinopsis(fetchedAnimeData[0].description ?? 'Loading...'),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
+
                   SizedBox(height: 16),
                   Text(
                     'Accede:',
@@ -147,7 +148,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    fetchedAnimeData[0].status.toString() ?? 'FINISHED',
+                    cambiosEstado(fetchedAnimeData[0].status?.toString()),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -250,6 +251,21 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
       }
     } else {
       return title;
+    }
+  }
+
+  String cambiosSinopsis(String text) {
+    return text.replaceAll('<br>', '');
+  }
+
+  String cambiosEstado(String? status) {
+    switch (status) {
+      case 'Status.FINISHED':
+        return 'Finalizado';
+      case 'Status.REALISING':
+        return 'En emisión';
+      default:
+        return 'Hiatus';
     }
   }
 }

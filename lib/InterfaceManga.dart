@@ -108,7 +108,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    fetchedMangaData[0].description ?? 'Loading...',
+                    cambiosSinopsis(fetchedMangaData[0].description ?? 'Loading...'),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -150,7 +150,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    fetchedMangaData[0].status.toString() ?? 'FINISHED',
+                    cambiosEstado(fetchedMangaData[0].status?.toString()),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -254,4 +254,21 @@ class InterfaceManga extends State<InterfaceMangaPage> {
       return title;
     }
   }
+
+  String cambiosSinopsis(String text) {
+    return text.replaceAll('<br>', '');
+  }
+
+  String cambiosEstado(String? status) {
+    switch (status) {
+      case 'Status.FINISHED':
+        return 'Finalizado';
+      case 'Status.REALISING':
+          return 'En emisión';
+      default:
+        return 'Hiatus';
+    }
+  }
+
+
 }

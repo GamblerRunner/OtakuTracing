@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PlayerAnime extends StatelessWidget {
   final int totalEpisodes;
@@ -50,11 +51,15 @@ class _MyHomePageState extends State<MyHomePage> {
   late YoutubePlayerController _controller;
   bool isMuted = true;
   double volume = 100.0;
+  Duration watchedDuration = Duration.zero;
 
   @override
   void initState() {
     super.initState();
+    _initializeController();
+  }
 
+  Future<void> _initializeController() async {
     _controller = YoutubePlayerController(
       initialVideoId: 'OhNwckCLzis', // Cambia a tu ID de video
       flags: const YoutubePlayerFlags(
@@ -63,6 +68,30 @@ class _MyHomePageState extends State<MyHomePage> {
         isLive: false,
       ),
     );
+
+    _controller.addListener(_videoListener);
+    await _loadWatchedDuration();
+    _controller.seekTo(watchedDuration);
+  }
+
+  void _videoListener() {
+    if (_controller.value.isPlaying) {
+      _saveWatchedDuration(_controller.value.position);
+    }
+  }
+
+  Future<void> _loadWatchedDuration() async {
+    final prefs = await SharedPreferences.getInstance();
+    final seconds = prefs.getInt('watched_duration_${widget.currentEpisode}') ?? 0;
+    setState(() {
+      watchedDuration = Duration(seconds: seconds);
+    });
+  }
+
+  Future<void> _saveWatchedDuration(Duration duration) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('watched_duration_${widget.currentEpisode}', duration.inSeconds);
+    print('Duración vista guardada: ${duration.inSeconds} segundos'); // Añadir esta línea
   }
 
   void _toggleMute() {
@@ -258,6 +287,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
+    _saveWatchedDuration(_controller.value.position);
     _controller.dispose();
     super.dispose();
   }
