@@ -4,6 +4,7 @@ import 'package:tfc/Firebase_Manager.dart';
 import 'package:tfc/video_player.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
+import 'chat_page.dart';
 import 'readManga.dart';
 import 'animation.dart';
 
@@ -131,7 +132,12 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          print('hola');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ChatPage(
+                                    community: fetchedAnimeData[0].englishTitle!.toString(),
+                                  )));
                         },
                         child: Text('Ir a comunidad(foro)'),
                       ),

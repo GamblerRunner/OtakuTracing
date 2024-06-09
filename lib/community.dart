@@ -19,12 +19,15 @@ import 'help.dart';
 void main() {
   runApp(CommmunityApp());
 }
+
 FirebaseManager fm = FirebaseManager();
 FirebaseFirestore db = FirebaseFirestore.instance;
-late String userName ="Paco";
-late String userId ="BACNUaEwrHNhsd7HV3eDHRt8s6s2";
-class CommmunityApp extends StatelessWidget {
+late String userName = "Paco";
+late String userUID = "12";
+late String comunityChat = "One Piece";
+List<String> comunities = [];
 
+class CommmunityApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,55 +41,51 @@ class CommunityPage extends StatefulWidget {
   @override
   _CommunityPageState createState() => _CommunityPageState();
   //Send Message
-  Future<void>sendMessage(String receiverId, String message) async{
-    //get cuurrent info
-    final String currentUserId = fm.uid;
-    final String currentUserName = fm.userName;
-    final Timestamp timestamp = Timestamp.now();
-
-    //create the message
-    Message newMessage = Message(
-      senderId: currentUserId,
-      senderName: currentUserName,
-      receiverId: receiverId,
-      timestamp: timestamp,
-      message: message,
-    );
-
-    //chat room
-    List<String> ids = [currentUserId,receiverId];
-    ids.sort();
-    String chatRoomId = ids.join(
-        "_"
-    );
-
-    //add it to database
-    await db.collection('chat_rooms').doc(chatRoomId).collection('messages').add(newMessage.toMap());
+  Future<void> sendMessage(String communityId, String message, String senderName, String userImg) async {
+    var user = await FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      userUID= user.uid;
+      await db.collection('communities').doc(communityId).collection('messages').add({
+        'message': message,
+        'senderId': userUID,
+        'senderName': senderName ?? 'Anonymous',
+        'senderImg': userImg ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    }
   }
-  //Get Messages
-  Stream<QuerySnapshot> getMessage(String userId, String otherUserId){
-    //construct chat room id
-    List<String> ids = [userId, otherUserId];
-    ids.sort();
-    String chatRoomId = ids.join("_");
-    return db.collection('chat_rooms').doc(chatRoomId).collection('messages').orderBy('timestamp', descending: false).snapshots();
+
+  Stream<QuerySnapshot> getMessages(String communityId) {
+    return db.collection('communities').doc(communityId).collection('messages').orderBy('timestamp', descending: false).snapshots();
   }
 }
 
 class _CommunityPageState extends State<CommunityPage> {
-  int _selectedIndex = 1; // Índice seleccionado del elemento actual ('Comunidades')
+  int _selectedIndex =
+      1; // Índice seleccionado del elemento actual ('Comunidades')
 
-  void init() async{
+  void init() async {
     super.initState();
     fm.getUser();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String fetchedUserName = sharedPreferences.getString("userName") ?? '';
     String fetchedUserId = sharedPreferences.getString("uid") ?? '';
+    //List<String>fetchedComunities = fm.getComunities() as List<String>;
 
     setState(() {
       userName = fetchedUserName;
-      userId = fetchedUserId;
+      userUID = fetchedUserId;
+      //comunities=fetchedComunities;
     });
+  }
+
+  void showComunitieChat(String communityName) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChatPage(
+              community: communityName,
+            )));
   }
 
   void _onItemTapped(int index) {
@@ -96,16 +95,23 @@ class _CommunityPageState extends State<CommunityPage> {
 
     switch (index) {
       case 0:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
         break;
 
       case 1:
-      // VICTOR LO HACE
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(receiverUserName: userName,receiverUserId: userId,)));
+        // VICTOR LO HACE
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ChatPage(
+                      community: comunityChat,
+                    )));
         break;
 
       case 2:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => MangasPage()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MangasPage()));
         break;
     }
   }
@@ -124,7 +130,6 @@ class _CommunityPageState extends State<CommunityPage> {
         backgroundColor: Colors.black,
         centerTitle: true,
       ),
-
       drawer: SizedBox(
         width: 225,
         child: Drawer(
@@ -160,7 +165,8 @@ class _CommunityPageState extends State<CommunityPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ProfilePage()),
+                          MaterialPageRoute(
+                              builder: (context) => ProfilePage()),
                         );
                       },
                     ),
@@ -221,11 +227,41 @@ class _CommunityPageState extends State<CommunityPage> {
           ),
         ),
       ),
-
-      body: Center(
-        child: Text('COMUNIDADES'),
-      ),
-
+      body: FutureBuilder<List<String>>(
+          future: fm.getComunities(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No hay comunidades disponibles'));
+            } else {
+              List<String> comunities = snapshot.data!;
+              return ListView.builder(
+                itemCount: comunities.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      showComunitieChat(comunities[index]);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Text(
+                        comunities[index],
+                        style: TextStyle(color: Colors.white, fontSize: 18.0),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+          }),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey,
         items: const <BottomNavigationBarItem>[

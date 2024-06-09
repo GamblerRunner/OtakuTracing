@@ -243,4 +243,42 @@ class FirebaseManager {
     return await userMedia;
   }
 
+  Future<List<String>> getComunities() async {
+    await Future.delayed(Duration(seconds: 1));
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    print("Hola1");
+
+    final collectionRef = db.collection("communities");
+    print("Hola2");
+    try {
+      // Obtener todos los documentos en la colección
+      QuerySnapshot querySnapshot = await collectionRef.get();
+      print("Hola3");
+      // Crear una lista para almacenar los nombres de usuario
+      List<String> chatRooms = [];
+      print("Hola4");
+      // Iterar sobre los documentos y extraer los nombres de usuario
+      print(querySnapshot.docs);
+      for (var doc in querySnapshot.docs) {
+        //Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        print("jajajaj");
+          chatRooms.add(doc.id);
+          print('jaja $doc');
+      }
+      print("Hola5");
+      print(chatRooms);
+      return chatRooms;
+    } catch (e) {
+      // Manejar errores al obtener los documentos
+      print("Error getting documents: $e");
+      return [];
+    }
+  }
+  Future<String?> getUserUID() async {
+    print("durisimo ppa");
+    var user = await FirebaseAuth.instance.currentUser;
+    print("durisimo ppa ${user?.uid}");
+    return await user?.uid;
+
+  }
 }

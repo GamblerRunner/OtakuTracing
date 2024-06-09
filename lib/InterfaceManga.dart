@@ -3,6 +3,7 @@ import 'package:tfc/Firebase_Manager.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'animation.dart';
+import 'chat_page.dart';
 import 'readManga.dart';
 
 Future<void> main() async {
@@ -133,7 +134,12 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          print('hola');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ChatPage(
+                                    community: fetchedMangaData[0].englishTitle!.toString(),
+                                  )));
                         },
                         child: Text('Ir a comunidad(foro)'),
                       ),
