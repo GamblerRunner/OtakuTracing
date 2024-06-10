@@ -125,7 +125,7 @@ class AnimeData {
           }
           bannerImage
           title {
-            english
+            userPreferred
             romaji
           }
           description
@@ -160,7 +160,7 @@ class AnimeData {
           }
           bannerImage
           title {
-            english
+            userPreferred
             romaji
           }
           description
@@ -197,7 +197,7 @@ class AnimeData {
           }
           bannerImage
           title {
-            english
+            userPreferred
             romaji
           }
           description
@@ -237,7 +237,7 @@ class AnimeData {
             extraLarge
           }
           title {
-            english
+            userPreferred
             romaji
           }
           description

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/community.dart';
 import 'Firebase_Manager.dart';
+import 'animation.dart';
 
 class ChatPage extends StatefulWidget {
   final String community;
@@ -32,6 +33,8 @@ class ChatPageState extends State<ChatPage> {
   String userImg="";
   late SharedPreferences preferences ;
 
+  bool following=false;
+
   @override
   initState() {
     super.initState();
@@ -40,6 +43,7 @@ class ChatPageState extends State<ChatPage> {
 
   Future<void> fetchUserUID() async {
     preferences = await SharedPreferences.getInstance();
+    bool following2 = await fm.getUserFavouriteComunity(widget.community);
     String userUIDget = await fm.getUserUID() as String;
     String? userNameGet = await preferences.getString("userName");
     String? userImgGet = await preferences.getString("ImgProfile");
@@ -47,6 +51,7 @@ class ChatPageState extends State<ChatPage> {
       userUID = userUIDget;
       userName = userNameGet!;
       userImg = userImgGet!;
+      following = following2;
     });
   }
 
@@ -61,7 +66,26 @@ class ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.community)),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text(widget.community),
+            SizedBox(width: 8.0),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  following = !following;
+                });
+                fm.addRemoveFavouriteComunity(widget.community, following);
+              },
+              child: Icon(
+                following ? Icons.favorite : Icons.favorite_border,
+                color: following ? Colors.red : Colors.grey,
+              ),
+            ),// Aquí puedes cambiar el ícono según tus necesidades
+          ],
+        ),
+      ),
       body: Column(
         children: [
           // Messages

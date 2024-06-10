@@ -274,6 +274,66 @@ class FirebaseManager {
       return [];
     }
   }
+
+  Future<void> addRemoveFavouriteComunity(String comunityName, bool addOrRemove) async {
+    print("holapapapa");
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    uid = (await preferences.getString("uid"))!;
+    DocumentReference animeInstance = db.collection("users").doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc("media");
+
+    print(addOrRemove);
+    if(addOrRemove) {
+      final data = {
+        "comunities": FieldValue.arrayUnion([comunityName])
+      };
+      await animeInstance.set(data, SetOptions(merge:true));
+      return;
+    }
+    final data = {
+      "comunities": FieldValue.arrayRemove([comunityName])
+    };
+    await animeInstance.set(data, SetOptions(merge:true));
+
+  }
+
+  Future<bool> getUserFavouriteComunity(String comunityName) async {
+    print("holapapapa");
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    uid = (await preferences.getString("uid"))!;
+
+    print("holapapapa2");
+    final docRef = db.collection("users").doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc("media");
+    print("BRUUUUUUUUUUUH");
+    try {
+      // Esperar a que se complete la operación de obtener el documento
+      DocumentSnapshot doc = await docRef.get();
+      print("holapapapa3");
+      List<String> favouriteList = [];
+      final data = doc.data() as Map<String, dynamic>;
+      print('testeando $data');
+
+      if(data.isEmpty){
+        return false;
+      }
+      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
+      if (data["comunities"] is List<dynamic>) {
+        favouriteList = (data["comunities"] as List<dynamic>).map((item) => item as String).toList();
+        print("menos cosas $favouriteList");
+        if(favouriteList.contains(comunityName)){
+          print("cosas");
+          return await true;
+        }
+      }
+
+    } catch (e) {
+      // Manejar errores al obtener el documento
+      print("Error getting document: $e");
+    }
+    return await false;
+  }
+
   Future<String?> getUserUID() async {
     print("durisimo ppa");
     var user = await FirebaseAuth.instance.currentUser;
