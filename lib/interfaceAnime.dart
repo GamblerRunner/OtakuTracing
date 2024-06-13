@@ -39,7 +39,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
     List<Anime> fetchedAnimeData2 = await data.getIdAnime();
     bool following2 = await fm.getUserFavourite(fetchedAnimeData2[0].id, false);
     print(fetchedAnimeData2?[0].coverImageUrl.toString());
-    if (fetchedAnimeData != null) {
+    if (fetchedAnimeData2 != null) {
       print("aaaaaaaaaaaaaaaaaaaaaah $following2");
       setState(() {
         fetchedAnimeData = fetchedAnimeData2;
@@ -51,7 +51,9 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
   }
 
   String getFormattedDate() {
-    if (fetchedAnimeData[0].startDate == null || fetchedAnimeData[0].startDate == 0) return 'Unknown';
+    if (fetchedAnimeData.isEmpty || fetchedAnimeData[0].startDate == null || fetchedAnimeData[0].startDate == 0) {
+      return 'Unknown';
+    }
     final year = (fetchedAnimeData[0].startDate! ~/ 10000).toString().padLeft(4, '0');
     final month = ((fetchedAnimeData[0].startDate! % 10000) ~/ 100).toString().padLeft(2, '0');
     final day = (fetchedAnimeData[0].startDate! % 100).toString().padLeft(2, '0');
@@ -63,7 +65,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          fetchedAnimeData[0].romajiTitle ?? 'Loading...',
+          formatTitle(fetchedAnimeData.isNotEmpty ? fetchedAnimeData[0].romajiTitle ?? 'Loading...' : 'Loading...'),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -91,7 +93,9 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   Container(
                     width: double.infinity,
                     child: Image.network(
-                      fetchedAnimeData[0].imageUrlTitle ?? fetchedAnimeData[0].coverImageUrl ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+                      fetchedAnimeData.isNotEmpty
+                          ? fetchedAnimeData[0].imageUrlTitle ?? fetchedAnimeData[0].coverImageUrl ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg'
+                          : 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -106,19 +110,10 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    cambiosSinopsis(fetchedAnimeData[0].description ?? 'Loading...'),
+                    cambiosSinopsis(fetchedAnimeData.isNotEmpty ? fetchedAnimeData[0].description ?? 'Loading...' : 'Loading...'),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
-
                   SizedBox(height: 16),
-                  Text(
-                    'Accede:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
                   SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -126,20 +121,31 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                       AnimatedFavouriteButton(
                         onPressed: () {
                           following = !following;
-                          fm.addRemoveFavourite(fetchedAnimeData[0].id, true, following);
+                          if (fetchedAnimeData.isNotEmpty) {
+                            fm.addRemoveFavourite(fetchedAnimeData[0].id, true, following);
+                          }
                         },
-                        isInitiallyFavoured: following, // puedes ajustar este valor basado en tu lógica
+                        isInitiallyFavoured: following,
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ChatPage(
-                                    community: fetchedAnimeData[0].englishTitle!.toString(),
-                                  )));
-                        },
-                        child: Text('Ir a comunidad(foro)'),
+                      Column(
+                        children: [
+                          SizedBox(height: 8),
+                          IconButton(
+                            icon: Icon(Icons.forum, color: Colors.white, size: 30),
+                            onPressed: () {
+                              if (fetchedAnimeData.isNotEmpty) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatPage(
+                                      community: fetchedAnimeData[0].englishTitle!.toString(),
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -154,21 +160,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    cambiosEstado(fetchedAnimeData[0].status?.toString()),
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Género:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    fetchedAnimeData[0].genres.toString().substring(1, fetchedAnimeData[0].genres.toString().length - 1),
+                    cambiosEstado(fetchedAnimeData.isNotEmpty ? fetchedAnimeData[0].status?.toString() : null),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -183,6 +175,22 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   SizedBox(height: 8),
                   Text(
                     getFormattedDate(),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Género:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    fetchedAnimeData.isNotEmpty
+                        ? fetchedAnimeData[0].genres.toString().substring(1, fetchedAnimeData[0].genres.toString().length - 1)
+                        : '',
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 24),
@@ -203,36 +211,71 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: fetchedAnimeData[0].episodes,
+                      itemCount: fetchedAnimeData.isNotEmpty ? fetchedAnimeData[0].episodes! + 1 : 0,
                       itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            border: Border.all(color: Colors.white),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              'Capítulo ${index + 1}',
-                              style: TextStyle(color: Colors.white),
+                        if (index == 0) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            onTap: () async {
-                              SharedPreferences preferences = await SharedPreferences.getInstance();
-                              await preferences.setString("videoId", fetchedAnimeData[0].mediaPlay ?? '1');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PlayerAnime(
-                                    totalEpisodes: fetchedAnimeData[0].episodes ?? 0,
-                                    currentEpisode: index + 1,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
+                            child: ListTile(
+                              title: Text(
+                                'TRAILER',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onTap: () async {
+                                if (fetchedAnimeData.isNotEmpty) {
+                                  SharedPreferences preferences = await SharedPreferences.getInstance();
+                                  await preferences.setString("videoId", fetchedAnimeData[0].mediaPlay ?? '1');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PlayerAnime(
+                                        totalEpisodes: fetchedAnimeData[0].episodes ?? 0,
+                                        currentEpisode: 0,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          );
+                        } else {
+                          return Container(
+                            margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                'Capítulo ${index}',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onTap: () async {
+                                if (fetchedAnimeData.isNotEmpty) {
+                                  SharedPreferences preferences = await SharedPreferences.getInstance();
+                                  await preferences.setString("videoId", fetchedAnimeData[0].mediaPlay ?? '1');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PlayerAnime(
+                                        totalEpisodes: fetchedAnimeData[0].episodes ?? 0,
+                                        currentEpisode: index,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          );
+                        }
                       },
                     ),
                   ),

@@ -15,6 +15,7 @@ import 'login.dart';
 import 'animation.dart';
 import 'myAnimes.dart';
 import 'help.dart';
+import 'myMangas.dart';
 
 void main() {
   runApp(CommmunityApp());
@@ -62,7 +63,7 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   int _selectedIndex =
-      1; // Índice seleccionado del elemento actual ('Comunidades')
+  1; // Índice seleccionado del elemento actual ('Comunidades')
 
   void init() async {
     super.initState();
@@ -100,13 +101,13 @@ class _CommunityPageState extends State<CommunityPage> {
         break;
 
       case 1:
-        // VICTOR LO HACE
+      // VICTOR LO HACE
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ChatPage(
-                      community: comunityChat,
-                    )));
+                  community: comunityChat,
+                )));
         break;
 
       case 2:
@@ -160,13 +161,22 @@ class _CommunityPageState extends State<CommunityPage> {
                   padding: EdgeInsets.zero,
                   children: <Widget>[
                     ListTile(
+                      leading: Icon(Icons.home),
+                      title: Text('Home'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      },
+                    ),
+                    ListTile(
                       leading: Icon(Icons.account_circle),
                       title: Text('Perfil'),
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => ProfilePage()),
+                          MaterialPageRoute(builder: (context) => ProfilePage()),
                         );
                       },
                     ),
@@ -186,8 +196,19 @@ class _CommunityPageState extends State<CommunityPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myAnimes()),
+                          MaterialPageRoute(builder: (context) => myMangas()),
                         );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.message),
+                      title: Text('Mis Comunidades'),
+                      onTap: () {
+                        /* Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => myMangas()),
+                        );
+                         */
                       },
                     ),
                   ],
@@ -227,7 +248,14 @@ class _CommunityPageState extends State<CommunityPage> {
           ),
         ),
       ),
-      body: FutureBuilder<List<String>>(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/img/fondoPantalla.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: FutureBuilder<List<String>>(
           future: fm.getComunities(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -261,7 +289,9 @@ class _CommunityPageState extends State<CommunityPage> {
                 },
               );
             }
-          }),
+          },
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey,
         items: const <BottomNavigationBarItem>[

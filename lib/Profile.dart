@@ -159,6 +159,17 @@ Future<void> changeUserName() async {
                         );
                       },
                     ),
+                    ListTile(
+                      leading: Icon(Icons.message),
+                      title: Text('Mis Comunidades'),
+                      onTap: () {
+                        /* Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => myMangas()),
+                        );
+                         */
+                      },
+                    )
                   ],
                 ),
               ),

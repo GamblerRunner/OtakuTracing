@@ -14,32 +14,29 @@ import 'animation.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
-    home: myAnimes(),
+    home: myMangas(),
   ));
 }
 
-class myAnimes extends StatefulWidget {
+class myMangas extends StatefulWidget {
   @override
-  myAnimesPage createState() => myAnimesPage();
+  myMangasPage createState() => myMangasPage();
 }
 
-class myAnimesPage extends State<myAnimes> {
+class myMangasPage extends State<myMangas> {
   late FirebaseManager fm;
 
   late String userName = 'user name';
   late String userImg = 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg';
   List<int> medias = [];
 
-  int _selectedIndex = 0;
   List<Media> fetchedData = [];
   final AnimeData data = AnimeData();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ScrollController _scrollController = ScrollController();
 
-  String? search = '';
-
-  bool mediaAM = false;
+  bool mediaAM = true;
 
   @override
   void initState() {
@@ -51,7 +48,7 @@ class myAnimesPage extends State<myAnimes> {
   Future<void> fetchData() async {
     await Future.delayed(Duration(seconds: 1));
     fetchedData = await data.getMyMedia(medias);
-    if (fetchedData != null) {
+    if (fetchedData.isNotEmpty) {
       setState(() {});
     } else {
       print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
@@ -60,8 +57,6 @@ class myAnimesPage extends State<myAnimes> {
 
   Future<void> fetchUserData() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    //await Future.delayed(Duration(seconds: 1));
-
     await fm.getUser();
     medias = await fm.getMyAnimes(mediaAM);
 
@@ -76,35 +71,9 @@ class myAnimesPage extends State<myAnimes> {
     fetchData();
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        fetchedData.clear();
-        mediaAM=false;
-        fetchUserData();
-        break;
-
-      case 1:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => CommunityPage()));
-        break;
-
-      case 2:
-        fetchedData.clear();
-        mediaAM=true;
-        fetchUserData();
-        break;
-    }
-  }
-
   Future<void> saveID(int id) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-
     await preferences.setInt("idMedia", id);
-
     Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceAnimePage()));
   }
 
@@ -113,7 +82,7 @@ class myAnimesPage extends State<myAnimes> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'MIS ANIMES',
+          'MIS MANGAS',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -177,7 +146,7 @@ class myAnimesPage extends State<myAnimes> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myAnimes()),
+                          MaterialPageRoute(builder: (context) => myMangas()),
                         );
                       },
                     ),
@@ -187,7 +156,7 @@ class myAnimesPage extends State<myAnimes> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myAnimes()),
+                          MaterialPageRoute(builder: (context) => myMangas()),
                         );
                       },
                     ),
@@ -254,51 +223,52 @@ class myAnimesPage extends State<myAnimes> {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 20), // Ajusta el padding para que comience desde arriba
-            child: ListView.builder(
-              controller: _scrollController,
+          Positioned.fill(
+            child: Padding(
               padding: EdgeInsets.symmetric(vertical: 25, horizontal: 30),
-              itemCount: (fetchedData.length / 2).ceil(),
-              itemBuilder: (context, index) {
-                int firstIndex = index * 2;
-                int secondIndex = firstIndex + 1;
+              child: ListView.builder(
+                controller: _scrollController,
+                padding: EdgeInsets.zero,
+                itemCount: (fetchedData.length / 2).ceil(),
+                itemBuilder: (context, index) {
+                  int firstIndex = index * 2;
+                  int secondIndex = firstIndex + 1;
 
-                return Padding(
-                  padding: EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            saveID(fetchedData[firstIndex].id);
-                            print('Tapped on ${fetchedData[firstIndex].romajiTitle}');
-                          },
-                          child: buildAnimeCard(fetchedData[firstIndex]),
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      if (secondIndex < fetchedData.length)
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              saveID(fetchedData[secondIndex].id);
-                              print('Tapped on ${fetchedData[secondIndex].romajiTitle}');
+                              saveID(fetchedData[firstIndex].id);
+                              print('Tapped on ${fetchedData[firstIndex].romajiTitle}');
                             },
-                            child: buildAnimeCard(fetchedData[secondIndex]),
+                            child: buildAnimeCard(fetchedData[firstIndex]),
                           ),
                         ),
-                    ],
-                  ),
-                );
-              },
+                        SizedBox(width: 8),
+                        if (secondIndex < fetchedData.length)
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                saveID(fetchedData[secondIndex].id);
+                                print('Tapped on ${fetchedData[secondIndex].romajiTitle}');
+                              },
+                              child: buildAnimeCard(fetchedData[secondIndex]),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],
       ),
     );
   }
-
 
   Widget buildAnimeCard(Media AnimeManga) {
     return Column(

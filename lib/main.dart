@@ -19,6 +19,7 @@ import 'myAnimes.dart';
 import 'help.dart';
 import 'readManga.dart';
 import 'InterfaceManga.dart';
+import 'myMangas.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
@@ -35,8 +36,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late FirebaseManager fm;
 
-  late String userName = 'user' ;
-  late String userImg = 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg' ;
+  late String userName = 'user';
+  late String userImg = 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg';
   bool _showOptions = false;
   int _selectedIndex = 0;
   List<Media> fetchedData = [];
@@ -46,6 +47,9 @@ class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
 
   String? search = '';
+  String searchText = 'Buscar Anime';
+  String appBarTitle = 'ANIMES';
+
 
   bool animemanga = false;
 
@@ -80,7 +84,6 @@ class _HomePageState extends State<HomePage> {
       userName = fetchedUserName;
       userImg = fetchedUserImg;
     });
-
   }
 
   Future<void> fetchSearchData() async {
@@ -103,14 +106,19 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      searchText = (index == 2) ? 'Buscar Manga' : 'Buscar Anime';
+      appBarTitle = (index == 2) ? 'MANGAS' : 'ANIMES';
+      animemanga = (index == 2);
+      fetchedData.clear();  // Limpiar datos anteriores
+      fetchData();  // Cargar nuevos datos
     });
 
     switch (index) {
       case 0:
         fetchedData.clear();
-          animemanga=false;
-          fetchData();
-          print(true);
+        animemanga = false;
+        fetchData();
+        print(true);
         break;
 
       case 1:
@@ -119,12 +127,13 @@ class _HomePageState extends State<HomePage> {
 
       case 2:
         fetchedData.clear();
-          animemanga=true;
-          fetchData();
-          print(false);
+        animemanga = true;
+        fetchData();
+        print(false);
         break;
     }
   }
+
 
   void _scrollToTop() {
     _scrollController.animateTo(
@@ -143,16 +152,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> saveID(int id) async {
-    SharedPreferences preferences= await SharedPreferences.getInstance();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
 
     await preferences.setInt("idMedia", id);
 
-    if(animemanga){
+    if (animemanga) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceMangaPage()));
-    }else{
+    } else {
       Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceAnimePage()));
     }
-
   }
 
   @override
@@ -161,7 +169,7 @@ class _HomePageState extends State<HomePage> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
-          'ANIMES',
+          appBarTitle,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -235,8 +243,19 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myAnimes()),
+                          MaterialPageRoute(builder: (context) => myMangas()),
                         );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.message),
+                      title: Text('Mis Comunidades'),
+                      onTap: () {
+                        /* Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => myMangas()),
+                        );
+                         */
                       },
                     ),
                   ],
@@ -313,14 +332,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     SizedBox(width: 10),
-                    SizedBox(
-                      width: 150,
+                    Expanded(
                       child: Form(
                         key: _formKey,
                         child: TextFormField(
                           style: TextStyle(fontSize: 14),
                           decoration: InputDecoration(
-                            labelText: 'search',
+                            labelText: searchText,
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                           ),
@@ -336,17 +354,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(width: 10),
                     SizedBox(
-                      width: 80,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _showOptions = !_showOptions;
-                          });
-                        },
-                        child: Text('filtro'),
-                      ),
-                    ),
-                    SizedBox(
                       width: 50,
                       height: 50,
                       child: FloatingActionButton(
@@ -359,33 +366,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                if (_showOptions)
-                  ExpansionTile(
-                    title: Text('Opciones de filtro'),
-                    children: <Widget>[
-                      CheckboxListTile(
-                        title: Text('Filtrar por año de publicación'),
-                        value: false,
-                        onChanged: (value) {
-                          // Implementa la lógica para filtrar por año de publicación
-                        },
-                      ),
-                      CheckboxListTile(
-                        title: Text('Filtrar por si se está emitiendo'),
-                        value: false,
-                        onChanged: (value) {
-                          // Implementa la lógica para filtrar por si se está emitiendo
-                        },
-                      ),
-                      CheckboxListTile(
-                        title: Text('Filtrar por género'),
-                        value: false,
-                        onChanged: (value) {
-                          // Implementa la lógica para filtrar por género
-                        },
-                      ),
-                    ],
-                  ),
               ],
             ),
           ),
@@ -408,7 +388,7 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             saveID(fetchedData![firstIndex].id);
                             print('Tapped on ${fetchedData![firstIndex].romajiTitle}');
-                            },
+                          },
                           child: buildAnimeCard(fetchedData![firstIndex]),
                         ),
                       ),

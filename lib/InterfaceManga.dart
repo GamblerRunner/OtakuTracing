@@ -65,13 +65,13 @@ class InterfaceManga extends State<InterfaceMangaPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          fetchedMangaData[0].romajiTitle ?? 'Loading...',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-          maxLines: 2,
-          overflow: TextOverflow.visible,
+            formatTitle(fetchedMangaData[0].romajiTitle ?? 'Loading...'),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.visible
         ),
         backgroundColor: Colors.black,
         centerTitle: true,
@@ -113,14 +113,6 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
-                  Text(
-                    'Accede:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
                   SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -132,16 +124,23 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                         },
                         isInitiallyFavoured: following, // puedes ajustar este valor basado en tu lógica
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
+                      Column(
+                        children: [
+                          SizedBox(height: 8),
+                          IconButton(
+                            icon: Icon(Icons.forum, color: Colors.white, size: 30),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
                                   builder: (context) => ChatPage(
                                     community: fetchedMangaData[0].englishTitle!.toString(),
-                                  )));
-                        },
-                        child: Text('Ir a comunidad(foro)'),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -184,7 +183,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                      getFormattedDate(),
+                    getFormattedDate(),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 24),
@@ -270,7 +269,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
       case 'Status.FINISHED':
         return 'Finalizado';
       case 'Status.REALISING':
-          return 'En emisión';
+        return 'En emisión';
       default:
         return 'Hiatus';
     }
