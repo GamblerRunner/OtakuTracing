@@ -24,7 +24,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
 
   final AnimeData data = AnimeData();
 
-  bool following=false;
+  bool following = false;
 
   @override
   void initState() {
@@ -34,44 +34,45 @@ class InterfaceManga extends State<InterfaceMangaPage> {
   }
 
   Future<void> fetchMangaData() async {
-    List<Manga> fetchedMangaData2 = await data.getIdManga(); //aqui mirar
-    //await Future.delayed(Duration(seconds: 1));
-    bool following2 = await fm.getUserFavourite(fetchedMangaData2[0].id, true);
-    print(fetchedMangaData2?[0].coverImageUrl.toString());
-    if (fetchedMangaData != null) {
+    List<Manga> fetchedMangaData2 = await data.getIdManga();
+
+    // Asegurarse de que el ID no sea nulo y sea del tipo correcto
+    var mangaId = fetchedMangaData2[0].id;
+    if (mangaId is int) {
+      bool following2 = await fm.getUserFavourite(mangaId, true);
       setState(() {
         fetchedMangaData = fetchedMangaData2;
         following = following2;
       });
     } else {
-      print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
+      print("Error: El ID del manga no es un entero.");
     }
   }
 
   String getFormattedDate() {
-    if (fetchedMangaData[0].startDate == null || fetchedMangaData[0].startDate == 0) return 'Unknown';
-    final year = (fetchedMangaData[0].startDate! ~/ 10000).toString().padLeft(4, '0');
-    final month = ((fetchedMangaData[0].startDate! % 10000) ~/ 100).toString().padLeft(2, '0');
-    final day = (fetchedMangaData[0].startDate! % 100).toString().padLeft(2, '0');
-    return '$year-$month-$day';
+    if (fetchedMangaData.isEmpty || fetchedMangaData[0].startDate == null || fetchedMangaData[0].startDate == 0) return 'Unknown';
+    final startDate = fetchedMangaData[0].startDate!;
+    if (startDate is int) {
+      final year = (startDate ~/ 10000).toString().padLeft(4, '0');
+      final month = ((startDate % 10000) ~/ 100).toString().padLeft(2, '0');
+      final day = (startDate % 100).toString().padLeft(2, '0');
+      return '$year-$month-$day';
+    }
+    return 'Unknown';
   }
-
 
   @override
   Widget build(BuildContext context) {
-    //String title = 'Mushoku Tensei II: Isekai Ittara Honki Dasu Part 2';
-    //String formattedTitle = formatTitle(title);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            formatTitle(fetchedMangaData[0].romajiTitle ?? 'Loading...'),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.visible
+          formatTitle(fetchedMangaData.isNotEmpty ? fetchedMangaData[0].romajiTitle ?? 'Loading...' : 'Loading...'),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.visible,
         ),
         backgroundColor: Colors.black,
         centerTitle: true,
@@ -87,18 +88,22 @@ class InterfaceManga extends State<InterfaceMangaPage> {
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
+              child: fetchedMangaData.isNotEmpty ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Portada del manga
                   Container(
                     width: double.infinity,
-                    height: 150, // Half the height of the main image
+                    height: 300, // Ajustar la altura según sea necesario
                     child: Image.network(
-                      fetchedMangaData[0].imageUrlTitle ?? fetchedMangaData[0].coverImageUrl ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+                      fetchedMangaData[0].imageUrlTitle ??
+                          fetchedMangaData[0].coverImageUrl ??
+                          'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
                       fit: BoxFit.cover,
                     ),
                   ),
                   SizedBox(height: 16),
+                  // Resto de la información del manga
                   Text(
                     'Sinopsis:',
                     style: TextStyle(
@@ -113,16 +118,20 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
-                  SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       AnimatedFavouriteButton(
                         onPressed: () {
-                          following=!following;
-                          fm.addRemoveFavourite(fetchedMangaData[0].id, false, following);
+                          setState(() {
+                            following = !following;
+                          });
+                          var mangaId = fetchedMangaData[0].id;
+                          if (mangaId is int) {
+                            fm.addRemoveFavourite(mangaId, false, following);
+                          }
                         },
-                        isInitiallyFavoured: following, // puedes ajustar este valor basado en tu lógica
+                        isInitiallyFavoured: following,
                       ),
                       Column(
                         children: [
@@ -134,7 +143,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ChatPage(
-                                    community: fetchedMangaData[0].englishTitle!.toString(),
+                                    community: fetchedMangaData[0].englishTitle ?? '',
                                   ),
                                 ),
                               );
@@ -155,7 +164,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    cambiosEstado(fetchedMangaData[0].status?.toString()),
+                    cambiosEstado(fetchedMangaData[0].status?.toString() ?? 'Unknown'),
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -169,7 +178,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    fetchedMangaData[0].genres.toString().substring(1, fetchedMangaData[0].genres.toString().length-1),
+                    fetchedMangaData[0].genres?.toString().substring(1, fetchedMangaData[0].genres!.toString().length - 1) ?? 'Unknown',
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 16),
@@ -204,7 +213,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: fetchedMangaData[0].chapters,
+                      itemCount: (fetchedMangaData[0].chapters ?? 0) + 1, // Adding one for the "COVER" item
                       itemBuilder: (context, index) {
                         return Container(
                           margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -216,7 +225,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                           ),
                           child: ListTile(
                             title: Text(
-                              'Capítulo ${index + 1}',
+                              index == 0 ? 'COVER' : 'Capítulo $index',
                               style: TextStyle(color: Colors.white),
                             ),
                             onTap: () {
@@ -225,18 +234,19 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                                 MaterialPageRoute(
                                   builder: (context) => ReadMangaPage(
                                     totalChapters: fetchedMangaData[0].chapters ?? 0,
-                                    selectedChapter: index + 1, // Pasar el número del capítulo seleccionado
+                                    selectedChapter: index,
                                   ),
                                 ),
                               );
                             },
-
                           ),
                         );
                       },
                     ),
                   ),
                 ],
+              ) : Center(
+                child: CircularProgressIndicator(),
               ),
             ),
           ),
@@ -274,6 +284,4 @@ class InterfaceManga extends State<InterfaceMangaPage> {
         return 'Hiatus';
     }
   }
-
-
 }

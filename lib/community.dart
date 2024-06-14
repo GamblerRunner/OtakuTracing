@@ -215,16 +215,6 @@ class _CommunityPageState extends State<CommunityPage> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Ajustes'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
-                },
-              ),
-              ListTile(
                 leading: Icon(Icons.help_outline),
                 title: Text('Ayuda'),
                 onTap: () {

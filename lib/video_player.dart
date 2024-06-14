@@ -63,9 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller = YoutubePlayerController(
       initialVideoId: 'OhNwckCLzis', // Cambia a tu ID de video
       flags: const YoutubePlayerFlags(
-        autoPlay: false,
+        autoPlay: true,
         mute: true,
         isLive: false,
+        startAt: 10,
       ),
     );
 
@@ -151,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             height: 100,
             child: RotatedBox(
-              quarterTurns: 1,
+              quarterTurns: 3,
               child: Slider(
                 value: volume,
                 min: 0,
