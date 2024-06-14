@@ -43,7 +43,6 @@ class _MangasPageState extends State<MangasPage> {
       break;
 
       case 1:
-      // VICTOR LO HACE
       Navigator.push(context, MaterialPageRoute(builder: (context) => CommunityPage()));
       break;
 

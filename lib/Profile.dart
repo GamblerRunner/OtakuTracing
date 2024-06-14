@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Firebase_Manager.dart';
@@ -21,14 +22,19 @@ class ProfilePage extends StatefulWidget {
   Profile createState() => Profile();
 }
 
+
 class Profile extends State<ProfilePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   late String urlImg;
   String? newUserName='';
   String? userName='user name';
-
+  late String uid = '';
   late FirebaseManager fm;
+  int userAnimes = 0;
+  int userMangas = 0;
+  int userCommunities = 0;
+
 
 @override
 void initState() {
@@ -53,11 +59,16 @@ Future<void> loadImage() async {
     await Future.delayed(Duration(seconds: 1));
 
     await fm.getUser();
-
+    List<int> myAnimes = await fm.getMyAnimes(false);
+    List<int> myMangas = await fm.getMyAnimes(true);
+    //List<String> myCommunities = await fm.getMyCommunities();
     String fetchedUserName = preferences.getString("userName") ?? '';
 
     setState(() {
       userName = fetchedUserName;
+      userAnimes = myAnimes.length;
+      userMangas = myMangas.length;
+     // userCommunities = myCommunities.length;
     });
 
   }
@@ -73,6 +84,32 @@ Future<void> changeUserName() async {
 
   }
 }
+  Widget buildDivider() => Container(
+    height: 24,
+    child: VerticalDivider(
+      color: Colors.black,
+    ),
+  );
+
+  Widget buildButton(BuildContext context, String value, String text) =>
+      Material(
+        color: Colors.transparent,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              value,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+            SizedBox(height: 2),
+            Text(
+              text,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -310,50 +347,12 @@ Future<void> changeUserName() async {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Material(
-                        color: Colors.transparent, // Hace que el Material sea transparente
-                        child: InkWell(
-                          onTap: () {
-                            print('Favorite icon clicked!');
-                          },
-                          child: Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                            size: 150,
-                            shadows: [
-                              BoxShadow(
-                                color: Colors.black,
-                                offset: Offset(8, 8),
-                                spreadRadius: 10,
-                                blurRadius: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                      Material(
-                        color: Colors.transparent, // Hace que el Material sea transparente
-                        child: InkWell(
-                          onTap: () {
-                            print('People icon clicked!');
-                          },
-                          child: Icon(
-                            Icons.people,
-                            color: Colors.blueAccent,
-                            size: 150,
-                            shadows: [
-                              BoxShadow(
-                                color: Colors.black,
-                                offset: Offset(8, 8),
-                                spreadRadius: 10,
-                                blurRadius: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    children: <Widget>[
+                      buildButton(context, '$userAnimes', 'Animes'),
+                      buildDivider(),
+                      buildButton(context, '$userCommunities', 'Comunidades'),
+                      buildDivider(),
+                      buildButton(context, '$userMangas', 'Mangas'),
                     ],
                   ),
                 ),
