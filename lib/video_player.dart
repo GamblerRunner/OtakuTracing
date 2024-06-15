@@ -1,12 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Firebase_Manager.dart';
+
 class PlayerAnime extends StatelessWidget {
   final int totalEpisodes;
   final int currentEpisode;
+  final String AnimeName;
 
-  const PlayerAnime({Key? key, required this.totalEpisodes, required this.currentEpisode}) : super(key: key);
+  const PlayerAnime({Key? key, required this.totalEpisodes, required this.currentEpisode, required this.AnimeName}) : super(key: key);
 
   static const customSwatch = MaterialColor(
     0xFFFF5252,
@@ -32,7 +36,7 @@ class PlayerAnime extends StatelessWidget {
         primarySwatch: customSwatch,
       ),
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(totalEpisodes: totalEpisodes, currentEpisode: currentEpisode),
+      home: MyHomePage(totalEpisodes: totalEpisodes, currentEpisode: currentEpisode, AnimeName: AnimeName),
     );
   }
 }
@@ -40,18 +44,23 @@ class PlayerAnime extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   final int totalEpisodes;
   final int currentEpisode;
+  final String AnimeName;
 
-  const MyHomePage({Key? key, required this.totalEpisodes, required this.currentEpisode}) : super(key: key);
+  const MyHomePage({Key? key, required this.totalEpisodes, required this.currentEpisode, required this.AnimeName}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  FirebaseManager fm = FirebaseManager();
+  FirebaseFirestore db = FirebaseFirestore.instance;
   late YoutubePlayerController _controller;
   bool isMuted = true;
   double volume = 100.0;
   Duration watchedDuration = Duration.zero;
+  Duration videoDuration = Duration.zero;
+  int videoStart = 0;
 
   @override
   void initState() {
@@ -60,19 +69,30 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _initializeController() async {
+    // Get the start time in seconds from your data source asynchronously
+    int getFMSeconds = await fm.getEpiodeSecond(widget.AnimeName, widget.currentEpisode);
+
+    // Initialize _controller with startAt set to getFMSeconds
     _controller = YoutubePlayerController(
-      initialVideoId: 'OhNwckCLzis', // Cambia a tu ID de video
-      flags: const YoutubePlayerFlags(
-        autoPlay: true,
-        mute: false,
+      initialVideoId: 'OhNwckCLzis', // Replace with your video ID
+      flags: YoutubePlayerFlags(
+        autoPlay: false,
+        mute: true,
         isLive: false,
-        startAt: 1,
+        startAt: getFMSeconds,
       ),
     );
 
     _controller.addListener(_videoListener);
     await _loadWatchedDuration();
     _controller.seekTo(watchedDuration);
+
+    // Get the video duration and update the state
+    _controller.addListener(() {
+      setState(() {
+        videoDuration = _controller.metadata.duration;
+      });
+    });
   }
 
   void _videoListener() {
@@ -92,7 +112,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _saveWatchedDuration(Duration duration) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('watched_duration_${widget.currentEpisode}', duration.inSeconds);
-    print('Duración vista guardada: ${duration.inSeconds} segundos'); // Añadir esta línea
+    print('Duración vista guardada: ${duration.inSeconds} segundos del total de ${videoDuration.inSeconds }'); // Añadir esta línea
+    if(duration.inSeconds == videoDuration.inSeconds -5){
+      fm.saveEndDuration(widget.AnimeName ,widget.currentEpisode);
+    }
+    if(duration.inSeconds % 5 ==0){
+      fm.saveDuration(widget.AnimeName , widget.currentEpisode, duration.inSeconds);
+    }
   }
 
   void _toggleMute() {
@@ -121,6 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context) => PlayerAnime(
             totalEpisodes: widget.totalEpisodes,
             currentEpisode: episode,
+            AnimeName: "pinga",
           ),
         ),
       );
