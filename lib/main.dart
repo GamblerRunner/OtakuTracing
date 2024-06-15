@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tfc/MyCommunities.dart';
 import 'package:tfc/Profile.dart';
 import 'package:tfc/ProfileImg.dart';
 import 'package:tfc/interfaceAnime.dart';
@@ -251,11 +252,11 @@ class _HomePageState extends State<HomePage> {
                       leading: Icon(Icons.message),
                       title: Text('Mis Comunidades'),
                       onTap: () {
-                        /* Navigator.push(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myMangas()),
+                          MaterialPageRoute(builder: (context) => MyCommunityPage()),
                         );
-                         */
+
                       },
                     ),
                   ],

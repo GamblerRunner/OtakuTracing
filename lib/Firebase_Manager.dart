@@ -283,6 +283,43 @@ class FirebaseManager {
     }
   }
 
+  Future<List<String>> getMyComunities() async {
+    await Future.delayed(Duration(seconds: 1));
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+    print(uidUser);
+    final docRef = db.collection("users")
+        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2")
+        .collection("follow")
+        .doc("media");
+    print("Hola2");
+    try {
+
+    // Esperar a que se complete la operación de obtener el documento
+    DocumentSnapshot doc = await docRef.get();
+    print("holapapapa3");
+    List<String> favouriteList = [];
+    final data = doc.data() as Map<String, dynamic>;
+    print('testeando $data');
+
+    if (data.isEmpty) {
+    return [];
+    }
+    // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
+    if (data['comunities'] is List<dynamic>) {
+    favouriteList =
+    (data['comunities'] as List<dynamic>).map((item) => item as String).toList();
+    print("menos cosas $favouriteList");
+    }
+
+    return favouriteList;
+    } catch (e) {
+      // Manejar errores al obtener los documentos
+      print("Error getting documents: $e");
+      return [];
+    }
+  }
+
   Future<void> addRemoveFavouriteComunity(String comunityName,
       bool addOrRemove) async {
     print("holapapapa");
