@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(ReadMangaApp());
-}
+import 'Firebase_Manager.dart';
+
 
 class ReadMangaApp extends StatelessWidget {
+  final int totalChapters;
+  final int currentChapter;
+  final String MangaName;
+
+  const ReadMangaApp({Key? key, required this.totalChapters, required this.currentChapter, required this.MangaName}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ReadMangaPage(totalChapters: 5, selectedChapter: 1),
+      home: ReadMangaPage(totalChapters: totalChapters, selectedChapter: currentChapter, mangaName:  MangaName),
     );
   }
 }
@@ -17,14 +22,16 @@ class ReadMangaApp extends StatelessWidget {
 class ReadMangaPage extends StatefulWidget {
   final int totalChapters;
   int selectedChapter; // Número del capítulo seleccionado
+  String mangaName;
 
-  ReadMangaPage({required this.totalChapters, required this.selectedChapter}); // Modificar el constructor
+  ReadMangaPage({required this.totalChapters, required this.selectedChapter, required this.mangaName}); // Modificar el constructor
 
   @override
   _ReadMangaPageState createState() => _ReadMangaPageState();
 }
 
 class _ReadMangaPageState extends State<ReadMangaPage> {
+  late FirebaseManager fm;
   bool isCascada = true;
   int currentPage = 0;
 
@@ -40,6 +47,15 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
   final PageController _pageController = PageController();
   final ScrollController _cascadaController = ScrollController();
 
+  void initState() {
+    super.initState();
+    fm = FirebaseManager();
+    fm.saveWatchingManga(widget.mangaName, widget.selectedChapter);
+  }
+
+  Future<void> updateWatchedEpisode() async {
+    fm.saveEndDuration(widget.mangaName, widget.selectedChapter, false);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,6 +159,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
               bottom: 80,
               child: ElevatedButton(
                 onPressed: () {
+                  updateWatchedEpisode();
                   setState(() {
                     if (widget.selectedChapter < widget.totalChapters) {
                       widget.selectedChapter++;
@@ -182,6 +199,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
           currentPage = index;
         });
       },
+
       itemBuilder: (context, index) {
         return _buildImageContainer(images[index], BoxFit.contain);
       },

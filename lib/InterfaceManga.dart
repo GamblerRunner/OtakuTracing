@@ -26,6 +26,9 @@ class InterfaceManga extends State<InterfaceMangaPage> {
 
   bool following = false;
 
+  List<int> fetchedChaptersSeen= [];
+  List<int> fetchedChaptersWatching= [];
+
   @override
   void initState() {
     super.initState();
@@ -40,9 +43,15 @@ class InterfaceManga extends State<InterfaceMangaPage> {
     var mangaId = fetchedMangaData2[0].id;
     if (mangaId is int) {
       bool following2 = await fm.getUserFavourite(mangaId, true);
+      List<int> getChapters= await fm.getSeenMedia(fetchedMangaData2[0].romajiTitle ?? 'no', true);
+      List<int> getChaptersWatching=await fm.getChapterWatching(fetchedMangaData2[0].romajiTitle ?? 'no');
+      print('TREMENDOOOOOO');
+      print(getChaptersWatching);
       setState(() {
         fetchedMangaData = fetchedMangaData2;
         following = following2;
+        fetchedChaptersSeen = getChapters;
+        fetchedChaptersWatching = getChaptersWatching;
       });
     } else {
       print("Error: El ID del manga no es un entero.");
@@ -215,6 +224,13 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: (fetchedMangaData[0].chapters ?? 0) + 1, // Adding one for the "COVER" item
                       itemBuilder: (context, index) {
+                        // Adjust the chapter index if the "COVER" is at index 0
+                        int chapterNumber = index == 0 ? 0 : index;
+
+                        // Check if the current chapter number is in the seen or watching lists
+                        bool watched = fetchedChaptersSeen.contains(chapterNumber);
+                        bool watching = fetchedChaptersWatching.contains(chapterNumber);
+
                         return Container(
                           margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                           padding: EdgeInsets.all(8),
@@ -226,7 +242,11 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                           child: ListTile(
                             title: Text(
                               index == 0 ? 'COVER' : 'Capítulo $index',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: watched
+                                    ? Colors.red
+                                    : (watching ? Colors.green : Colors.white),
+                              ),
                             ),
                             onTap: () {
                               Navigator.push(
@@ -235,6 +255,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                                   builder: (context) => ReadMangaPage(
                                     totalChapters: fetchedMangaData[0].chapters ?? 0,
                                     selectedChapter: index,
+                                    mangaName: fetchedMangaData[0].romajiTitle ?? 'No Title',
                                   ),
                                 ),
                               );
@@ -243,6 +264,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                         );
                       },
                     ),
+
                   ),
                 ],
               ) : Center(

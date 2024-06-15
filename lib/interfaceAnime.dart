@@ -41,7 +41,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
   Future<void> fetchMangaData() async {
     List<Anime> fetchedAnimeData2 = await data.getIdAnime();
     bool following2 = await fm.getUserFavourite(fetchedAnimeData2[0].id, false);
-    List<int> getEpisodes= await fm.getSeenEpisodes(fetchedAnimeData2[0].romajiTitle ?? 'no');
+    List<int> getEpisodes= await fm.getSeenMedia(fetchedAnimeData2[0].romajiTitle ?? 'no', false);
     List<int> getEpisodesWatching=await fm.getEpisodeWatching(fetchedAnimeData2[0].romajiTitle ?? 'no');
     print(getEpisodes);
     print(getEpisodesWatching);

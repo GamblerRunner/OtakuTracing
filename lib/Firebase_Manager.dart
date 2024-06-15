@@ -354,19 +354,40 @@ class FirebaseManager {
     return await user?.uid;
   }
 
-  Future<void> saveEndDuration(String AnimeName, int episode) async {
+  Future<void> saveEndDuration(String name, int episode, bool AM) async {
     print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
     print(uid);
     print("aqui paso un puto");
+    String type = 'watchingManga';
+    if(AM){
+      type = 'watchingAnime';
+    }
     DocumentReference animeInstance = db.collection("users").doc(
         "BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc(
-        "watchingAnime");
+        type).collection("watched").doc(name);
 
-    print(AnimeName);
     final data = {
-      AnimeName: FieldValue.arrayUnion([episode])
+      'chapters': FieldValue.arrayUnion([episode])
+    };
+    await animeInstance.set(data, SetOptions(merge: true));
+    return;
+  }
+
+  Future<void> saveWatchingManga(String MangaName, int episode) async {
+    print("holapapapa");
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+    print(uid);
+    print("aqui paso un puto");
+    String type = 'watchingManga';
+    DocumentReference animeInstance = db.collection("users").doc(
+        "BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc(
+        type).collection("watching").doc(MangaName);
+
+    final data = {
+      'chapters': FieldValue.arrayUnion([episode])
     };
     await animeInstance.set(data, SetOptions(merge: true));
     return;
@@ -395,15 +416,21 @@ class FirebaseManager {
 
 
 
-  Future<List<int>> getSeenEpisodes(String name) async {
+  Future<List<int>> getSeenMedia(String name, bool am) async {
     await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
     print("Hola1");
 
+    String type= 'watchingAnime';
+    String bp = 'episodes';
+    if(am){
+      type = 'watchingManga';
+      bp = 'chapters';
+    }
     DocumentReference animeInstance = db.collection("users").doc(
         "BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc(
-        "watchingAnime").collection("wached").doc(name);
+        type).collection("watched").doc(name);
     print("Hola2");
     try {
       DocumentSnapshot doc = await animeInstance.get();
@@ -411,7 +438,7 @@ class FirebaseManager {
       final data = doc.data() as Map<String, dynamic>;
       print('testeando $data');
 
-      List<dynamic> dynamicList = data["season1"] ?? [];
+      List<dynamic> dynamicList = data[bp] ?? [];
       List<int> infoEpisodes = dynamicList.cast<int>();
       print("Hola3");
       // Crear una lista para almacenar los nombres de usuario
@@ -449,6 +476,36 @@ class FirebaseManager {
     }
 
     return episodeKeys;
+  }
+
+  Future<List<int>> getChapterWatching(String name) async {
+    print('caca');
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+    print(uidUser);
+
+    DocumentReference animeInstance = db.collection("users")
+        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2") // Use the actual user's UID instead of a hardcoded value
+        .collection("follow")
+        .doc("watchingManga")
+        .collection("watching")
+        .doc(name);
+
+    print('maricarmen estuvo aqui');
+    DocumentSnapshot documentSnapshot = await animeInstance.get();
+    print('maricarmen estuvo aqui');
+    List<int> chapters = [];
+
+    final data = documentSnapshot.data() as Map<String, dynamic>;
+    print('testeando $data');
+
+    List<dynamic> dynamicList = data['chapters'] ?? [];
+    chapters = dynamicList.cast<int>();
+
+    print('testeando $data');
+
+    print(chapters);
+    return chapters;
   }
 
   Future<int> getEpiodeSecond(String name, int episode) async {

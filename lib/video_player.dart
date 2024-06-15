@@ -114,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await prefs.setInt('watched_duration_${widget.currentEpisode}', duration.inSeconds);
     print('Duración vista guardada: ${duration.inSeconds} segundos del total de ${videoDuration.inSeconds }'); // Añadir esta línea
     if(duration.inSeconds == videoDuration.inSeconds -5){
-      fm.saveEndDuration(widget.AnimeName ,widget.currentEpisode);
+      fm.saveEndDuration(widget.AnimeName ,widget.currentEpisode, true);
     }
     if(duration.inSeconds % 5 ==0){
       fm.saveDuration(widget.AnimeName , widget.currentEpisode, duration.inSeconds);
