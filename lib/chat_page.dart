@@ -169,11 +169,12 @@ class ChatPageState extends State<ChatPage> {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
+
           Expanded(
             child: TextField(
               controller: messageController,
               decoration: InputDecoration(
-                labelText: 'Enter message',
+                labelText: 'Escriba un mensaje',
                 border: OutlineInputBorder(),
               ),
               obscureText: false,
@@ -181,7 +182,7 @@ class ChatPageState extends State<ChatPage> {
           ),
           IconButton(
             onPressed: sendMessage,
-            icon: const Icon(Icons.send, size: 30, color: Colors.blueAccent),
+            icon: const Icon(Icons.send, size: 30, color: Colors.black),
           ),
         ],
       ),

@@ -255,7 +255,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                             ),
                             child: ListTile(
                               title: Text(
-                                'Capítulo ${index}',
+                                'Episodio ${index}',
                                 style: TextStyle(color: Colors.white),
                               ),
                               onTap: () async {

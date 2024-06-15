@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Firebase_Manager.dart';
@@ -22,7 +21,6 @@ class ProfilePage extends StatefulWidget {
   Profile createState() => Profile();
 }
 
-
 class Profile extends State<ProfilePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -35,24 +33,23 @@ class Profile extends State<ProfilePage> {
   int userMangas = 0;
   int userCommunities = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    loadImage();
+    fm = FirebaseManager();
+    fetchUserData();
+  }
 
-@override
-void initState() {
-  super.initState();
-  loadImage();
-  fm = FirebaseManager();
-  fetchUserData();
-}
+  Future<void> loadImage() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
 
-Future<void> loadImage() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? newImgProfile = preferences.getString("ImgProfile");
 
-  String? newImgProfile = preferences.getString("ImgProfile");
-
-  setState(() {
-    urlImg = newImgProfile!;
-  });
-}
+    setState(() {
+      urlImg = newImgProfile!;
+    });
+  }
 
   Future<void> fetchUserData() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -68,22 +65,23 @@ Future<void> loadImage() async {
       userName = fetchedUserName;
       userAnimes = myAnimes.length;
       userMangas = myMangas.length;
-     // userCommunities = myCommunities.length;
+      // userCommunities = myCommunities.length;
     });
 
   }
 
-Future<void> changeUserName() async {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState!.save();
-    fm.changeUserName(newUserName!, urlImg);
+  Future<void> changeUserName() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      fm.changeUserName(newUserName!, urlImg);
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+      SharedPreferences preferences = await SharedPreferences.getInstance();
 
-    await preferences.setString("userName", newUserName!);
+      await preferences.setString("userName", newUserName!);
 
+    }
   }
-}
+
   Widget buildDivider() => Container(
     height: 24,
     child: VerticalDivider(
@@ -120,7 +118,6 @@ Future<void> changeUserName() async {
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
-            letterSpacing: 2.0,
             color: Colors.white,
           ),
         ),
@@ -210,19 +207,10 @@ Future<void> changeUserName() async {
                   ],
                 ),
               ),
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Ajustes'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
-                },
-              ),
+
               ListTile(
                 leading: Icon(Icons.help_outline),
-                title: Text('Ayuda'),
+                title: Text('Terminos'),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -255,9 +243,8 @@ Future<void> changeUserName() async {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                    'assets/img/backgroundTwo.jpg'), // Ruta de la imagen de fondo
-                fit: BoxFit.cover, // Ajuste de la imagen de fondo
+                image: AssetImage('assets/img/fondoPantalla.jpg'),
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -268,74 +255,74 @@ Future<void> changeUserName() async {
                 Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(128, 0, 0, 255),
+                    color: Colors.transparent,  // Cambio de azul a transparente
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Form(
                     key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              print('Image clicked!');
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (context) => ProfileImgPage()),
-                              );
-                            },
-                            child: ClipOval(
-                              child: Image.network(
-                                urlImg, //Imagen del usuario
-                                width: 300,
-                                height: 300,
-                                fit: BoxFit.cover,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                print('Image clicked!');
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ProfileImgPage()),
+                                );
+                              },
+                              child: ClipOval(
+                                child: Image.network(
+                                  urlImg, //Imagen del usuario
+                                  width: 300,
+                                  height: 300,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 35,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 150, // Ajusta el ancho del campo de entrada aquí
-                            child: TextFormField(
-                              style: TextStyle(fontSize: 14), // Tamaño del texto
-                              decoration: InputDecoration(
-                                labelText: 'User Name',
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 10), // Padding interno del campo de entrada
+                          ],
+                        ),
+                        SizedBox(height: 35,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 150, // Ajusta el ancho del campo de entrada aquí
+                              child: TextFormField(
+                                style: TextStyle(fontSize: 14), // Tamaño del texto
+                                decoration: InputDecoration(
+                                  labelText: 'User Name',
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 10), // Padding interno del campo de entrada
+                                ),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'El campo Email está vacío';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) => newUserName = value,
                               ),
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'El campo Email está vacío';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) => newUserName = value,
                             ),
-                          ),
-                          SizedBox(width: 40),
-                          SizedBox(
-                            width: 70,
-                            height: 50,
-                            child: FloatingActionButton(
-                              onPressed: () {
-                                changeUserName();
-                              },
-                              child: Text('Guardar'),
-                              backgroundColor: Colors.white,
+                            SizedBox(width: 40),
+                            SizedBox(
+                              width: 70,
+                              height: 50,
+                              child: FloatingActionButton(
+                                onPressed: () {
+                                  changeUserName();
+                                },
+                                child: Text('Guardar'),
+                                backgroundColor: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(height: 20),
