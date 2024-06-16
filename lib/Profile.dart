@@ -58,14 +58,14 @@ class Profile extends State<ProfilePage> {
     await fm.getUser();
     List<int> myAnimes = await fm.getMyAnimes(false);
     List<int> myMangas = await fm.getMyAnimes(true);
-    //List<String> myCommunities = await fm.getMyCommunities();
+    List<String> myCommunities = await fm.getMyComunities();
     String fetchedUserName = preferences.getString("userName") ?? '';
 
     setState(() {
       userName = fetchedUserName;
       userAnimes = myAnimes.length;
       userMangas = myMangas.length;
-      // userCommunities = myCommunities.length;
+      userCommunities = myCommunities.length;
     });
 
   }

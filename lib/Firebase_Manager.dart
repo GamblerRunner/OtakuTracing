@@ -578,4 +578,47 @@ class FirebaseManager {
     return second;
   }
 
+  Future<List<String>> getEpisodes(String name) async {
+    await Future.delayed(Duration(seconds: 1));
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    var docRef = db.collection("multimedia")
+        .doc("animes")
+        .collection(name)
+        .doc("Episodes");
+    print("Hola2");
+    try {
+
+      // Esperar a que se complete la operación de obtener el documento
+      DocumentSnapshot doc = await docRef.get();
+
+      print("holapapapa3");
+      List<String> episodesList = [];
+      if(!doc.exists){
+        docRef = db.collection("multimedia")
+            .doc("animes")
+            .collection("CalicoElectronico")
+            .doc("Episodes");
+        doc = await docRef.get();
+      }
+      final data = doc.data() as Map<String, dynamic>;
+      if (data.isEmpty) {
+        if (data.isEmpty) {
+          return [];
+        }
+      }
+      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
+      if (data['IDs'] is List<dynamic>) {
+        episodesList =
+            (data['IDs'] as List<dynamic>).map((item) => item as String).toList();
+        print("menos cosas $episodesList");
+      }
+
+      return episodesList;
+    } catch (e) {
+      // Manejar errores al obtener los documentos
+      print("Error getting documents: $e");
+      return [];
+    }
+  }
+
 }

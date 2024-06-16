@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Firebase_Manager.dart';
 import 'package:tfc/video_player.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'chat_page.dart';
-import 'readManga.dart';
 import 'animation.dart';
 
 Future<void> main() async {
@@ -23,6 +23,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
   late FirebaseManager fm;
 
   List<Anime> fetchedAnimeData = [];
+  List<String> fetchedEpisodes = [];
 
   final AnimeData data = AnimeData();
 
@@ -43,6 +44,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
     bool following2 = await fm.getUserFavourite(fetchedAnimeData2[0].id, false);
     List<int> getEpisodes= await fm.getSeenMedia(fetchedAnimeData2[0].romajiTitle ?? 'no', false);
     List<int> getEpisodesWatching=await fm.getEpisodeWatching(fetchedAnimeData2[0].romajiTitle ?? 'no');
+    List<String> getEpisodesFirebase = await fm.getEpisodes(fetchedAnimeData2[0].romajiTitle ?? 'no');
     print(getEpisodes);
     print(getEpisodesWatching);
     print(fetchedAnimeData2?[0].coverImageUrl.toString());
@@ -53,6 +55,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
         following = following2;
         fetchedEpisodesSeen = getEpisodes;
         fetchedEpisodesWatching = getEpisodesWatching;
+        fetchedEpisodes = getEpisodesFirebase;
       });
     } else {
       print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
@@ -212,7 +215,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: fetchedAnimeData[0].episodes,
+                      itemCount: fetchedEpisodes.length,
                       itemBuilder: (context, index) {
                         bool watched = fetchedEpisodesSeen.contains(index + 1);
                         bool watching = fetchedEpisodesWatching.contains(index + 1);
@@ -235,14 +238,15 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                             ),
                             onTap: () async {
                               SharedPreferences preferences = await SharedPreferences.getInstance();
-                              await preferences.setString("videoId", fetchedAnimeData[0].mediaPlay ?? '1');
+                              await preferences.setString("videoId", fetchedEpisodes[index] ?? '1');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => PlayerAnime(
-                                    totalEpisodes: fetchedAnimeData[0].episodes ?? 0,
+                                    totalEpisodes: fetchedEpisodes.length ?? 0,
                                     currentEpisode: index + 1,
                                     AnimeName: fetchedAnimeData[0].romajiTitle ?? "no title",
+                                    getEpisodes: fetchedEpisodes,
                                   ),
                                 ),
                               );
