@@ -55,6 +55,7 @@ class ProfileImg extends State<ProfileImgPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         title: Text(
           'Selecciona foto de perfil',
           style: TextStyle(

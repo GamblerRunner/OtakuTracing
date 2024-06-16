@@ -113,6 +113,7 @@ class Profile extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         title: Text(
           'PERFIL',
           style: TextStyle(

@@ -112,6 +112,7 @@ class myAnimesPage extends State<myAnimes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         title: Text(
           'MIS ANIMES',
           style: TextStyle(

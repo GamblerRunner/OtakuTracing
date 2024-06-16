@@ -255,6 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (context, player) {
         return Scaffold(
           appBar: AppBar(
+            iconTheme: IconThemeData(color :Colors.white),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
@@ -262,7 +263,8 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             title: Text(
-              'EPISODIO ${widget.currentEpisode}',
+              formatTitle(widget.getEpisodes.isNotEmpty ? widget.AnimeName ?? 'Loading...' : 'Loading...'),
+             
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -283,7 +285,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0), // Padding para separación de los bordes
-                  child: Column(
+                  child: widget.getEpisodes.isNotEmpty ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
@@ -314,6 +316,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                     ],
+                  ) : Center(
+                    child: CircularProgressIndicator(),
                   ),
                 ),
               ),
@@ -329,5 +333,20 @@ class _MyHomePageState extends State<MyHomePage> {
     _saveWatchedDuration(_controller.value.position);
     _controller.dispose();
     super.dispose();
+  }
+
+  String formatTitle(String title) {
+    int maxLength = 30;
+    if (title.length > maxLength) {
+      int middle = (title.length / 2).round();
+      int spaceIndex = title.indexOf(' ', middle);
+      if (spaceIndex != -1 && spaceIndex < title.length - 1) {
+        return title.substring(0, spaceIndex) + '\n' + title.substring(spaceIndex + 1);
+      } else {
+        return title.substring(0, middle) + '\n' + title.substring(middle);
+      }
+    } else {
+      return title;
+    }
   }
 }

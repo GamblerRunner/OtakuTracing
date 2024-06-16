@@ -59,6 +59,7 @@ Nos reservamos el derecho de actualizar o modificar estos Términos en cualquier
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         title: Text(
           'TERMINOS Y CONDICIONES\n                 DE USO',
           style: TextStyle(

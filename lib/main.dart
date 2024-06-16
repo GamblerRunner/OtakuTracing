@@ -169,6 +169,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         title: Text(
           appBarTitle,
           style: TextStyle(

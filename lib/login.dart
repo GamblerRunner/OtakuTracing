@@ -98,6 +98,7 @@ class Login extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         automaticallyImplyLeading: false,
         title: Text(
           'INICIAR SESIÓN',

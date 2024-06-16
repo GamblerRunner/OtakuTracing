@@ -85,6 +85,7 @@ class Register extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         automaticallyImplyLeading: false,
         title: Center(
           child: Text(

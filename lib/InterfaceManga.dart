@@ -78,6 +78,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         title: Text(
           formatTitle(fetchedMangaData.isNotEmpty ? fetchedMangaData[0].romajiTitle ?? 'Loading...' : 'Loading...'),
           style: TextStyle(

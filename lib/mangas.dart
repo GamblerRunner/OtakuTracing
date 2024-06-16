@@ -56,6 +56,7 @@ class _MangasPageState extends State<MangasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         title: Text(
           'MANGAS',
           style: TextStyle(

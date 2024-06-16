@@ -121,6 +121,7 @@ class _CommunityPageState extends State<CommunityPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         title: Text(
           'COMUNIDADES',
           style: TextStyle(

@@ -74,6 +74,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color :Colors.white),
         title: Text(
           formatTitle(fetchedAnimeData.isNotEmpty ? fetchedAnimeData[0].romajiTitle ?? 'Loading...' : 'Loading...'),
           style: TextStyle(
