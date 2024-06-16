@@ -44,12 +44,14 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
     bool following2 = await fm.getUserFavourite(fetchedAnimeData2[0].id, false);
     List<int> getEpisodes= await fm.getSeenMedia(fetchedAnimeData2[0].romajiTitle ?? 'no', false);
     List<int> getEpisodesWatching=await fm.getEpisodeWatching(fetchedAnimeData2[0].romajiTitle ?? 'no');
-    List<String> getEpisodesFirebase = await fm.getEpisodes(fetchedAnimeData2[0].romajiTitle ?? 'no');
+    List<String> getEpisodesFirebase = [];
+    getEpisodesFirebase = await fm.getEpisodes(fetchedAnimeData2[0].romajiTitle ?? 'no');
+    getEpisodesFirebase.insert(0, fetchedAnimeData2[0].mediaPlay ?? 'no');
+
     print(getEpisodes);
     print(getEpisodesWatching);
     print(fetchedAnimeData2?[0].coverImageUrl.toString());
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString("videoId", fetchedAnimeData[0].mediaPlay ?? '1');
+    print(getEpisodesFirebase);
     if (fetchedAnimeData != null) {
       print("aaaaaaaaaaaaaaaaaaaaaah $following2");
       setState(() {

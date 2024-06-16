@@ -76,14 +76,11 @@ class _MyHomePageState extends State<MyHomePage> {
     // Get the start time in seconds from your data source asynchronously
     int getFMSeconds = await fm.getEpiodeSecond(widget.AnimeName, widget.currentEpisode);
     print('salida video');
-    print(widget.getEpisodes[widget.currentEpisode-1]);
+    print(widget.getEpisodes[widget.currentEpisode]);
     // Initialize _controller with startAt set to getFMSeconds
-    String video=widget.getEpisodes[widget.currentEpisode-1];
-    if(widget.currentEpisode==0){
-      video=widget.getTrailer;
-    }
+
     _controller = YoutubePlayerController(
-      initialVideoId: widget.getEpisodes[widget.currentEpisode-1], // Replace with your video ID
+      initialVideoId: widget.getEpisodes[widget.currentEpisode], // Replace with your video ID
       flags: YoutubePlayerFlags(
         autoPlay: false,
         mute: true,
