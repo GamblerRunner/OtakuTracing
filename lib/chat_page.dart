@@ -57,7 +57,7 @@ class ChatPageState extends State<ChatPage> {
 
   void sendMessage() async {
     if (messageController.text.isNotEmpty) {
-      await chatService.sendMessage(widget.community, messageController.text, userName, userImg);
+      await fm.sendMessage(widget.community, messageController.text, userName, userImg);
       // Clear the controller after sending message
       messageController.clear();
     }
@@ -103,7 +103,7 @@ class ChatPageState extends State<ChatPage> {
   // Build message list
   Widget buildMessageList() {
     return StreamBuilder(
-      stream: chatService.getMessages(widget.community),
+      stream: fm.getMessages(widget.community),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');

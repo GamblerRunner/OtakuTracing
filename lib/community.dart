@@ -41,24 +41,7 @@ class CommmunityApp extends StatelessWidget {
 class CommunityPage extends StatefulWidget {
   @override
   _CommunityPageState createState() => _CommunityPageState();
-  //Send Message
-  Future<void> sendMessage(String communityId, String message, String senderName, String userImg) async {
-    var user = await FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      userUID= user.uid;
-      await db.collection('communities').doc(communityId).collection('messages').add({
-        'message': message,
-        'senderId': userUID,
-        'senderName': senderName ?? 'Anonymous',
-        'senderImg': userImg ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-    }
-  }
 
-  Stream<QuerySnapshot> getMessages(String communityId) {
-    return db.collection('communities').doc(communityId).collection('messages').orderBy('timestamp', descending: false).snapshots();
-  }
 }
 
 class _CommunityPageState extends State<CommunityPage> {

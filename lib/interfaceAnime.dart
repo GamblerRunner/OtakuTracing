@@ -48,6 +48,8 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
     print(getEpisodes);
     print(getEpisodesWatching);
     print(fetchedAnimeData2?[0].coverImageUrl.toString());
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString("videoId", fetchedAnimeData[0].mediaPlay ?? '1');
     if (fetchedAnimeData != null) {
       print("aaaaaaaaaaaaaaaaaaaaaah $following2");
       setState(() {
@@ -235,10 +237,6 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                               ),
                               onTap: () async {
                                 if (fetchedAnimeData.isNotEmpty) {
-                                  SharedPreferences preferences = await SharedPreferences
-                                      .getInstance();
-                                  await preferences.setString("videoId",
-                                      fetchedAnimeData[0].mediaPlay ?? '1');
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

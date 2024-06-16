@@ -205,11 +205,9 @@ class FirebaseManager {
     FirebaseFirestore db = FirebaseFirestore.instance;
     List<int> userMedia = [];
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-    String am = '';
+    String am = 'mangas';
     if (!mediaAM) {
       am = 'animes';
-    } else {
-      am = 'mangas';
     }
 
     final docRef = db.collection("users")
@@ -671,6 +669,25 @@ class FirebaseManager {
       print("Error getting documents: $e");
       return [];
     }
+  }
+
+  Future<void> sendMessage(String communityId, String message, String senderName, String userImg) async {
+    var user = await FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      FirebaseFirestore db = FirebaseFirestore.instance;
+      await db.collection('communities').doc(communityId).collection('messages').add({
+        'message': message,
+        'senderId': user.uid,
+        'senderName': senderName ?? 'Anonymous',
+        'senderImg': userImg ?? 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    }
+  }
+
+  Stream<QuerySnapshot> getMessages(String communityId) {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    return db.collection('communities').doc(communityId).collection('messages').orderBy('timestamp', descending: false).snapshots();
   }
 
 }

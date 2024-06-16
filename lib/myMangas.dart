@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tfc/MyCommunities.dart';
+import 'package:tfc/myAnimes.dart';
 import 'package:tfc/settings.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
@@ -36,7 +38,6 @@ class myMangasPage extends State<myMangas> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ScrollController _scrollController = ScrollController();
 
-  bool mediaAM = true;
 
   @override
   void initState() {
@@ -58,7 +59,7 @@ class myMangasPage extends State<myMangas> {
   Future<void> fetchUserData() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await fm.getUser();
-    medias = await fm.getMyAnimes(mediaAM);
+    medias = await fm.getMyAnimes(true);
 
     String fetchedUserName = preferences.getString("userName") ?? '';
     String fetchedUserImg = preferences.getString("ImgProfile") ?? '';
@@ -147,7 +148,7 @@ class myMangasPage extends State<myMangas> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myMangas()),
+                          MaterialPageRoute(builder: (context) => myAnimes()),
                         );
                       },
                     ),
@@ -165,11 +166,10 @@ class myMangasPage extends State<myMangas> {
                       leading: Icon(Icons.message),
                       title: Text('Mis Comunidades'),
                       onTap: () {
-                        /* Navigator.push(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myMangas()),
+                          MaterialPageRoute(builder: (context) => MyCommunityPage()),
                         );
-                         */
                       },
                     ),
                   ],

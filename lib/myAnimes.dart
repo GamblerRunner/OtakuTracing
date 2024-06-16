@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tfc/MyCommunities.dart';
 import 'package:tfc/settings.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
@@ -33,13 +34,10 @@ class myAnimesPage extends State<myAnimes> {
   int _selectedIndex = 0;
   List<Media> fetchedData = [];
   final AnimeData data = AnimeData();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ScrollController _scrollController = ScrollController();
 
   String? search = '';
 
-  bool mediaAM = false;
 
   @override
   void initState() {
@@ -63,7 +61,7 @@ class myAnimesPage extends State<myAnimes> {
     //await Future.delayed(Duration(seconds: 1));
 
     await fm.getUser();
-    medias = await fm.getMyAnimes(mediaAM);
+    medias = await fm.getMyAnimes(false);
 
     String fetchedUserName = preferences.getString("userName") ?? '';
     String fetchedUserImg = preferences.getString("ImgProfile") ?? '';
@@ -74,30 +72,6 @@ class myAnimesPage extends State<myAnimes> {
     });
 
     fetchData();
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        fetchedData.clear();
-        mediaAM=false;
-        fetchUserData();
-        break;
-
-      case 1:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => CommunityPage()));
-        break;
-
-      case 2:
-        fetchedData.clear();
-        mediaAM=true;
-        fetchUserData();
-        break;
-    }
   }
 
   Future<void> saveID(int id) async {
@@ -196,11 +170,11 @@ class myAnimesPage extends State<myAnimes> {
                       leading: Icon(Icons.message),
                       title: Text('Mis Comunidades'),
                       onTap: () {
-                        /* Navigator.push(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myMangas()),
+                          MaterialPageRoute(builder: (context) => MyCommunityPage()),
                         );
-                         */
+
                       },
                     ),
                   ],

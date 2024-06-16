@@ -36,7 +36,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
   int currentPage = 0;
 
   late List<String> images = [
-    'https://cdn.pixabay.com/photo/2023/08/19/17/58/woman-8200965_960_720.png',
+    'https://cdn.pixabay.com/photo/2015/02/22/17/56/loading-645268_1280.jpg',
   ];
 
   final PageController _pageController = PageController();
