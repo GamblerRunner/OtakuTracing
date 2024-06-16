@@ -75,7 +75,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          fetchedAnimeData[0].romajiTitle ?? 'Loading...',
+          formatTitle(fetchedAnimeData.isNotEmpty ? fetchedAnimeData[0].romajiTitle ?? 'Loading...' : 'Loading...'),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -97,7 +97,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
+              child: fetchedAnimeData.isNotEmpty ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
@@ -307,6 +307,8 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
 
                   ),
                 ],
+              ) : Center(
+                 child: CircularProgressIndicator(),
               ),
             ),
           ),
