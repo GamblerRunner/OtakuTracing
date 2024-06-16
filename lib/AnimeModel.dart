@@ -130,7 +130,7 @@ class Anime {
       description: json['description'] as String? ?? 'No description available',
       status: _statusFromString(json['status'] as String?),
       episodes: json['episodes'] as int? ?? 0,
-      mediaPlay: json['trailer']?['id'] as String? ?? 'Mr7QgUfjdvQ',
+      mediaPlay: json['trailer']?['id'] as String? ?? 'OhNwckCLzis',
       genres: (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList() ?? ['Unknown Genre'],
     );
   }

@@ -217,43 +217,92 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: fetchedEpisodes.length,
                       itemBuilder: (context, index) {
-                        bool watched = fetchedEpisodesSeen.contains(index + 1);
-                        bool watching = fetchedEpisodesWatching.contains(index + 1);
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            border: Border.all(color: Colors.white),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              'Capítulo ${index + 1}',
-                              style: TextStyle(
-                                color: watched
-                                    ? Colors.red : (watching ? Colors.green : Colors.white),
-                              ),
-
+                        if (index == 0) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            onTap: () async {
-                              SharedPreferences preferences = await SharedPreferences.getInstance();
-                              await preferences.setString("videoId", fetchedEpisodes[index] ?? '1');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PlayerAnime(
-                                    totalEpisodes: fetchedEpisodes.length ?? 0,
-                                    currentEpisode: index + 1,
-                                    AnimeName: fetchedAnimeData[0].romajiTitle ?? "no title",
-                                    getEpisodes: fetchedEpisodes,
-                                  ),
+                            child: ListTile(
+                              title: Text(
+                                'TRAILER',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onTap: () async {
+                                if (fetchedAnimeData.isNotEmpty) {
+                                  SharedPreferences preferences = await SharedPreferences
+                                      .getInstance();
+                                  await preferences.setString("videoId",
+                                      fetchedAnimeData[0].mediaPlay ?? '1');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PlayerAnime(
+                                            totalEpisodes: fetchedAnimeData[0].episodes ?? 0,
+                                            currentEpisode: 0,
+                                            AnimeName: fetchedAnimeData[0].romajiTitle ?? 'No Title',
+                                            getEpisodes: fetchedEpisodes,
+                                            getTrailer: fetchedAnimeData[0].mediaPlay ?? '1',
+                                          ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          );
+                        } else {
+                          bool watched = fetchedEpisodesSeen.contains(
+                              index + 1);
+                          bool watching = fetchedEpisodesWatching.contains(
+                              index + 1);
+                          return Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                'Capítulo ${index}',
+                                style: TextStyle(
+                                  color: watched
+                                      ? Colors.red : (watching
+                                      ? Colors.green
+                                      : Colors.white),
                                 ),
-                              );
-                            },
-                          ),
-                        );
-                      },
+
+                              ),
+                              onTap: () async {
+                                SharedPreferences preferences = await SharedPreferences
+                                    .getInstance();
+                                await preferences.setString(
+                                    "videoId", fetchedEpisodes[index] ?? '1');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        PlayerAnime(
+                                          totalEpisodes: fetchedEpisodes.length ?? 0,
+                                          currentEpisode: index + 1,
+                                          AnimeName: fetchedAnimeData[0].romajiTitle ?? "no title",
+                                          getEpisodes: fetchedEpisodes,
+                                          getTrailer: fetchedAnimeData[0].mediaPlay ?? '1',
+                                        ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        }
+                      }
                     ),
 
                   ),

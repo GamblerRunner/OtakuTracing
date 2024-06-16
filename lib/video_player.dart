@@ -10,8 +10,9 @@ class PlayerAnime extends StatelessWidget {
   final int currentEpisode;
   final String AnimeName;
   final List<String> getEpisodes;
+  final String getTrailer;
 
-  const PlayerAnime({Key? key, required this.totalEpisodes, required this.currentEpisode, required this.AnimeName, required this.getEpisodes}) : super(key: key);
+  const PlayerAnime({Key? key, required this.totalEpisodes, required this.currentEpisode, required this.AnimeName, required this.getEpisodes, required String this.getTrailer}) : super(key: key);
 
   static const customSwatch = MaterialColor(
     0xFFFF5252,
@@ -37,7 +38,7 @@ class PlayerAnime extends StatelessWidget {
         primarySwatch: customSwatch,
       ),
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(totalEpisodes: totalEpisodes, currentEpisode: currentEpisode, AnimeName: AnimeName, getEpisodes: getEpisodes,),
+      home: MyHomePage(totalEpisodes: totalEpisodes, currentEpisode: currentEpisode, AnimeName: AnimeName, getEpisodes: getEpisodes, getTrailer: getTrailer,),
     );
   }
 }
@@ -47,8 +48,9 @@ class MyHomePage extends StatefulWidget {
   final int currentEpisode;
   final String AnimeName;
   final List<String> getEpisodes;
+  final String getTrailer;
 
-  const MyHomePage({Key? key, required this.totalEpisodes, required this.currentEpisode, required this.AnimeName, required this.getEpisodes}) : super(key: key);
+  const MyHomePage({Key? key, required this.totalEpisodes, required this.currentEpisode, required this.AnimeName, required this.getEpisodes, required this.getTrailer}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -76,6 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
     print('salida video');
     print(widget.getEpisodes[widget.currentEpisode-1]);
     // Initialize _controller with startAt set to getFMSeconds
+    String video=widget.getEpisodes[widget.currentEpisode-1];
+    if(widget.currentEpisode==0){
+      video=widget.getTrailer;
+    }
     _controller = YoutubePlayerController(
       initialVideoId: widget.getEpisodes[widget.currentEpisode-1], // Replace with your video ID
       flags: YoutubePlayerFlags(
@@ -152,6 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
             currentEpisode: episode,
             AnimeName: widget.AnimeName,
             getEpisodes: widget.getEpisodes,
+            getTrailer: widget.getTrailer,
           ),
         ),
       );
