@@ -533,6 +533,9 @@ class FirebaseManager {
     print('maricarmen estuvo aqui');
     List<int> chapters = [];
 
+    if(!documentSnapshot.exists){
+      return [];
+    }
     final data = documentSnapshot.data() as Map<String, dynamic>;
     print('testeando $data');
 
