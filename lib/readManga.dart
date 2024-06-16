@@ -35,13 +35,8 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
   bool isCascada = true;
   int currentPage = 0;
 
-  // CARGAMOS LAS IMAGENES AQUI
-  final List<String> images = [
-    'assets/img/fotoMangaStock1.png',
-    'assets/img/fotoMangaStock2.png',
-    'assets/img/fotoMangaStock3.png',
-    'assets/img/fotoMangaStock4.png',
-    'assets/img/fotoMangaStock5.png',
+  late List<String> images = [
+    'https://cdn.pixabay.com/photo/2023/08/19/17/58/woman-8200965_960_720.png',
   ];
 
   final PageController _pageController = PageController();
@@ -51,10 +46,20 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
     super.initState();
     fm = FirebaseManager();
     fm.saveWatchingManga(widget.mangaName, widget.selectedChapter);
+    fetchPageData();
+  }
+
+  Future<void> fetchPageData() async {
+    String chapterName = ('Chapter${widget.selectedChapter}').toString();
+    List<String> fetchedPages = await fm.getPages(chapterName);
+
+    setState(() {
+      images = fetchedPages;
+    });
   }
 
   Future<void> updateWatchedEpisode() async {
-    fm.saveEndDuration(widget.mangaName, widget.selectedChapter, false);
+    fm.saveEndDuration(widget.mangaName, widget.selectedChapter, true);
   }
   @override
   Widget build(BuildContext context) {
@@ -142,6 +147,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
                   setState(() {
                     if (widget.selectedChapter > 1) {
                       widget.selectedChapter--;
+                      fetchPageData();
                       if (isCascada) {
                         _cascadaController.jumpTo(0);
                       } else {
@@ -163,6 +169,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
                   setState(() {
                     if (widget.selectedChapter < widget.totalChapters) {
                       widget.selectedChapter++;
+                      fetchPageData();
                       if (isCascada) {
                         _cascadaController.jumpTo(0);
                       } else {
@@ -209,7 +216,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
   Widget _buildImageContainer(String imagePath, BoxFit boxFit) {
     return Container(
       width: double.infinity,
-      child: Image.asset(imagePath, fit: boxFit),
+      child: Image.network(imagePath, fit: boxFit),
     );
   }
 }

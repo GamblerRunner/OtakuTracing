@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/main.dart';
-import 'package:tfc/login.dart';
-import 'register.dart';
 //Firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -64,8 +61,6 @@ class FirebaseManager {
     final newUserCloud = {
       "username": userName,
       "userimg": "https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg",
-      "favourites": [],
-      "comunitiesFollow": []
     };
 
     db
@@ -89,14 +84,12 @@ class FirebaseManager {
       final data = doc.data() as Map<String, dynamic>;
 
       data.forEach((key, value) {
-        print('jaj $value');
         imgData.add(value.toString());
       });
     } catch (e) {
       print("Error img: $e");
     }
 
-    print('nah nah nah $imgData');
     return imgData;
   }
 
@@ -104,10 +97,9 @@ class FirebaseManager {
     await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    uid = (await preferences.getString("uid"))!;
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
 
-
-    final docRef = db.collection("users").doc(uid);
+    final docRef = db.collection("users").doc(uidUser);
 
     try {
       // Esperar a que se complete la operación de obtener el documento
@@ -132,8 +124,7 @@ class FirebaseManager {
   Future<bool> getUserFavourite(int id, bool type) async {
     print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    uid = (await preferences.getString("uid"))!;
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
 
     String am = "animes";
     if (type) {
@@ -141,7 +132,7 @@ class FirebaseManager {
     }
     print("holapapapa2");
     final docRef = db.collection("users")
-        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2")
+        .doc(uidUser)
         .collection("follow")
         .doc("media");
     print("BRUUUUUUUUUUUH");
@@ -175,21 +166,19 @@ class FirebaseManager {
 
   Future<void> changeUserName(String userName, String userImg) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    uid = (await preferences.getString("uid"))!;
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
 
     final data = {"username": userName, "userimg": userImg};
 
-    db.collection("users").doc(uid).set(data, SetOptions(merge: true));
+    db.collection("users").doc(uidUser).set(data, SetOptions(merge: true));
   }
 
   Future<void> addRemoveFavourite(int id, bool type, bool addOrRemove) async {
     print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    uid = (await preferences.getString("uid"))!;
-    DocumentReference animeInstance = db.collection("users").doc(
-        "BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc("media");
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+
+    DocumentReference animeInstance = db.collection("users").doc(uidUser).collection("follow").doc("media");
 
     print("BRUUUUUUUUUUUH");
 
@@ -215,8 +204,7 @@ class FirebaseManager {
     await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
     List<int> userMedia = [];
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    uid = (await preferences.getString("uid"))!;
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
     String am = '';
     if (!mediaAM) {
       am = 'animes';
@@ -225,7 +213,7 @@ class FirebaseManager {
     }
 
     final docRef = db.collection("users")
-        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2")
+        .doc(uidUser)
         .collection("follow")
         .doc("media");
 
@@ -289,7 +277,7 @@ class FirebaseManager {
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
     print(uidUser);
     final docRef = db.collection("users")
-        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2")
+        .doc(uidUser)
         .collection("follow")
         .doc("media");
     print("Hola2");
@@ -320,14 +308,12 @@ class FirebaseManager {
     }
   }
 
-  Future<void> addRemoveFavouriteComunity(String comunityName,
-      bool addOrRemove) async {
+  Future<void> addRemoveFavouriteComunity(String comunityName, bool addOrRemove) async {
     print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    uid = (await preferences.getString("uid"))!;
-    DocumentReference animeInstance = db.collection("users").doc(
-        "BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc("media");
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+
+    DocumentReference animeInstance = db.collection("users").doc(uidUser).collection("follow").doc("media");
 
     print(addOrRemove);
     if (addOrRemove) {
@@ -346,12 +332,10 @@ class FirebaseManager {
   Future<bool> getUserFavouriteComunity(String comunityName) async {
     print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    uid = (await preferences.getString("uid"))!;
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
 
-    print("holapapapa2");
     final docRef = db.collection("users")
-        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2")
+        .doc(uidUser)
         .collection("follow")
         .doc("media");
     print("BRUUUUUUUUUUUH");
@@ -391,36 +375,35 @@ class FirebaseManager {
     return await user?.uid;
   }
 
-  Future<void> saveEndDuration(String name, int episode, bool AM) async {
+  Future<void> saveEndDuration(String name, int episode, bool am) async {
     print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
     print(uid);
     print("aqui paso un puto");
-    String type = 'watchingManga';
-    if(AM){
-      type = 'watchingAnime';
+    String type = 'watchingAnime';
+    String bp = 'episodes';
+    if(am){
+      type = 'watchingManga';
+      bp = 'chapters';
     }
-    DocumentReference animeInstance = db.collection("users").doc(
-        "BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc(
+    DocumentReference animeInstance = db.collection("users").doc(uidUser).collection("follow").doc(
         type).collection("watched").doc(name);
-
+    print('CACAAAAAAAAAAAAAAAAAAAAAAAA');
     final data = {
-      'chapters': FieldValue.arrayUnion([episode])
+      bp.toString(): FieldValue.arrayUnion([episode])
     };
+    print(data);
     await animeInstance.set(data, SetOptions(merge: true));
-    return;
   }
 
   Future<void> saveWatchingManga(String MangaName, int episode) async {
     print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-    print(uid);
     print("aqui paso un puto");
     String type = 'watchingManga';
-    DocumentReference animeInstance = db.collection("users").doc(
-        "BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc(
+    DocumentReference animeInstance = db.collection("users").doc(uidUser).collection("follow").doc(
         type).collection("watching").doc(MangaName);
 
     final data = {
@@ -438,7 +421,7 @@ class FirebaseManager {
     print(uidUser);
 
     DocumentReference animeInstance = db.collection("users")
-        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2") // Use the actual user's UID instead of a hardcoded value
+        .doc(uidUser) // Use the actual user's UID instead of a hardcoded value
         .collection("follow")
         .doc("watchingAnime")
         .collection("watching")
@@ -465,8 +448,7 @@ class FirebaseManager {
       type = 'watchingManga';
       bp = 'chapters';
     }
-    DocumentReference animeInstance = db.collection("users").doc(
-        "BACNUaEwrHNhsd7HV3eDHRt8s6s2").collection("follow").doc(
+    DocumentReference animeInstance = db.collection("users").doc(uidUser).collection("follow").doc(
         type).collection("watched").doc(name);
     print("Hola2");
     try {
@@ -495,7 +477,7 @@ class FirebaseManager {
     print(uidUser);
 
     DocumentReference animeInstance = db.collection("users")
-        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2") // Use the actual user's UID instead of a hardcoded value
+        .doc(uidUser) // Use the actual user's UID instead of a hardcoded value
         .collection("follow")
         .doc("watchingAnime")
         .collection("watching")
@@ -522,7 +504,7 @@ class FirebaseManager {
     print(uidUser);
 
     DocumentReference animeInstance = db.collection("users")
-        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2") // Use the actual user's UID instead of a hardcoded value
+        .doc(uidUser) // Use the actual user's UID instead of a hardcoded value
         .collection("follow")
         .doc("watchingManga")
         .collection("watching")
@@ -555,7 +537,7 @@ class FirebaseManager {
     int second =0;
 
     DocumentReference animeInstance = db.collection("users")
-        .doc("BACNUaEwrHNhsd7HV3eDHRt8s6s2") // Use the actual user's UID instead of a hardcoded value
+        .doc(uidUser) // Use the actual user's UID instead of a hardcoded value
         .collection("follow")
         .doc("watchingAnime")
         .collection("watching")
@@ -614,6 +596,76 @@ class FirebaseManager {
       }
 
       return episodesList;
+    } catch (e) {
+      // Manejar errores al obtener los documentos
+      print("Error getting documents: $e");
+      return [];
+    }
+  }
+
+  Future<int> getChapters(String name, int chapters) async {
+    await Future.delayed(Duration(seconds: 1));
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    var docRef = db.collection("multimedia")
+        .doc("mangas")
+        .collection(name);
+    print("Hola2");
+    try {
+      var querySnapshot = await docRef.get();
+      if (querySnapshot.docs.isEmpty) {
+        String getName = 'BlackCobra';
+        if(chapters % 2 ==0){
+          getName = 'Fantastic';
+        }else if(chapters % 3 ==0){
+          getName = 'The Flame';
+        }
+        await preferences.setString("newNameChapter", getName);
+        var defaultCollectionRef = db.collection("multimedia")
+            .doc("mangas")
+            .collection(getName);
+        querySnapshot = await defaultCollectionRef.get();
+        await preferences.setString("newNameChapter", getName);
+      }
+
+      return querySnapshot.docs.length;
+    } catch (e) {
+      print("Error getting documents: $e");
+      return 0;
+    }
+  }
+
+  Future<List<String>> getPages(String chapter) async {
+    await Future.delayed(Duration(seconds: 1));
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    String getName = await preferences.getString("newNameChapter") ?? 'The Flame';
+    print(getName);
+    print(chapter);
+    var docRef = db.collection("multimedia")
+        .doc("mangas")
+        .collection(getName)
+        .doc(chapter);
+    print("Hola209");
+    try {
+
+      // Esperar a que se complete la operación de obtener el documento
+      DocumentSnapshot doc = await docRef.get();
+
+      print("holapapapa3");
+      List<String> pagesList = [];
+      final data = doc.data() as Map<String, dynamic>;
+      if (data.isEmpty) {
+        return [];
+      }
+      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
+      if (data['Pages'] is List<dynamic>) {
+        pagesList =
+            (data['Pages'] as List<dynamic>).map((item) => item as String).toList();
+        print("menos cosas $pagesList");
+      }
+
+      return pagesList;
     } catch (e) {
       // Manejar errores al obtener los documentos
       print("Error getting documents: $e");

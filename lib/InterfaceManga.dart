@@ -29,6 +29,8 @@ class InterfaceManga extends State<InterfaceMangaPage> {
   List<int> fetchedChaptersSeen= [];
   List<int> fetchedChaptersWatching= [];
 
+  int numberChapters = 0;
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +47,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
       bool following2 = await fm.getUserFavourite(mangaId, true);
       List<int> getChapters= await fm.getSeenMedia(fetchedMangaData2[0].romajiTitle ?? 'no', true);
       List<int> getChaptersWatching=await fm.getChapterWatching(fetchedMangaData2[0].romajiTitle ?? 'no');
+      int numberChapters2 = await fm.getChapters(fetchedMangaData2[0].romajiTitle ?? 'no', fetchedMangaData2[0].chapters ?? 0);
       print('TREMENDOOOOOO');
       print(getChaptersWatching);
       setState(() {
@@ -52,6 +55,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
         following = following2;
         fetchedChaptersSeen = getChapters;
         fetchedChaptersWatching = getChaptersWatching;
+        numberChapters = numberChapters2;
       });
     } else {
       print("Error: El ID del manga no es un entero.");
@@ -222,7 +226,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: (fetchedMangaData[0].chapters ?? 0) + 1, // Adding one for the "COVER" item
+                      itemCount: (numberChapters ?? 0) + 1, // Adding one for the "COVER" item
                       itemBuilder: (context, index) {
                         // Adjust the chapter index if the "COVER" is at index 0
                         int chapterNumber = index == 0 ? 0 : index;
@@ -253,7 +257,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ReadMangaPage(
-                                    totalChapters: fetchedMangaData[0].chapters ?? 0,
+                                    totalChapters: numberChapters ?? 0,
                                     selectedChapter: index,
                                     mangaName: fetchedMangaData[0].romajiTitle ?? 'No Title',
                                   ),
