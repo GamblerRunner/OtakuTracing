@@ -145,16 +145,18 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                         },
                         isInitiallyFavoured: following, // puedes ajustar este valor basado en tu lógica
                       ),
-                      ElevatedButton(
+                      IconButton(
+                        icon: Icon(Icons.forum, color: Colors.white, size:30),
                         onPressed: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ChatPage(
-                                    community: fetchedAnimeData[0].englishTitle!.toString(),
-                                  )));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                community: fetchedAnimeData[0].englishTitle!.toString(),
+                              ),
+                            ),
+                          );
                         },
-                        child: Text('Ir a comunidad(foro)'),
                       ),
                     ],
                   ),
