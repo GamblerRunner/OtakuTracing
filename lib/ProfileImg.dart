@@ -57,7 +57,7 @@ class ProfileImg extends State<ProfileImgPage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color :Colors.white),
         title: Text(
-          'Selecciona foto de perfil',
+          'Select profile photo',
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,

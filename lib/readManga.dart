@@ -67,7 +67,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color :Colors.white),
         title: Text(
-          'CAPITULO ${widget.selectedChapter}', // Mostrar el número del capítulo seleccionado
+          'EPISODE ${widget.selectedChapter}', // Mostrar el número del capítulo seleccionado
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,

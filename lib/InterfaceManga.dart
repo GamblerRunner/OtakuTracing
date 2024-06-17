@@ -119,7 +119,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   SizedBox(height: 16),
                   // Resto de la información del manga
                   Text(
-                    'Sinopsis:',
+                    'Synopsis:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -169,7 +169,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Estado:',
+                    'Status:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -183,7 +183,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Género:',
+                    'Gender:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -197,7 +197,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Fecha de Publicación:',
+                    'Publication date:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -211,7 +211,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                   ),
                   SizedBox(height: 24),
                   Text(
-                    'Capítulos:',
+                    'Chapters:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -246,10 +246,10 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                           ),
                           child: ListTile(
                             title: Text(
-                              index == 0 ? 'Capítulo $index' : 'Capítulo $index',
+                              index == 0 ? 'Chapter $index' : 'Chapter $index',
                               style: TextStyle(
                                 color: watched
-                                    ? Colors.red
+                                    ? Colors.grey
                                     : (watching ? Colors.green : Colors.white),
                               ),
                             ),
@@ -304,9 +304,9 @@ class InterfaceManga extends State<InterfaceMangaPage> {
   String cambiosEstado(String? status) {
     switch (status) {
       case 'Status.FINISHED':
-        return 'Finalizado';
+        return 'Ended';
       case 'Status.REALISING':
-        return 'En emisión';
+        return 'In broadcast';
       default:
         return 'Hiatus';
     }

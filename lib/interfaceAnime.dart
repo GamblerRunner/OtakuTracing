@@ -114,7 +114,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Sinopsis:',
+                    'Synopsis:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -128,14 +128,6 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
 
                   SizedBox(height: 16),
-                  Text(
-                    'Accede:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
                   SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -164,7 +156,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Estado:',
+                    'Status:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -178,7 +170,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Género:',
+                    'Gender:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -192,7 +184,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Fecha de Publicación:',
+                    'Publication date:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -206,7 +198,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                   ),
                   SizedBox(height: 24),
                   Text(
-                    'Capítulos:',
+                    'Episodes:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -236,7 +228,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                             ),
                             child: ListTile(
                               title: Text(
-                                'TRAILER',
+                                'Trailer',
                                 style: TextStyle(color: Colors.white),
                               ),
                               onTap: () async {
@@ -274,11 +266,11 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                             ),
                             child: ListTile(
                               title: Text(
-                                'Capítulo ${index}',
+                                'Episode ${index}',
                                 style: TextStyle(
                                   color: watched
                                       ? Colors.red : (watching
-                                      ? Colors.green
+                                      ? Colors.grey
                                       : Colors.white),
                                 ),
 
@@ -342,9 +334,9 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
   String cambiosEstado(String? status) {
     switch (status) {
       case 'Status.FINISHED':
-        return 'Finalizado';
+        return 'Ended';
       case 'Status.REALISING':
-        return 'En emisión';
+        return 'In broadcast';
       default:
         return 'Hiatus';
     }

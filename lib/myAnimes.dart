@@ -12,6 +12,7 @@ import 'interfaceAnime.dart';
 import 'login.dart';
 import 'main.dart';
 import 'animation.dart';
+import 'myMangas.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
@@ -88,7 +89,7 @@ class myAnimesPage extends State<myAnimes> {
       appBar: AppBar(
         iconTheme: IconThemeData(color :Colors.white),
         title: Text(
-          'MIS ANIMES',
+          'MY ANIMES',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -132,13 +133,13 @@ class myAnimesPage extends State<myAnimes> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage(animeManga: false)),
+                          MaterialPageRoute(builder: (context) => HomePage(animeManga: false,)),
                         );
                       },
                     ),
                     ListTile(
                       leading: Icon(Icons.account_circle),
-                      title: Text('Perfil'),
+                      title: Text('Profile'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -148,7 +149,7 @@ class myAnimesPage extends State<myAnimes> {
                     ),
                     ListTile(
                       leading: Icon(Icons.tv),
-                      title: Text('Mis Animes'),
+                      title: Text('My Animes'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -158,17 +159,17 @@ class myAnimesPage extends State<myAnimes> {
                     ),
                     ListTile(
                       leading: Icon(Icons.menu_book),
-                      title: Text('Mis Mangas'),
+                      title: Text('My Mangas'),
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myAnimes()),
+                          MaterialPageRoute(builder: (context) => myMangas()),
                         );
                       },
                     ),
                     ListTile(
                       leading: Icon(Icons.message),
-                      title: Text('Mis Comunidades'),
+                      title: Text('My Communities'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -182,7 +183,7 @@ class myAnimesPage extends State<myAnimes> {
               ),
               ListTile(
                 leading: Icon(Icons.help_outline),
-                title: Text('Ayuda'),
+                title: Text('Terms'),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -192,7 +193,7 @@ class myAnimesPage extends State<myAnimes> {
               ),
               ListTile(
                 leading: Icon(Icons.account_balance_wallet),
-                title: Text('Cerrar Sesión'),
+                title: Text('Log out'),
                 onTap: () async {
                   SharedPreferences preferences = await SharedPreferences.getInstance();
                   await preferences.remove('rememberEmailPassword');

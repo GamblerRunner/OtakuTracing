@@ -26,8 +26,8 @@ class Profile extends State<ProfilePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   late String urlImg;
-  String? newUserName='';
-  String? userName='user name';
+  String? newUserName = '';
+  String? userName = 'user name';
   late String uid = '';
   late FirebaseManager fm;
   int userAnimes = 0;
@@ -68,22 +68,18 @@ class Profile extends State<ProfilePage> {
       userMangas = myMangas.length;
       userCommunities = myCommunities.length;
     });
-
   }
 
   Future<void> changeUserData() async {
+    _formKey.currentState!.save();
+    if (newUserName == '') {
+      newUserName = userName;
+    }
+    fm.changeUserName(newUserName!, urlImg);
 
-      _formKey.currentState!.save();
-      if(newUserName == ''){
-        newUserName = userName;
-      }
-      fm.changeUserName(newUserName!, urlImg);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
 
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-
-      await preferences.setString("userName", newUserName!);
-
-
+    await preferences.setString("userName", newUserName!);
   }
 
   Widget buildDivider() => Container(
@@ -93,33 +89,32 @@ class Profile extends State<ProfilePage> {
     ),
   );
 
-  Widget buildButton(BuildContext context, String value, String text) =>
-      Material(
-        color: Colors.transparent,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              value,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
-            SizedBox(height: 2),
-            Text(
-              text,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+  Widget buildButton(BuildContext context, String value, String text) => Material(
+    color: Colors.transparent,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          value,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
         ),
-      );
+        SizedBox(height: 2),
+        Text(
+          text,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color :Colors.white),
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          'PERFIL',
+          'PROFILE',
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
@@ -170,7 +165,7 @@ class Profile extends State<ProfilePage> {
                     ),
                     ListTile(
                       leading: Icon(Icons.account_circle),
-                      title: Text('Perfil'),
+                      title: Text('Profile'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -180,7 +175,7 @@ class Profile extends State<ProfilePage> {
                     ),
                     ListTile(
                       leading: Icon(Icons.tv),
-                      title: Text('Mis Animes'),
+                      title: Text('My Animes'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -190,7 +185,7 @@ class Profile extends State<ProfilePage> {
                     ),
                     ListTile(
                       leading: Icon(Icons.menu_book),
-                      title: Text('Mis Mangas'),
+                      title: Text('My Mangas'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -200,22 +195,20 @@ class Profile extends State<ProfilePage> {
                     ),
                     ListTile(
                       leading: Icon(Icons.message),
-                      title: Text('Mis Comunidades'),
+                      title: Text('My Communities'),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => MyCommunityPage()),
                         );
-
                       },
-                    )
+                    ),
                   ],
                 ),
               ),
-
               ListTile(
                 leading: Icon(Icons.help_outline),
-                title: Text('Terminos'),
+                title: Text('Terms'),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -225,10 +218,9 @@ class Profile extends State<ProfilePage> {
               ),
               ListTile(
                 leading: Icon(Icons.account_balance_wallet),
-                title: Text('Cerrar Sesión'),
+                title: Text('Log out'),
                 onTap: () async {
-                  SharedPreferences preferences = await SharedPreferences
-                      .getInstance();
+                  SharedPreferences preferences = await SharedPreferences.getInstance();
                   await preferences.remove('rememberEmailPassword');
                   await preferences.remove("email");
                   await preferences.remove("contrasenia");
@@ -260,7 +252,7 @@ class Profile extends State<ProfilePage> {
                 Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: Colors.transparent,  // Cambio de azul a transparente
+                    color: Colors.transparent, // Cambio de azul a transparente
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Form(
@@ -281,7 +273,7 @@ class Profile extends State<ProfilePage> {
                               },
                               child: ClipOval(
                                 child: Image.network(
-                                  urlImg, //Imagen del usuario
+                                  urlImg, // Imagen del usuario
                                   width: 300,
                                   height: 300,
                                   fit: BoxFit.cover,
@@ -290,7 +282,7 @@ class Profile extends State<ProfilePage> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        SizedBox(height: 35),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -299,7 +291,8 @@ class Profile extends State<ProfilePage> {
                               child: TextFormField(
                                 style: TextStyle(fontSize: 14), // Tamaño del texto
                                 decoration: InputDecoration(
-                                  labelText: 'User Name',
+                                  labelText: 'Username',
+                                  labelStyle: TextStyle(color: Colors.black), // Cambia el color de la letra a negro
                                   border: OutlineInputBorder(),
                                   contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 10), // Padding interno del campo de entrada
                                 ),
@@ -320,7 +313,7 @@ class Profile extends State<ProfilePage> {
                                 onPressed: () {
                                   changeUserData();
                                 },
-                                child: Text('Guardar'),
+                                child: Text('Save'),
                                 backgroundColor: Colors.white,
                               ),
                             ),
@@ -342,7 +335,7 @@ class Profile extends State<ProfilePage> {
                     children: <Widget>[
                       buildButton(context, '$userAnimes', 'Animes'),
                       buildDivider(),
-                      buildButton(context, '$userCommunities', 'Comunidades'),
+                      buildButton(context, '$userCommunities', 'Communities'),
                       buildDivider(),
                       buildButton(context, '$userMangas', 'Mangas'),
                     ],

@@ -36,7 +36,7 @@ class Login extends State<LoginPage> {
       String? success = await fm.loginUser(email!, contrasenia!);
       if (success!='') {
         Fluttertoast.showToast(
-          msg: "Inicio de sesion existosa \nBienvenido Otaku",
+          msg: 'Successful login \nWelcome Otaku',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.black,
@@ -60,7 +60,7 @@ class Login extends State<LoginPage> {
         );
       } else {
         Fluttertoast.showToast(
-          msg: "Usuario o contraseña incorrectos \nPor favor, inténtelo de nuevo",
+          msg: "Incorrect email or password \nPlease try again",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.black,
@@ -101,7 +101,7 @@ class Login extends State<LoginPage> {
         iconTheme: IconThemeData(color :Colors.white),
         automaticallyImplyLeading: false,
         title: Text(
-          'INICIAR SESIÓN',
+          'LOGIN',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -175,7 +175,7 @@ class Login extends State<LoginPage> {
                     TextFormField(
                       obscureText: obscureText,
                       decoration: InputDecoration(
-                        labelText: 'Contraseña',
+                        labelText: 'Password',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
@@ -209,7 +209,7 @@ class Login extends State<LoginPage> {
                             });
                           },
                         ),
-                        Text('Recuérdame'),
+                        Text('Remember me'),
                       ],
                     ),
                     SizedBox(height: 5),
@@ -219,7 +219,7 @@ class Login extends State<LoginPage> {
                         child: ElevatedButton(
                           onPressed: iniciarSesion,
                           child: Text(
-                            'Iniciar Sesión',
+                            'Sign in',
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -239,7 +239,7 @@ class Login extends State<LoginPage> {
                       child: Container(
                         padding: EdgeInsets.all(10.0),
                         child: Text(
-                          '¿No tienes una cuenta? Regístrate',
+                          'You do not have an account? Sign up',
                           style: TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,

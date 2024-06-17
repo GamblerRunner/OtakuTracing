@@ -256,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             title: Text(
-              'EPISODIO ${widget.currentEpisode}',
+              'CHAPTER ${widget.currentEpisode}',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -297,13 +297,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: widget.currentEpisode > 1
                                 ? () => _navigateToEpisode(widget.currentEpisode - 1)
                                 : null,
-                            child: Text('Anterior'),
+                            child: Text('Previous'),
                           ),
                           ElevatedButton(
                             onPressed: widget.currentEpisode < widget.totalEpisodes
                                 ? () => _navigateToEpisode(widget.currentEpisode + 1)
                                 : null,
-                            child: Text('Siguiente'),
+                            child: Text('Next'),
                           ),
                         ],
                       ),

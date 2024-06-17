@@ -19,7 +19,7 @@ class Register extends State<RegisterPage> {
   String? contrasenia2;
   bool _isPasswordVisible1 = false;
   bool _isPasswordVisible2 = false;
-  bool pasarFire = true; // Definir la variable pasarFire
+  bool pasarFire = true;
 
   FirebaseManager fm = FirebaseManager();
 
@@ -32,7 +32,7 @@ class Register extends State<RegisterPage> {
 
       if (contrasenia1 != contrasenia2) {
         Fluttertoast.showToast(
-          msg: 'Las contraseñas no coinciden',
+          msg: 'Passwords do not match',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.red,
@@ -44,7 +44,7 @@ class Register extends State<RegisterPage> {
       fm.registerNewUser(correo!, contrasenia1!, usuario!).then((success) async {
         if (success == true) {
           Fluttertoast.showToast(
-            msg: 'Usuario registrado correctamente',
+            msg: 'Successfully registered user',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.black,
@@ -59,7 +59,7 @@ class Register extends State<RegisterPage> {
           );
         } else {
           Fluttertoast.showToast(
-            msg: 'Error al registrar el usuario',
+            msg: 'Error registering user',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.red,
@@ -72,11 +72,11 @@ class Register extends State<RegisterPage> {
 
   String? _validateField(String? value, String fieldName) {
     if (value == null || value.isEmpty) {
-      return 'El campo $fieldName está vacío';
+      return 'The field $fieldName is empty';
     } else if (fieldName == 'Nombre del usuario' && !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
-      return 'El campo $fieldName solo puede contener \nletras de la A a la Z y números';
+      return 'The field $fieldName can only contain \nletters from A to Z and numbers';
     } else if (fieldName == 'Email' && !value.contains('@')) {
-      return 'El campo $fieldName debe contener un "@"';
+      return 'The field $fieldName must contain an "@"';
     }
     return null;
   }
@@ -89,7 +89,7 @@ class Register extends State<RegisterPage> {
         automaticallyImplyLeading: false,
         title: Center(
           child: Text(
-            'REGISTRO',
+            'REGISTRATION',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -130,7 +130,7 @@ class Register extends State<RegisterPage> {
                       children: <Widget>[
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Nombre del usuario',
+                            labelText: 'Username',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5.0),
                             ),
@@ -152,7 +152,7 @@ class Register extends State<RegisterPage> {
                         SizedBox(height: 15),
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Contraseña',
+                            labelText: 'Password',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5.0),
                             ),
@@ -173,7 +173,7 @@ class Register extends State<RegisterPage> {
                         SizedBox(height: 15),
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Confirmar contraseña',
+                            labelText: 'Confirm password',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5.0),
                             ),
@@ -201,7 +201,7 @@ class Register extends State<RegisterPage> {
                             child: ElevatedButton(
                               onPressed: registrarse,
                               child: Text(
-                                'Registrarse',
+                                'Sign up',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -222,7 +222,7 @@ class Register extends State<RegisterPage> {
                             padding: EdgeInsets.all(10.0),
                             alignment: Alignment.center,
                             child: Text(
-                              '¿Ya tienes cuenta? Inicia sesión',
+                              'Do you already have an account? Sign in',
                               style: TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.bold,
