@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Firebase_Manager.dart';
 import 'package:tfc/MyCommunities.dart';
 import 'package:tfc/myMangas.dart';
-import 'package:tfc/settings.dart';
 
 import 'ProfileImg.dart';
 import 'help.dart';
