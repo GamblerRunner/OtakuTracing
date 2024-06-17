@@ -21,7 +21,7 @@ class ReadMangaApp extends StatelessWidget {
 
 class ReadMangaPage extends StatefulWidget {
   final int totalChapters;
-  int selectedChapter; // Número del capítulo seleccionado
+  int selectedChapter;
   String mangaName;
 
   ReadMangaPage({required this.totalChapters, required this.selectedChapter, required this.mangaName}); // Modificar el constructor
@@ -50,7 +50,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
   }
 
   Future<void> fetchPageData() async {
-    String chapterName = ('Chapter${widget.selectedChapter}').toString();
+    String chapterName = ('Chapter${widget.selectedChapter+1}').toString();
     List<String> fetchedPages = await fm.getPages(chapterName);
 
     setState(() {

@@ -246,7 +246,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                           ),
                           child: ListTile(
                             title: Text(
-                              index == 0 ? 'COVER' : 'Capítulo $index',
+                              index == 0 ? 'Capítulo $index' : 'Capítulo $index',
                               style: TextStyle(
                                 color: watched
                                     ? Colors.red
