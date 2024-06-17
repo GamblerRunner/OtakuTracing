@@ -294,7 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ElevatedButton(
-                            onPressed: widget.currentEpisode > 1
+                            onPressed: widget.currentEpisode > 0
                                 ? () => _navigateToEpisode(widget.currentEpisode - 1)
                                 : null,
                             child: Text('Anterior'),
