@@ -227,12 +227,10 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: (numberChapters-1 ?? 0) + 1, // Adding one for the "COVER" item
+                      itemCount: (numberChapters-1 ?? 0) + 1,
                       itemBuilder: (context, index) {
-                        // Adjust the chapter index if the "COVER" is at index 0
                         int chapterNumber = index == 0 ? 0 : index;
 
-                        // Check if the current chapter number is in the seen or watching lists
                         bool watched = fetchedChaptersSeen.contains(chapterNumber);
                         bool watching = fetchedChaptersWatching.contains(chapterNumber);
 

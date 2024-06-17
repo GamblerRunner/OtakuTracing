@@ -294,7 +294,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                                     builder: (context) =>
                                         PlayerAnime(
                                           totalEpisodes: fetchedEpisodes.length ?? 0,
-                                          currentEpisode: index + 1,
+                                          currentEpisode: index ,
                                           AnimeName: fetchedAnimeData[0].romajiTitle ?? "no title",
                                           getEpisodes: fetchedEpisodes,
                                           getTrailer: fetchedAnimeData[0].mediaPlay ?? '1',

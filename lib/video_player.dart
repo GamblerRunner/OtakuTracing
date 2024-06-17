@@ -75,6 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _initializeController() async {
     int getFMSeconds = await fm.getEpiodeSecond(widget.AnimeName, widget.currentEpisode);
 
+    print(widget.getEpisodes);
+    print(widget.currentEpisode);
+    print(widget.getEpisodes[widget.currentEpisode]);
     _controller = YoutubePlayerController(
       initialVideoId: widget.getEpisodes[widget.currentEpisode],
       flags: YoutubePlayerFlags(

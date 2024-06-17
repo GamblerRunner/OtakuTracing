@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/MyCommunities.dart';
 import 'package:tfc/Profile.dart';
@@ -13,8 +14,11 @@ import 'myAnimes.dart';
 import 'help.dart';
 import 'InterfaceManga.dart';
 import 'myMangas.dart';
+import 'dart:ui' as ui;
 
 Future<void> main() async {
+  RenderErrorBox.backgroundColor = Colors.transparent;
+  RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: HomePage(animeManga: false),
