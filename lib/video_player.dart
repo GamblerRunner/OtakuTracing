@@ -73,14 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _initializeController() async {
-    // Get the start time in seconds from your data source asynchronously
     int getFMSeconds = await fm.getEpiodeSecond(widget.AnimeName, widget.currentEpisode);
-    print('salida video');
-    print(widget.getEpisodes[widget.currentEpisode]);
-    // Initialize _controller with startAt set to getFMSeconds
 
     _controller = YoutubePlayerController(
-      initialVideoId: widget.getEpisodes[widget.currentEpisode], // Replace with your video ID
+      initialVideoId: widget.getEpisodes[widget.currentEpisode],
       flags: YoutubePlayerFlags(
         autoPlay: false,
         mute: true,
