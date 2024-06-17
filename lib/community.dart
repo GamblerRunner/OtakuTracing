@@ -17,6 +17,7 @@ import 'animation.dart';
 import 'myAnimes.dart';
 import 'help.dart';
 import 'myMangas.dart';
+import 'mangas.dart';
 
 void main() {
   runApp(CommmunityApp());
@@ -212,7 +213,7 @@ class _CommunityPageState extends State<CommunityPage> {
                 title: Text('Log out'),
                 onTap: () async {
                   SharedPreferences preferences = await SharedPreferences.getInstance();
-                  await preferences.remove('rememberEmailPassword');
+                  await preferences.setBool('rememberEmailPassword', false);
                   await preferences.remove("email");
                   await preferences.remove("contrasenia");
                   await preferences.remove("uid");
@@ -270,6 +271,7 @@ class _CommunityPageState extends State<CommunityPage> {
           },
         ),
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey,
         items: const <BottomNavigationBarItem>[
@@ -279,7 +281,7 @@ class _CommunityPageState extends State<CommunityPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message, color: Colors.white),
-            label: 'Comunidades',
+            label: 'Communities',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book, color: Colors.white),

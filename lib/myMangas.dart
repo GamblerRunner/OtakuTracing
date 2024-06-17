@@ -191,7 +191,7 @@ class myMangasPage extends State<myMangas> {
                 title: Text('Log out'),
                 onTap: () async {
                   SharedPreferences preferences = await SharedPreferences.getInstance();
-                  await preferences.remove('rememberEmailPassword');
+                  await preferences.setBool('rememberEmailPassword', false);
                   await preferences.remove("email");
                   await preferences.remove("contrasenia");
                   await preferences.remove("uid");

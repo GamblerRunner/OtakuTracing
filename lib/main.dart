@@ -18,11 +18,15 @@ import 'package:flutter/rendering.dart';
 
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Asegurarse de que los Widgets están inicializados
+  final SharedPreferences preferences = await SharedPreferences.getInstance();
+  bool rememberMe = preferences.getBool('rememberEmailPassword') ?? false;
+
   RenderErrorBox.backgroundColor = Colors.transparent;
   RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: HomePage(animeManga: false),
+    home: rememberMe ? HomePage(animeManga: false) : LoginPage(),
   ));
 }
 
@@ -286,7 +290,7 @@ class _HomePageStartState extends State<HomePageStart> {
                 title: Text('Log out'),
                 onTap: () async {
                   SharedPreferences preferences = await SharedPreferences.getInstance();
-                  await preferences.remove('rememberEmailPassword');
+                  await preferences.setBool('rememberEmailPassword', false);
                   await preferences.remove("email");
                   await preferences.remove("contrasenia");
                   await preferences.remove("uid");
@@ -296,6 +300,7 @@ class _HomePageStartState extends State<HomePageStart> {
                   );
                 },
               ),
+
             ],
           ),
         ),

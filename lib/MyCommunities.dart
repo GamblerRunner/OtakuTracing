@@ -210,7 +210,7 @@ class MyCommunityPageState extends State<MyCommunityPage> {
                 title: Text('Log out'),
                 onTap: () async {
                   SharedPreferences preferences = await SharedPreferences.getInstance();
-                  await preferences.remove('rememberEmailPassword');
+                  await preferences.setBool('rememberEmailPassword', false);
                   await preferences.remove("email");
                   await preferences.remove("contrasenia");
                   await preferences.remove("uid");
@@ -267,26 +267,6 @@ class MyCommunityPageState extends State<MyCommunityPage> {
             }
           },
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.grey,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.tv_rounded, color: Colors.white),
-            label: 'Animes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message, color: Colors.white),
-            label: 'Comunidades',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book, color: Colors.white),
-            label: 'Mangas',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
-        onTap: _onItemTapped,
       ),
     );
   }
