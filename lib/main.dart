@@ -64,6 +64,7 @@ class _HomePageStartState extends State<HomePageStart> {
 
 
   bool animemanga = false;
+  bool searching = false;
 
   @override
   void initState() {
@@ -95,18 +96,21 @@ class _HomePageStartState extends State<HomePageStart> {
 
   Future<void> fetchSearchData() async {
     if (_formKey.currentState!.validate()) {
+      searching = true;
       _formKey.currentState!.save();
       if (search!.isEmpty) {
         return;
       }
       fetchedData.clear();
-      fetchedData = await data.getPageSearchData(search!);
+      fetchedData = await data.getPageSearchData(search!, animemanga);
       print(fetchedData?[0].coverImageUrl.toString());
       if (fetchedData != null) {
         setState(() {});
       } else {
         print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
       }
+    }else{
+      searching = false;
     }
   }
 
@@ -116,8 +120,8 @@ class _HomePageStartState extends State<HomePageStart> {
       searchText = (index == 2) ? 'Buscar Manga' : 'Buscar Anime';
       appBarTitle = (index == 2) ? 'MANGAS' : 'ANIMES';
       animemanga = (index == 2);
-      fetchedData.clear();  // Limpiar datos anteriores
-      fetchData();  // Cargar nuevos datos
+      fetchedData.clear();
+      fetchData();
     });
 
     switch (index) {
@@ -149,7 +153,7 @@ class _HomePageStartState extends State<HomePageStart> {
   }
 
   Future<void> fetchNextPage(bool next) async {
-    final data = await this.data.fetchNextPage(next);
+    final data = await this.data.fetchNextPage(next, animemanga);
     setState(() {
       fetchedData = data!;
       scrollToTop();
@@ -340,7 +344,7 @@ class _HomePageStartState extends State<HomePageStart> {
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 'El campo Buscar está vacío';
+                              return 'This field is empty';
                             }
                             return null;
                           },
@@ -417,6 +421,12 @@ class _HomePageStartState extends State<HomePageStart> {
               height: 30,
               child: FloatingActionButton(
                 onPressed: () async {
+                  if (searching) {
+                    setState(() {
+                      _formKey.currentState!.reset();
+                      searchText = '';
+                    });
+                  }
                   await fetchNextPage(false);
                 },
                 child: Text('<'),
@@ -429,6 +439,12 @@ class _HomePageStartState extends State<HomePageStart> {
               height: 30,
               child: FloatingActionButton(
                 onPressed: () async {
+                  if (searching) {
+                    setState(() {
+                      _formKey.currentState!.reset();
+                      searchText = '';
+                    });
+                  }
                   await fetchNextPage(true);
                 },
                 child: Text('>'),

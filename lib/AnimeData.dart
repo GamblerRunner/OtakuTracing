@@ -281,7 +281,6 @@ class AnimeData {
           _mangaQuery, // Use the static query string
           variables: {'page': _currentPage, 'perPage': _perPage},
         );
-        //print(result);
         if (result.hasException) {
           throw Exception("Error cogiendo los datos");
         }
@@ -290,20 +289,21 @@ class AnimeData {
         MediaModel.fromJson(result.data?['Page'] ?? {});
         _totalPages = animeData.pageInfo.total;
         _animeList.addAll(animeData.media);
-        //print(_currentPage);
-        //print(_animeList[0].romajiTitle);
         return _animeList;
       } catch (e) {
         throw Exception("Error cogiendo los datos");
       }
 
-
   }
 
-  Future<List<Media>> getPageSearchData(String search) async {
+  Future<List<Media>> getPageSearchData(String search, bool am) async {
     try {
+      String media = _animeSearchQuery;
+      if(am){
+        media = _mangaSearchQuery;
+      }
       final result = await client.query(
-        _animeSearchQuery, // Use the static query string
+        media,
         variables: {'page': _currentPage, 'perPage': _perPage, 'search': search},
       );
       //print(result);
@@ -315,8 +315,6 @@ class AnimeData {
       MediaModel.fromJson(result.data?['Page'] ?? {});
       _totalPages = animeData.pageInfo.total;
       _animeList.addAll(animeData.media);
-      //print(_currentPage);
-      //print(_animeList[0].romajiTitle);
       return _animeList;
     } catch (e) {
       throw Exception("Error cogiendo los datos");
@@ -324,19 +322,19 @@ class AnimeData {
 
   }
 
-  Future<List<Media>?> fetchNextPage(bool afterBefore) async {
+  Future<List<Media>?> fetchNextPage(bool afterBefore, bool media) async {
     try{
       if(afterBefore){
         if (_currentPage < _totalPages) {
           _animeList=[];
           _currentPage++;
-          return await getPageData(false);
+          return await getPageData(media);
         }
       }else{
         if (_currentPage > 1) {
           _animeList=[];
           _currentPage--;
-          return await getPageData(false);
+          return await getPageData(media);
         }
       }
     } catch (e) {
