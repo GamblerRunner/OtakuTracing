@@ -67,7 +67,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color :Colors.white),
         title: Text(
-          'EPISODE ${widget.selectedChapter}', // Mostrar el número del capítulo seleccionado
+          'CHAPTER ${widget.selectedChapter}', // Mostrar el número del capítulo seleccionado
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -157,7 +157,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
                     }
                   });
                 },
-                child: Text('Anterior'),
+                child: Text('Previous'),
               ),
             ),
           if (widget.selectedChapter < widget.totalChapters)
@@ -179,7 +179,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
                     }
                   });
                 },
-                child: Text('Siguiente'),
+                child: Text('Next'),
               ),
             ),
         ],

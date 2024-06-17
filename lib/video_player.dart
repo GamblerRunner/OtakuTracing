@@ -259,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             title: Text(
-              'CHAPTER ${widget.currentEpisode}',
+              'EPISODE ${widget.currentEpisode}',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
