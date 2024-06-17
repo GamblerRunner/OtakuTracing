@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Firebase_Manager.dart';
 import 'package:tfc/MyCommunities.dart';
+import 'package:tfc/myMangas.dart';
 import 'package:tfc/settings.dart';
 
 import 'ProfileImg.dart';
@@ -71,16 +72,19 @@ class Profile extends State<ProfilePage> {
 
   }
 
-  Future<void> changeUserName() async {
-    if (_formKey.currentState!.validate()) {
+  Future<void> changeUserData() async {
+
       _formKey.currentState!.save();
+      if(newUserName == ''){
+        newUserName = userName;
+      }
       fm.changeUserName(newUserName!, urlImg);
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
       await preferences.setString("userName", newUserName!);
 
-    }
+
   }
 
   Widget buildDivider() => Container(
@@ -191,7 +195,7 @@ class Profile extends State<ProfilePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myAnimes()),
+                          MaterialPageRoute(builder: (context) => myMangas()),
                         );
                       },
                     ),
@@ -302,7 +306,7 @@ class Profile extends State<ProfilePage> {
                                 ),
                                 validator: (value) {
                                   if (value!.isEmpty) {
-                                    return 'El campo Email está vacío';
+                                    return 'Not Changing user name';
                                   }
                                   return null;
                                 },
@@ -315,7 +319,7 @@ class Profile extends State<ProfilePage> {
                               height: 50,
                               child: FloatingActionButton(
                                 onPressed: () {
-                                  changeUserName();
+                                  changeUserData();
                                 },
                                 child: Text('Guardar'),
                                 backgroundColor: Colors.white,
