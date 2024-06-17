@@ -1,46 +1,53 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/MyCommunities.dart';
 import 'package:tfc/Profile.dart';
-import 'package:tfc/ProfileImg.dart';
 import 'package:tfc/interfaceAnime.dart';
 import 'package:tfc/login.dart';
-import 'package:tfc/video_player.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'Firebase_Manager.dart';
-import 'firebase_options.dart';
-import 'settings.dart';
-import 'mangas.dart';
 import 'community.dart';
 import 'animation.dart';
 import 'myAnimes.dart';
 import 'help.dart';
-import 'readManga.dart';
 import 'InterfaceManga.dart';
 import 'myMangas.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: HomePage(),
+    home: HomePage(animeManga: false),
   ));
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
+  final bool animeManga;
+
+  const HomePage({Key? key, required this.animeManga}) : super(key: key);
+
   @override
-  _HomePageState createState() => _HomePageState();
+  Widget build(BuildContext context) {
+    return HomePageStart(animeManga: animeManga);
+  }
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageStart extends StatefulWidget {
+  final bool animeManga;
+
+  const HomePageStart({required this.animeManga, Key? key}) : super(key: key);
+
+  @override
+  _HomePageStartState createState() => _HomePageStartState();
+}
+
+class _HomePageStartState extends State<HomePageStart> {
   late FirebaseManager fm;
 
   late String userName = 'user';
   late String userImg = 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg';
-  bool _showOptions = false;
-  int _selectedIndex = 0;
+
+  int selectedIndex = 0;
   List<Media> fetchedData = [];
   final AnimeData data = AnimeData();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -58,18 +65,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     fm = FirebaseManager();
+    animemanga = widget.animeManga;
     fetchData();
     fetchUserData();
   }
 
   Future<void> fetchData() async {
     fetchedData = await data.getPageData(animemanga);
-    print(fetchedData?[0].coverImageUrl.toString());
-    if (fetchedData != null) {
-      setState(() {});
-    } else {
-      print("ERROR, NO FETCHING DATA FROM THE DATABASE FOUND (error de consulta en grahpql)");
-    }
   }
 
   Future<void> fetchUserData() async {
@@ -104,9 +106,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
       searchText = (index == 2) ? 'Buscar Manga' : 'Buscar Anime';
       appBarTitle = (index == 2) ? 'MANGAS' : 'ANIMES';
       animemanga = (index == 2);
@@ -119,7 +121,6 @@ class _HomePageState extends State<HomePage> {
         fetchedData.clear();
         animemanga = false;
         fetchData();
-        print(true);
         break;
 
       case 1:
@@ -130,13 +131,12 @@ class _HomePageState extends State<HomePage> {
         fetchedData.clear();
         animemanga = true;
         fetchData();
-        print(false);
         break;
     }
   }
 
 
-  void _scrollToTop() {
+  void scrollToTop() {
     _scrollController.animateTo(
       0.0,
       duration: Duration(milliseconds: 300),
@@ -144,11 +144,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _fetchNextPage(bool next) async {
+  Future<void> fetchNextPage(bool next) async {
     final data = await this.data.fetchNextPage(next);
     setState(() {
       fetchedData = data!;
-      _scrollToTop();
+      scrollToTop();
     });
   }
 
@@ -215,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => HomePage(animeManga: false,)),
                         );
                       },
                     ),
@@ -413,7 +413,7 @@ class _HomePageState extends State<HomePage> {
               height: 30,
               child: FloatingActionButton(
                 onPressed: () async {
-                  await _fetchNextPage(false);
+                  await fetchNextPage(false);
                 },
                 child: Text('<'),
                 backgroundColor: Colors.white,
@@ -425,7 +425,7 @@ class _HomePageState extends State<HomePage> {
               height: 30,
               child: FloatingActionButton(
                 onPressed: () async {
-                  await _fetchNextPage(true);
+                  await fetchNextPage(true);
                 },
                 child: Text('>'),
                 backgroundColor: Colors.white,
@@ -451,9 +451,9 @@ class _HomePageState extends State<HomePage> {
             label: 'Mangas',
           ),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: selectedIndex,
         selectedItemColor: Colors.black,
-        onTap: _onItemTapped,
+        onTap: onItemTapped,
       ),
     );
   }

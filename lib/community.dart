@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tfc/MyCommunities.dart';
 import 'package:tfc/chat_page.dart';
 import 'Firebase_Manager.dart';
 import 'main.dart';
@@ -23,9 +24,8 @@ void main() {
 
 FirebaseManager fm = FirebaseManager();
 FirebaseFirestore db = FirebaseFirestore.instance;
-late String userName = "Paco";
-late String userUID = "12";
-late String comunityChat = "One Piece";
+late String userName = "No Name";
+late String comunityChat = "Community";
 List<String> comunities = [];
 
 class CommmunityApp extends StatelessWidget {
@@ -45,21 +45,21 @@ class CommunityPage extends StatefulWidget {
 }
 
 class _CommunityPageState extends State<CommunityPage> {
-  int _selectedIndex =
-  1; // Índice seleccionado del elemento actual ('Comunidades')
+  int _selectedIndex = 1;
 
-  void init() async {
+  @override
+  void initState() {
     super.initState();
-    fm.getUser();
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String fetchedUserName = sharedPreferences.getString("userName") ?? '';
-    String fetchedUserId = sharedPreferences.getString("uid") ?? '';
-    //List<String>fetchedComunities = fm.getComunities() as List<String>;
+    fetchUserData();
+  }
 
+  Future<void> fetchUserData() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await Future.delayed(Duration(seconds: 1));
+    await fm.getUser();
+    String fetchedUserName = preferences.getString("userName") ?? '';
     setState(() {
       userName = fetchedUserName;
-      userUID = fetchedUserId;
-      //comunities=fetchedComunities;
     });
   }
 
@@ -80,11 +80,10 @@ class _CommunityPageState extends State<CommunityPage> {
     switch (index) {
       case 0:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => HomePage(animeManga: false)));
         break;
 
       case 1:
-      // VICTOR LO HACE
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -95,7 +94,7 @@ class _CommunityPageState extends State<CommunityPage> {
 
       case 2:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MangasPage()));
+            context, MaterialPageRoute(builder: (context) => HomePage(animeManga: true)));
         break;
     }
   }
@@ -130,7 +129,7 @@ class _CommunityPageState extends State<CommunityPage> {
                   padding: EdgeInsets.zero,
                   child: Center(
                     child: Text(
-                      'User Name',
+                      userName,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -150,7 +149,7 @@ class _CommunityPageState extends State<CommunityPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => HomePage(animeManga: false,)),
                         );
                       },
                     ),
@@ -188,11 +187,11 @@ class _CommunityPageState extends State<CommunityPage> {
                       leading: Icon(Icons.message),
                       title: Text('Mis Comunidades'),
                       onTap: () {
-                        /* Navigator.push(
+                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myMangas()),
+                          MaterialPageRoute(builder: (context) => MyCommunityPage()),
                         );
-                         */
+
                       },
                     ),
                   ],

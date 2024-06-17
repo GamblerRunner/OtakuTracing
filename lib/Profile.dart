@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/Firebase_Manager.dart';
+import 'package:tfc/MyCommunities.dart';
 import 'package:tfc/settings.dart';
 
 import 'ProfileImg.dart';
@@ -160,7 +161,7 @@ class Profile extends State<ProfilePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => HomePage(animeManga: false)),
                         );
                       },
                     ),
@@ -198,11 +199,11 @@ class Profile extends State<ProfilePage> {
                       leading: Icon(Icons.message),
                       title: Text('Mis Comunidades'),
                       onTap: () {
-                        /* Navigator.push(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => myMangas()),
+                          MaterialPageRoute(builder: (context) => MyCommunityPage()),
                         );
-                         */
+
                       },
                     )
                   ],

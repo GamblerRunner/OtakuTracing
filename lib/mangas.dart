@@ -39,7 +39,7 @@ class _MangasPageState extends State<MangasPage> {
 
     switch (index) {
       case 0:
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(animeManga: false)));
       break;
 
       case 1:
@@ -47,7 +47,7 @@ class _MangasPageState extends State<MangasPage> {
       break;
 
       case 2:
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MangasPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(animeManga: true)));
       break;
     }
   }

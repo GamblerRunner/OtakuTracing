@@ -78,11 +78,10 @@ class MyCommunityPageState extends State<MyCommunityPage> {
     switch (index) {
       case 0:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => HomePage(animeManga: false)));
         break;
 
       case 1:
-      // VICTOR LO HACE
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -148,7 +147,7 @@ class MyCommunityPageState extends State<MyCommunityPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => HomePage(animeManga: false,)),
                         );
                       },
                     ),

@@ -132,7 +132,7 @@ class myAnimesPage extends State<myAnimes> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => HomePage(animeManga: false)),
                         );
                       },
                     ),

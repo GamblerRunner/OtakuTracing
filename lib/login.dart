@@ -56,7 +56,7 @@ class Login extends State<LoginPage> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => HomePage(animeManga: false,)),
         );
       } else {
         Fluttertoast.showToast(
@@ -85,7 +85,7 @@ class Login extends State<LoginPage> {
       if (success != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => HomePage(animeManga: false,)),
         );
       }else{
         await preferences.remove("uid");
