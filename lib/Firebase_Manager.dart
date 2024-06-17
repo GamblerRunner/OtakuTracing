@@ -97,9 +97,9 @@ class FirebaseManager {
     await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+    uid = (await preferences.getString("uid"))!;
 
-    final docRef = db.collection("users").doc(uidUser);
+    final docRef = db.collection("users").doc(uid);
 
     try {
       // Esperar a que se complete la operación de obtener el documento
