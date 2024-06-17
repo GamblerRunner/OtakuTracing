@@ -13,12 +13,8 @@ import 'myAnimes.dart';
 import 'help.dart';
 import 'InterfaceManga.dart';
 import 'myMangas.dart';
-import 'dart:ui' as ui;
-import 'package:flutter/rendering.dart';
 
 Future<void> main() async {
-  RenderErrorBox.backgroundColor = Colors.transparent;
-  RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: HomePage(animeManga: false),
@@ -59,7 +55,7 @@ class _HomePageStartState extends State<HomePageStart> {
   final ScrollController _scrollController = ScrollController();
 
   String? search = '';
-  String searchText = 'Search Anime';
+  String searchText = 'Buscar Anime';
   String appBarTitle = 'ANIMES';
 
 
@@ -113,11 +109,11 @@ class _HomePageStartState extends State<HomePageStart> {
   void onItemTapped(int index) {
     setState(() {
       selectedIndex = index;
-      searchText = (index == 2) ? 'Search Manga' : 'Search Anime';
+      searchText = (index == 2) ? 'Buscar Manga' : 'Buscar Anime';
       appBarTitle = (index == 2) ? 'MANGAS' : 'ANIMES';
       animemanga = (index == 2);
-      fetchedData.clear();
-      fetchData();
+      fetchedData.clear();  // Limpiar datos anteriores
+      fetchData();  // Cargar nuevos datos
     });
 
     switch (index) {
@@ -225,7 +221,7 @@ class _HomePageStartState extends State<HomePageStart> {
                     ),
                     ListTile(
                       leading: Icon(Icons.account_circle),
-                      title: Text('Profile'),
+                      title: Text('Perfil'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -235,7 +231,7 @@ class _HomePageStartState extends State<HomePageStart> {
                     ),
                     ListTile(
                       leading: Icon(Icons.tv),
-                      title: Text('My Animes'),
+                      title: Text('Mis Animes'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -245,7 +241,7 @@ class _HomePageStartState extends State<HomePageStart> {
                     ),
                     ListTile(
                       leading: Icon(Icons.menu_book),
-                      title: Text('My Mangas'),
+                      title: Text('Mis Mangas'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -255,7 +251,7 @@ class _HomePageStartState extends State<HomePageStart> {
                     ),
                     ListTile(
                       leading: Icon(Icons.message),
-                      title: Text('My Communities'),
+                      title: Text('Mis Comunidades'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -269,7 +265,7 @@ class _HomePageStartState extends State<HomePageStart> {
               ),
               ListTile(
                 leading: Icon(Icons.help_outline),
-                title: Text('Terms'),
+                title: Text('Terminos'),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -279,7 +275,7 @@ class _HomePageStartState extends State<HomePageStart> {
               ),
               ListTile(
                 leading: Icon(Icons.account_balance_wallet),
-                title: Text('Log out'),
+                title: Text('Cerrar Sesión'),
                 onTap: () async {
                   SharedPreferences preferences = await SharedPreferences.getInstance();
                   await preferences.remove('rememberEmailPassword');
@@ -356,7 +352,7 @@ class _HomePageStartState extends State<HomePageStart> {
                         onPressed: () async {
                           await fetchSearchData();
                         },
-                        child: Text('Search'),
+                        child: Text('Buscar'),
                         backgroundColor: Colors.white,
                       ),
                     ),
@@ -448,7 +444,7 @@ class _HomePageStartState extends State<HomePageStart> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message, color: Colors.white),
-            label: 'Communities',
+            label: 'Comunidades',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book, color: Colors.white),

@@ -75,6 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _initializeController() async {
     int getFMSeconds = await fm.getEpiodeSecond(widget.AnimeName, widget.currentEpisode);
 
+    print(widget.getEpisodes);
+    print(widget.currentEpisode);
+    print(widget.getEpisodes[widget.currentEpisode]);
     _controller = YoutubePlayerController(
       initialVideoId: widget.getEpisodes[widget.currentEpisode],
       flags: YoutubePlayerFlags(
@@ -294,7 +297,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ElevatedButton(
-                            onPressed: widget.currentEpisode > 1
+                            onPressed: widget.currentEpisode > 0
                                 ? () => _navigateToEpisode(widget.currentEpisode - 1)
                                 : null,
                             child: Text('Previous'),

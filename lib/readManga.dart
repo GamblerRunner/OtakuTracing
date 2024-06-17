@@ -139,14 +139,14 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
             ],
           ),
           // Botones de flecha
-          if (widget.selectedChapter > 1) // Verifica si el capítulo actual es mayor que 1
+          if (widget.selectedChapter > 0) // Verifica si el capítulo actual es mayor que 1
             Positioned(
               left: 10,
               bottom: 80,
               child: ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    if (widget.selectedChapter > 1) {
+                    if (widget.selectedChapter > 0) {
                       widget.selectedChapter--;
                       fetchPageData();
                       if (isCascada) {
