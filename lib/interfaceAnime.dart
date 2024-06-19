@@ -251,10 +251,8 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                             ),
                           );
                         } else {
-                          bool watched = fetchedEpisodesSeen.contains(
-                              index + 1);
-                          bool watching = fetchedEpisodesWatching.contains(
-                              index + 1);
+                          bool watched = fetchedEpisodesSeen.contains(index);
+                          bool watching = fetchedEpisodesWatching.contains(index);
                           return Container(
                             margin: EdgeInsets.symmetric(
                                 vertical: 4, horizontal: 8),

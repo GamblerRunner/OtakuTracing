@@ -8,7 +8,6 @@ import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'Firebase_Manager.dart';
 import 'community.dart';
-import 'animation.dart';
 import 'myAnimes.dart';
 import 'help.dart';
 import 'InterfaceManga.dart';

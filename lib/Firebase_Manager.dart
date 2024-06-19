@@ -102,10 +102,8 @@ class FirebaseManager {
     final docRef = db.collection("users").doc(uid);
 
     try {
-      // Esperar a que se complete la operación de obtener el documento
       DocumentSnapshot doc = await docRef.get();
 
-      // Obtener los datos del documento
       final data = doc.data() as Map<String, dynamic>;
       print('testeando $data');
 
@@ -116,7 +114,6 @@ class FirebaseManager {
       await preferences.setString("userName", userName);
       await preferences.setString("ImgProfile", userImg);
     } catch (e) {
-      // Manejar errores al obtener el documento
       print("Error getting document: $e");
     }
   }

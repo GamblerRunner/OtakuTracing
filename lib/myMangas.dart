@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tfc/MyCommunities.dart';
 import 'package:tfc/myAnimes.dart';
-import 'package:tfc/settings.dart';
 import 'AnimeData.dart';
 import 'AnimeModel.dart';
 import 'Firebase_Manager.dart';
+import 'InterfaceManga.dart';
 import 'Profile.dart';
-import 'community.dart';
 import 'help.dart';
-import 'interfaceAnime.dart';
 import 'login.dart';
 import 'main.dart';
-import 'animation.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
@@ -34,8 +31,6 @@ class myMangasPage extends State<myMangas> {
 
   List<Media> fetchedData = [];
   final AnimeData data = AnimeData();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ScrollController _scrollController = ScrollController();
 
 
@@ -75,7 +70,7 @@ class myMangasPage extends State<myMangas> {
   Future<void> saveID(int id) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setInt("idMedia", id);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceAnimePage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceMangaPage()));
   }
 
   @override
