@@ -268,7 +268,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                                 style: TextStyle(
                                   color: watched
                                       ? Colors.red : (watching
-                                      ? Colors.grey
+                                      ? Colors.green
                                       : Colors.white),
                                 ),
 
