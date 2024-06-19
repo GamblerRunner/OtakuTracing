@@ -247,7 +247,7 @@ class InterfaceManga extends State<InterfaceMangaPage> {
                               index == 0 ? 'Chapter $index' : 'Chapter $index',
                               style: TextStyle(
                                 color: watched
-                                    ? Colors.green
+                                    ? Colors.red
                                     : (watching ? Colors.green : Colors.white),
                               ),
                             ),
