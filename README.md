@@ -1,4 +1,4 @@
 # OTAKU TRACING 
 
-Proyecto developted with Flutter, Graphql, Firebase.
+Proyect developted with Flutter, Graphql, Firebase.
 
