@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/Profile.dart';
+import 'package:tfc/Profile/Profile.dart';
 
-import 'Firebase_Manager.dart';
+import '../Firebase/Firebase_Manager.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -37,7 +37,6 @@ class ProfileImg extends State<ProfileImgPage> {
       imagePaths = newImagePaths;
     });
 
-    print('Imagenes obtenidas: $imagePaths');
   }
 
   Future<void> setImg(String url) async {
@@ -87,9 +86,9 @@ class ProfileImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Obtener el ancho de la pantalla
+    // Gets the length of the screen
     final screenWidth = MediaQuery.of(context).size.width;
-    // Definir el tamaño de las imágenes
+    // Define how much size in every row it fills
     final itemSize = screenWidth / 3; // 3 imágenes por fila
 
     return GridView.builder(

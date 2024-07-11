@@ -1,7 +1,7 @@
 import 'package:graphql/client.dart';
 
 class GrahpqlData {
-  static const String _endpoint = 'https://graphql.anilist.co';
+  static const String _endpoint = 'https://graphql.anilist.co'; //the url where all the info is o every anime and manga is
   final GraphQLClient client;
 
   GrahpqlData({GraphQLClient? injectedClient})
@@ -22,7 +22,7 @@ class GrahpqlData {
       }) async {
     try {
       _buildClient();
-      final QueryResult result = await client.query(
+      final QueryResult result = await client.query( //Here calls the method query form GraphQLClient class
         QueryOptions(
           document: gql(queryString),
           variables: variables ?? {},
@@ -32,7 +32,6 @@ class GrahpqlData {
       if (result.hasException) {
         throw result.exception!;
       }
-      print(result);
       return result;
     } catch (e) {
       throw e.toString();

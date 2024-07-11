@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Firebase_Manager.dart';
+import '../Firebase/Firebase_Manager.dart';
 
 class PlayerAnime extends StatelessWidget {
   final int totalEpisodes;
@@ -72,12 +72,19 @@ class _MyHomePageState extends State<MyHomePage> {
     _initializeController();
   }
 
+  /// Initializes the YouTube player controller with the specified video and settings.
+  ///
+  /// This asynchronous method performs the following steps:
+  /// 1. Retrieves the number of seconds to start the video from a data source.
+  /// 2. Creates a `YoutubePlayerController` with the initial video ID and playback settings.
+  /// 3. Adds a listener to handle video playback events.
+  /// 4. Loads the watched duration and seeks the video to that point.
+  /// 5. Adds another listener to update the state with the video's total duration.
   Future<void> _initializeController() async {
-    int getFMSeconds = await fm.getEpiodeSecond(widget.AnimeName, widget.currentEpisode);
+    // Retrieve the starting position in seconds for the current episode of the anime.
+    int getFMSeconds = await fm.getEpisodeSecond(widget.AnimeName, widget.currentEpisode);
 
-    print(widget.getEpisodes);
-    print(widget.currentEpisode);
-    print(widget.getEpisodes[widget.currentEpisode]);
+    // Initialize the YouTube player controller with the retrieved start time.
     _controller = YoutubePlayerController(
       initialVideoId: widget.getEpisodes[widget.currentEpisode],
       flags: YoutubePlayerFlags(
@@ -88,11 +95,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
+    // Add a listener to handle video playback events.
     _controller.addListener(_videoListener);
+
+    // Load the watched duration and seek the video to that point.
     await _loadWatchedDuration();
     _controller.seekTo(watchedDuration);
 
-    // Get the video duration and update the state
+    // Add a listener to update the state with the video's total duration.
     _controller.addListener(() {
       setState(() {
         videoDuration = _controller.metadata.duration;
@@ -117,7 +127,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _saveWatchedDuration(Duration duration) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('watched_duration_${widget.currentEpisode}', duration.inSeconds);
-    print('Duración vista guardada: ${duration.inSeconds} segundos del total de ${videoDuration.inSeconds }'); // Añadir esta línea
     if(duration.inSeconds == videoDuration.inSeconds -5){
       fm.saveEndDuration(widget.AnimeName ,widget.currentEpisode, false);
     }

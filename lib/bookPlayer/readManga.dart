@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'Firebase_Manager.dart';
+import '../Firebase/Firebase_Manager.dart';
 
 
 class ReadMangaApp extends StatelessWidget {
@@ -39,8 +38,8 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
     'https://cdn.pixabay.com/photo/2015/02/22/17/56/loading-645268_1280.jpg',
   ];
 
-  final PageController _pageController = PageController();
-  final ScrollController _cascadaController = ScrollController();
+  final PageController pageController = PageController();
+  final ScrollController cascadaController = ScrollController();
 
   void initState() {
     super.initState();
@@ -51,7 +50,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
 
   Future<void> fetchPageData() async {
     String chapterName = ('Chapter${widget.selectedChapter+1}').toString();
-    List<String> fetchedPages = await fm.getPages(chapterName);
+    List<String> fetchedPages = await fm.getPages(chapterName); // Load the images from the database
 
     setState(() {
       images = fetchedPages;
@@ -67,7 +66,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color :Colors.white),
         title: Text(
-          'CHAPTER ${widget.selectedChapter}', // Mostrar el número del capítulo seleccionado
+          'CHAPTER ${widget.selectedChapter}', // Show the number of chapter selected
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -132,7 +131,7 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Container(
                     margin: EdgeInsets.only(bottom: 20),
-                    child: isCascada ? _buildCascadaView() : _buildPageView(),
+                    child: isCascada ? buildCascadaView() : buildPageView(),
                   ),
                 ),
               ),
@@ -150,9 +149,9 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
                       widget.selectedChapter--;
                       fetchPageData();
                       if (isCascada) {
-                        _cascadaController.jumpTo(0);
+                        cascadaController.jumpTo(0);
                       } else {
-                        _pageController.jumpTo(0);
+                        pageController.jumpTo(0);
                       }
                     }
                   });
@@ -172,9 +171,9 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
                       widget.selectedChapter++;
                       fetchPageData();
                       if (isCascada) {
-                        _cascadaController.jumpTo(0);
+                        cascadaController.jumpTo(0);
                       } else {
-                        _pageController.jumpTo(0);
+                        pageController.jumpTo(0);
                       }
                     }
                   });
@@ -187,37 +186,48 @@ class _ReadMangaPageState extends State<ReadMangaPage> {
     );
   }
 
-  Widget _buildCascadaView() {
+  /// Builds a ListView in a cascading (waterfall) layout.
+  ///
+  /// This widget uses a ListView.builder to create a scrollable list of images,
+  /// each image is wrapped in a container and displayed with BoxFit.cover.
+  Widget buildCascadaView() {
     return ListView.builder(
-      controller: _cascadaController, // Controlador de desplazamiento para la vista en cascada
-      itemCount: images.length,
+      controller: cascadaController, // Controller to manage scrolling in the ListView.
+      itemCount: images.length, // Number of images to display.
       itemBuilder: (context, index) {
-        return _buildImageContainer(images[index], BoxFit.cover);
+        return buildImageContainer(images[index], BoxFit.cover); // Builds each image container.
       },
     );
   }
 
-  Widget _buildPageView() {
+  /// Builds a PageView for swiping between images.
+  ///
+  /// This widget uses a PageView.builder to create a swipeable list of images,
+  /// and updates the current page index on page change.
+  Widget buildPageView() {
     return PageView.builder(
-      itemCount: images.length,
-      controller: _pageController,
-      pageSnapping: true,
+      itemCount: images.length, // Number of images to display.
+      controller: pageController, // Controller to manage the PageView.
+      pageSnapping: true, // Enables page snapping.
       onPageChanged: (index) {
         setState(() {
-          currentPage = index;
+          currentPage = index; // Updates the current page index.
         });
       },
-
       itemBuilder: (context, index) {
-        return _buildImageContainer(images[index], BoxFit.contain);
+        return buildImageContainer(images[index], BoxFit.contain); // Builds each image container.
       },
     );
   }
 
-  Widget _buildImageContainer(String imagePath, BoxFit boxFit) {
+  /// Builds a container for displaying an image.
+  ///
+  /// This helper widget creates a container with the specified image and fit.
+  Widget buildImageContainer(String imagePath, BoxFit boxFit) {
     return Container(
-      width: double.infinity,
-      child: Image.network(imagePath, fit: boxFit),
+      width: double.infinity, // Makes the container as wide as its parent.
+      child: Image.network(imagePath, fit: boxFit), // Loads the image from the network.
     );
   }
+
 }

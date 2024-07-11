@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tfc/Firebase_Manager.dart';
-import 'AnimeData.dart';
-import 'AnimeModel.dart';
-import 'animation.dart';
-import 'chat_page.dart';
-import 'readManga.dart';
+import 'package:tfc/Firebase/Firebase_Manager.dart';
+import '../graphiql/AnimeData.dart';
+import '../graphiql/AnimeModel.dart';
+import '../animation/animation.dart';
+import '../communitieChat/chat_page.dart';
+import '../bookPlayer/readManga.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(

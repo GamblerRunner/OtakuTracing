@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/Firebase_Manager.dart';
-import 'package:tfc/video_player.dart';
-import 'AnimeData.dart';
-import 'AnimeModel.dart';
-import 'chat_page.dart';
-import 'animation.dart';
+import 'package:tfc/Firebase/Firebase_Manager.dart';
+import 'package:tfc/mediaPlayer/video_player.dart';
+import '../graphiql/AnimeData.dart';
+import '../graphiql/AnimeModel.dart';
+import '../communitieChat/chat_page.dart';
+import '../animation/animation.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(
@@ -14,7 +13,7 @@ Future<void> main() async {
   ));
 }
 
-class InterfaceAnimePage extends StatefulWidget {
+class InterfaceAnimePage extends StatefulWidget { //This interface works the same way as the MangaInterface
   @override
   InterfaceAnime createState() => InterfaceAnime();
 }
@@ -40,21 +39,16 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
   }
 
   Future<void> fetchMangaData() async {
-    List<Anime> fetchedAnimeData2 = await data.getIdAnime();
-    bool following2 = await fm.getUserFavourite(fetchedAnimeData2[0].id, false);
-    List<int> getEpisodes= await fm.getSeenMedia(fetchedAnimeData2[0].romajiTitle ?? 'no', false);
-    List<int> getEpisodesWatching=await fm.getEpisodeWatching(fetchedAnimeData2[0].romajiTitle ?? 'no');
+    List<Anime> fetchedAnimeData2 = await data.getIdAnime(); //We get all the anime information from the graphql 'anilist'
+    bool following2 = await fm.getUserFavourite(fetchedAnimeData2[0].id, false);// this boolean says if its currently followed or not
+    List<int> getEpisodes= await fm.getSeenMedia(fetchedAnimeData2[0].romajiTitle ?? 'no', false);// this list get the episodes are already fully watched
+    List<int> getEpisodesWatching=await fm.getEpisodeWatching(fetchedAnimeData2[0].romajiTitle ?? 'no');//this list get the episodes that are curently watching
     List<String> getEpisodesFirebase = [];
-    getEpisodesFirebase = await fm.getEpisodes(fetchedAnimeData2[0].romajiTitle ?? 'no');
+    getEpisodesFirebase = await fm.getEpisodes(fetchedAnimeData2[0].romajiTitle ?? 'no');//It get the total number of episodes in the Collecion Firebase
     getEpisodesFirebase.insert(0, fetchedAnimeData2[0].mediaPlay ?? 'no');
 
-    print(getEpisodes);
-    print(getEpisodesWatching);
-    print(fetchedAnimeData2?[0].coverImageUrl.toString());
-    print(getEpisodesFirebase);
     if (fetchedAnimeData != null) {
-      print("aaaaaaaaaaaaaaaaaaaaaah $following2");
-      setState(() {
+      setState(() {//Once every method here finish, it will update the page with that information
         fetchedAnimeData = fetchedAnimeData2;
         following = following2;
         fetchedEpisodesSeen = getEpisodes;
@@ -237,7 +231,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          PlayerAnime(
+                                          PlayerAnime(//To pass to the page with mediaPlayer, you must pass the total number, the trailer, the number of the episode and the name
                                             totalEpisodes: fetchedAnimeData[0].episodes ?? 0,
                                             currentEpisode: 0,
                                             AnimeName: fetchedAnimeData[0].romajiTitle ?? 'No Title',
@@ -265,7 +259,7 @@ class InterfaceAnime extends State<InterfaceAnimePage> {
                             child: ListTile(
                               title: Text(
                                 'Episode ${index}',
-                                style: TextStyle(
+                                style: TextStyle(//In case a number of wpisode is been watched, it will be the text color in green, if its watched red and if it's none then white
                                   color: watched
                                       ? Colors.red : (watching
                                       ? Colors.green

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/Firebase_Manager.dart';
+import 'package:tfc/Firebase/Firebase_Manager.dart';
 import 'login.dart'; // Importar la pantalla de inicio de sesión
 
 class RegisterPage extends StatefulWidget {
@@ -10,27 +10,29 @@ class RegisterPage extends StatefulWidget {
 }
 
 class Register extends State<RegisterPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  // VARIABLES
   String? usuario;
   String? correo;
   String? contrasenia1;
   String? contrasenia2;
-  bool _isPasswordVisible1 = false;
-  bool _isPasswordVisible2 = false;
-  bool pasarFire = true;
+  bool isPasswordVisible1 = false;
+  bool isPasswordVisible2 = false;
+  bool passFire = true;
 
   FirebaseManager fm = FirebaseManager();
 
-  // METODOS
+  /// Handles the user registration process.
   void registrarse() {
-    pasarFire = true;
+    passFire = true; // Flag indicating that password validation should be triggered.
 
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+    if (formKey.currentState!.validate()) {
+      // If the form is valid, save the form state.
+      formKey.currentState!.save();
 
+      // Check if the passwords match.
       if (contrasenia1 != contrasenia2) {
+        // Show a toast message if the passwords do not match.
         Fluttertoast.showToast(
           msg: 'Passwords do not match',
           toastLength: Toast.LENGTH_SHORT,
@@ -41,8 +43,10 @@ class Register extends State<RegisterPage> {
         return;
       }
 
+      // Attempt to register a new user.
       fm.registerNewUser(correo!, contrasenia1!, usuario!).then((success) async {
         if (success == true) {
+          // Show a toast message if registration is successful.
           Fluttertoast.showToast(
             msg: 'Successfully registered user',
             toastLength: Toast.LENGTH_SHORT,
@@ -50,14 +54,18 @@ class Register extends State<RegisterPage> {
             backgroundColor: Colors.black,
             textColor: Colors.white,
           );
-          SharedPreferences preferences = await SharedPreferences.getInstance();
 
+          // Store the default profile image URL in shared preferences.
+          SharedPreferences preferences = await SharedPreferences.getInstance();
           await preferences.setString("newImgProfile", "https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg");
+
+          // Navigate to the login page.
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => LoginPage()),
           );
         } else {
+          // Show a toast message if there is an error during registration.
           Fluttertoast.showToast(
             msg: 'Error registering user',
             toastLength: Toast.LENGTH_SHORT,
@@ -70,10 +78,11 @@ class Register extends State<RegisterPage> {
     }
   }
 
-  String? _validateField(String? value, String fieldName) {
+
+  String? validateField(String? value, String fieldName) {
     if (value == null || value.isEmpty) {
       return 'The field $fieldName is empty';
-    } else if (fieldName == 'Nombre del usuario' && !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+    } else if (fieldName == 'User name' && !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
       return 'The field $fieldName can only contain \nletters from A to Z and numbers';
     } else if (fieldName == 'Email' && !value.contains('@')) {
       return 'The field $fieldName must contain an "@"';
@@ -125,7 +134,7 @@ class Register extends State<RegisterPage> {
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                   child: Form(
-                    key: _formKey,
+                    key: formKey,
                     child: Column(
                       children: <Widget>[
                         TextFormField(
@@ -135,7 +144,7 @@ class Register extends State<RegisterPage> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                           ),
-                          validator: (value) => _validateField(value, 'Nombre del usuario'),
+                          validator: (value) => validateField(value, 'Nombre del usuario'),
                           onSaved: (value) => usuario = value,
                         ),
                         SizedBox(height: 15),
@@ -146,7 +155,7 @@ class Register extends State<RegisterPage> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                           ),
-                          validator: (value) => _validateField(value, 'Email'),
+                          validator: (value) => validateField(value, 'Email'),
                           onSaved: (value) => correo = value,
                         ),
                         SizedBox(height: 15),
@@ -158,16 +167,16 @@ class Register extends State<RegisterPage> {
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _isPasswordVisible1 ? Icons.visibility : Icons.visibility_off,
+                                isPasswordVisible1 ? Icons.visibility : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
-                                  _isPasswordVisible1 = !_isPasswordVisible1;
+                                  isPasswordVisible1 = !isPasswordVisible1;
                                 });
                               },
                             ),
                           ),
-                          obscureText: !_isPasswordVisible1,
+                          obscureText: !isPasswordVisible1,
                           onSaved: (value) => contrasenia1 = value,
                         ),
                         SizedBox(height: 15),
@@ -179,19 +188,19 @@ class Register extends State<RegisterPage> {
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _isPasswordVisible2 ? Icons.visibility : Icons.visibility_off,
+                                isPasswordVisible2 ? Icons.visibility : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
-                                  _isPasswordVisible2 = !_isPasswordVisible2;
+                                  isPasswordVisible2 = !isPasswordVisible2;
                                 });
                               },
                             ),
                           ),
-                          obscureText: !_isPasswordVisible2,
+                          obscureText: !isPasswordVisible2,
                           validator: (value) {
                             contrasenia2 = value;
-                            return _validateField(value, 'Confirmar contraseña');
+                            return validateField(value, 'Confirmar contraseña');
                           },
                         ),
                         SizedBox(height: 25),

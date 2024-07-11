@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/Firebase_Manager.dart';
-import 'package:tfc/MyCommunities.dart';
-import 'package:tfc/myMangas.dart';
+import 'package:tfc/Firebase/Firebase_Manager.dart';
+import 'package:tfc/miInfo/MyCommunities.dart';
+import 'package:tfc/miInfo/myMangas.dart';
 
 import 'ProfileImg.dart';
-import 'help.dart';
-import 'login.dart';
-import 'main.dart';
-import 'myAnimes.dart';
-import 'animation.dart';
+import '../help/help.dart';
+import '../authenticator/login.dart';
+import '../main/main.dart';
+import '../miInfo/myAnimes.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -44,7 +43,7 @@ class Profile extends State<ProfilePage> {
 
   Future<void> loadImage() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-
+    //It loads the image you have from the start
     String? newImgProfile = preferences.getString("ImgProfile");
 
     setState(() {
@@ -57,6 +56,7 @@ class Profile extends State<ProfilePage> {
     await Future.delayed(Duration(seconds: 1));
 
     await fm.getUser();
+    //It gets the number of mangas, animes, and communities su saved in the database
     List<int> myAnimes = await fm.getMyAnimes(false);
     List<int> myMangas = await fm.getMyAnimes(true);
     List<String> myCommunities = await fm.getMyComunities();
@@ -265,7 +265,6 @@ class Profile extends State<ProfilePage> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                print('Image clicked!');
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(builder: (context) => ProfileImgPage()),

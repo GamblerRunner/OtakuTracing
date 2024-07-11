@@ -1,16 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/chat_page.dart';
-import 'Firebase_Manager.dart';
-import 'main.dart';
-import 'mangas.dart';
-import 'community.dart';
-import 'Profile.dart';
-import 'login.dart';
+import 'package:tfc/communitieChat/chat_page.dart';
+import '../Firebase/Firebase_Manager.dart';
+import '../main/main.dart';
+import '../Profile/Profile.dart';
+import '../authenticator/login.dart';
 import 'myAnimes.dart';
-import 'help.dart';
+import '../help/help.dart';
 import 'myMangas.dart';
 
 void main() {
@@ -19,9 +16,9 @@ void main() {
 
 FirebaseManager fm = FirebaseManager();
 FirebaseFirestore db = FirebaseFirestore.instance;
-late String userName = "noName";
-late String userUID = "0";
-late String comunityChat = "No Title";
+String userName = "noName";
+String userUID = "0";
+String comunityChat = "No Title";
 List<String> comunities = [];
 
 class MyCommmunityApp extends StatelessWidget {
@@ -37,14 +34,22 @@ class MyCommunityPage extends StatefulWidget {
   @override
   MyCommunityPageState createState() => MyCommunityPageState();
 
+  /// Retrieves a stream of messages for a specific community.
+  ///
+  /// This method queries the 'messages' collection within a specified 'community' document,
+  /// ordering the messages by timestamp in ascending order, and returns a stream of
+  /// [QuerySnapshot] objects which can be listened to for real-time updates.
   Stream<QuerySnapshot> getMessages(String communityId) {
-    return db.collection('communities').doc(communityId).collection('messages').orderBy('timestamp', descending: false).snapshots();
+    return db.collection('communities')
+        .doc(communityId)
+        .collection('messages')
+        .orderBy('timestamp', descending: false)
+        .snapshots();
   }
+
 }
 
 class MyCommunityPageState extends State<MyCommunityPage> {
-  int _selectedIndex =
-  1; // Índice seleccionado del elemento actual ('Comunidades')
 
   void init() async {
     super.initState();
@@ -52,12 +57,10 @@ class MyCommunityPageState extends State<MyCommunityPage> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String fetchedUserName = sharedPreferences.getString("userName") ?? '';
     String fetchedUserId = sharedPreferences.getString("uid") ?? '';
-    //List<String>fetchedComunities = fm.getComunities() as List<String>;
 
     setState(() {
       userName = fetchedUserName;
       userUID = fetchedUserId;
-      //comunities=fetchedComunities;
     });
   }
 
@@ -70,32 +73,6 @@ class MyCommunityPageState extends State<MyCommunityPage> {
             )));
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage(animeManga: false)));
-        break;
-
-      case 1:
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ChatPage(
-                  community: comunityChat,
-                )));
-        break;
-
-      case 2:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MangasPage()));
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'AnimeModel.dart';
 import 'GrahpqlData.dart';
 
 class AnimeData {
   late final GrahpqlData client=GrahpqlData();
 
-  static const String _animeQuery = r'''
+
+  //Every variable from here is used for every different type of query
+  static const String animeQuery = r'''
     query ($page: Int, $perPage: Int) {
       Page (page: $page, perPage: $perPage) {
         pageInfo {
@@ -33,7 +32,7 @@ class AnimeData {
     }
   ''';
 
-  static const String _animeSearchQuery = r'''
+  static const String animeSearchQuery = r'''
     query ($page: Int, $perPage: Int, $search: String) {
       Page (page: $page, perPage: $perPage) {
         pageInfo {
@@ -58,7 +57,7 @@ class AnimeData {
     }
   ''';
 
-  static const String _mangaQuery = r'''
+  static const String mangaQuery = r'''
     query ($page: Int, $perPage: Int) {
       Page (page: $page, perPage: $perPage) {
         pageInfo {
@@ -82,7 +81,7 @@ class AnimeData {
       }
     }
   ''';
-  static const String _mangaSearchQuery = r'''
+  static const String mangaSearchQuery = r'''
     query ($page: Int, $perPage: Int, $search: String) {
       Page (page: $page, perPage: $perPage) {
         pageInfo {
@@ -246,78 +245,75 @@ class AnimeData {
     }
   ''';
 
-  static const int _perPage = 20;
-  List<Media> _animeList = [];
+  static const int perPage = 20;
+  List<Media> animeList = [];
   List<Manga> manga = [];
   List<Anime> anime = [];
-  var _currentPage = 1;
-  var _totalPages = 250;
+  var currentPage = 1;
+  var totalPages = 250;
 
   Future<List<Media>> getPageData(bool animemanga) async {
     if(!animemanga){
       try {
+        //Calls the method query in GrahpqlData class
         final result = await client.query(
-          _animeQuery, // Use the static query string
-          variables: {'page': _currentPage, 'perPage': _perPage},
+          animeQuery, // Use the static query string
+          variables: {'page': currentPage, 'perPage': perPage},
         );
-        //print(result);
         if (result.hasException) {
-          throw Exception("Error cogiendo los datos");
+          throw Exception("Error getting the data");
         }
 
         final MediaModel animeData =
         MediaModel.fromJson(result.data?['Page'] ?? {});
-        _totalPages = animeData.pageInfo.total;
-        _animeList.addAll(animeData.media);
-        //print(_currentPage);
-        //print(_animeList[0].romajiTitle);
-        return _animeList;
+        totalPages = animeData.pageInfo.total;
+        animeList.addAll(animeData.media);
+        return animeList;
       } catch (e) {
-        throw Exception("Error cogiendo los datos");
+        throw Exception("Error getting the data");
       }
     }
       try {
         final result = await client.query(
-          _mangaQuery, // Use the static query string
-          variables: {'page': _currentPage, 'perPage': _perPage},
+          mangaQuery, // Use the static query string
+          variables: {'page': currentPage, 'perPage': perPage},
         );
         if (result.hasException) {
-          throw Exception("Error cogiendo los datos");
+          throw Exception("Error getting the data");
         }
 
         final MediaModel animeData =
         MediaModel.fromJson(result.data?['Page'] ?? {});
-        _totalPages = animeData.pageInfo.total;
-        _animeList.addAll(animeData.media);
-        return _animeList;
+        totalPages = animeData.pageInfo.total;
+        animeList.addAll(animeData.media);
+        return animeList;
       } catch (e) {
-        throw Exception("Error cogiendo los datos");
+        throw Exception("Error getting the data");
       }
 
   }
 
   Future<List<Media>> getPageSearchData(String search, bool am) async {
     try {
-      String media = _animeSearchQuery;
+      String media = animeSearchQuery;
       if(am){
-        media = _mangaSearchQuery;
+        media = mangaSearchQuery;
       }
       final result = await client.query(
         media,
-        variables: {'page': _currentPage, 'perPage': _perPage, 'search': search},
+        variables: {'page': currentPage, 'perPage': perPage, 'search': search},
       );
-      //print(result);
       if (result.hasException) {
-        throw Exception("Error cogiendo los datos");
+        throw Exception("Error getting the data");
       }
 
       final MediaModel animeData =
       MediaModel.fromJson(result.data?['Page'] ?? {});
-      _totalPages = animeData.pageInfo.total;
-      _animeList.addAll(animeData.media);
-      return _animeList;
+      totalPages = animeData.pageInfo.total;
+      animeList.addAll(animeData.media);
+      return animeList;
     } catch (e) {
-      throw Exception("Error cogiendo los datos");
+      throw Exception("Error getting the data");
     }
 
   }
@@ -325,21 +321,22 @@ class AnimeData {
   Future<List<Media>?> fetchNextPage(bool afterBefore, bool media) async {
     try{
       if(afterBefore){
-        if (_currentPage < _totalPages) {
-          _animeList=[];
-          _currentPage++;
+        if (currentPage < totalPages) {
+          animeList=[];
+          currentPage++;
           return await getPageData(media);
         }
       }else{
-        if (_currentPage > 1) {
-          _animeList=[];
-          _currentPage--;
+        if (currentPage > 1) {
+          animeList=[];
+          currentPage--;
           return await getPageData(media);
         }
       }
     } catch (e) {
-      throw Exception("Error cogiendo los datos de la siguiente pagina");
+      throw Exception("Error getting the data");
     }
+    return null;
   }
 
   Future<List<Manga>> getIdManga() async {
@@ -352,22 +349,17 @@ class AnimeData {
         idMangaSearchQuery, // Use the static query string
         variables: {'id': id},
       );
-      //print(result);
       if (result.hasException) {
-        throw Exception("Error cogiendo los datos");
+        throw Exception("Error getting the data");
       }
 
       final MangaModel animeData =
       MangaModel.fromJson(result.data?['Page'] ?? {});
-      _totalPages = animeData.pageInfo.total;
+      totalPages = animeData.pageInfo.total;
       manga.addAll(animeData.media);
-      //print(_currentPage);
-      //print(_animeList[0].romajiTitle);
-      print('patata');
-      print(manga[0]);
       return manga;
     } catch (e) {
-      throw Exception("Error cogiendo los datos");
+      throw Exception("Error getting the data");
     }
 
   }
@@ -377,29 +369,23 @@ class AnimeData {
       SharedPreferences preferences= await SharedPreferences.getInstance();
       int? id=await preferences.getInt("idMedia") ?? 1;
 
-      print(id);
       await Future.delayed(Duration(seconds: 1));
 
       final result = await client.query(
         idAnimeSearchQuery, // Use the static query string
         variables: {'id': id},
       );
-      //print(result);
       if (result.hasException) {
-        throw Exception("Error cogiendo los datos");
+        throw Exception("Error getting the data");
       }
 
       final AnimeModel animeData =
       AnimeModel.fromJson(result.data?['Page'] ?? {});
-      _totalPages = animeData.pageInfo.total;
+      totalPages = animeData.pageInfo.total;
       anime.addAll(animeData.media);
-      //print(_currentPage);
-      //print(_animeList[0].romajiTitle);
-      print('patata');
-      print(anime[0]);
       return anime;
     } catch (e) {
-      throw Exception("Error cogiendo los datos");
+      throw Exception("Error getting the data");
     }
   }
 
@@ -407,22 +393,19 @@ class AnimeData {
       try {
         final result = await client.query(
           myMediaQuery, // Use the static query string
-          variables: {'page': _currentPage, 'perPage': _perPage, 'id_in': medias},
+          variables: {'page': currentPage, 'perPage': perPage, 'id_in': medias},
         );
-        //print(result);
         if (result.hasException) {
-          throw Exception("Error cogiendo los datos");
+          throw Exception("Error getting the data");
         }
 
         final MediaModel animeData =
         MediaModel.fromJson(result.data?['Page'] ?? {});
-        _totalPages = animeData.pageInfo.total;
-        _animeList.addAll(animeData.media);
-        //print(_currentPage);
-        //print(_animeList[0].romajiTitle);
-        return _animeList;
+        totalPages = animeData.pageInfo.total;
+        animeList.addAll(animeData.media);
+        return animeList;
       } catch (e) {
-        throw Exception("Error cogiendo los datos");
+        throw Exception("Error getting the data");
       }
     }
 

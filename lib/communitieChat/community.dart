@@ -2,22 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/MyCommunities.dart';
-import 'package:tfc/chat_page.dart';
-import 'Firebase_Manager.dart';
-import 'main.dart';
-import 'message.dart';
-import 'register.dart';
-import 'settings.dart';
-import 'mangas.dart';
-import 'community.dart';
-import 'Profile.dart';
-import 'login.dart';
-import 'animation.dart';
-import 'myAnimes.dart';
-import 'help.dart';
-import 'myMangas.dart';
-import 'mangas.dart';
+import 'package:tfc/miInfo/MyCommunities.dart';
+import 'package:tfc/communitieChat/chat_page.dart';
+import '../Firebase/Firebase_Manager.dart';
+import '../main/main.dart';
+import '../Profile/Profile.dart';
+import '../authenticator/login.dart';
+import '../miInfo/myAnimes.dart';
+import '../help/help.dart';
+import '../miInfo/myMangas.dart';
 
 void main() {
   runApp(CommmunityApp());
@@ -64,6 +57,7 @@ class _CommunityPageState extends State<CommunityPage> {
     });
   }
 
+  //It takes to ChatPage where the chat is in the database saved with the anime or manga name
   void showComunitieChat(String communityName) {
     Navigator.push(
         context,

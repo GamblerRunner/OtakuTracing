@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/MyCommunities.dart';
-import 'package:tfc/Profile.dart';
-import 'package:tfc/interfaceAnime.dart';
-import 'package:tfc/login.dart';
-import 'AnimeData.dart';
-import 'AnimeModel.dart';
-import 'Firebase_Manager.dart';
-import 'community.dart';
-import 'myAnimes.dart';
-import 'help.dart';
-import 'InterfaceManga.dart';
-import 'myMangas.dart';
+import 'package:tfc/miInfo/MyCommunities.dart';
+import 'package:tfc/Profile/Profile.dart';
+import '../InterfaceAnimeManga/interfaceAnime.dart';
+import 'package:tfc/authenticator/login.dart';
+import '../graphiql/AnimeData.dart';
+import '../graphiql/AnimeModel.dart';
+import '../Firebase/Firebase_Manager.dart';
+import '../communitieChat/community.dart';
+import '../miInfo/myAnimes.dart';
+import '../help/help.dart';
+import '../InterfaceAnimeManga/InterfaceManga.dart';
+import '../miInfo/myMangas.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Asegurarse de que los Widgets están inicializados
+  WidgetsFlutterBinding.ensureInitialized(); // Make sure the widgets are started
   final SharedPreferences preferences = await SharedPreferences.getInstance();
   bool rememberMe = preferences.getBool('rememberEmailPassword') ?? false;
 
@@ -77,6 +77,8 @@ class _HomePageStartState extends State<HomePageStart> {
     animemanga = widget.animeManga;
     fetchData();
     fetchUserData();
+    int startIndex = animemanga ? 2 : 0;
+    onItemTapped(startIndex);
   }
 
   Future<void> fetchData() async {
@@ -85,7 +87,7 @@ class _HomePageStartState extends State<HomePageStart> {
 
   Future<void> fetchUserData() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(seconds: 1)); //We use this so that Firebase has time to charge , if this isn't there, then it will give problems to charge the data from the database
 
     await fm.getUser();
 

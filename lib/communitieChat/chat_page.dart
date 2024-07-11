@@ -1,13 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/community.dart';
-import 'Firebase_Manager.dart';
-import 'animation.dart';
+import 'package:tfc/communitieChat/community.dart';
+import '../Firebase/Firebase_Manager.dart';
 
 class ChatPage extends StatefulWidget {
   final String community;

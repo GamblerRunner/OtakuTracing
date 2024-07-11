@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/MyCommunities.dart';
-import 'package:tfc/settings.dart';
-import 'AnimeData.dart';
-import 'AnimeModel.dart';
-import 'Firebase_Manager.dart';
-import 'Profile.dart';
-import 'community.dart';
-import 'help.dart';
-import 'interfaceAnime.dart';
-import 'login.dart';
-import 'main.dart';
-import 'animation.dart';
+import 'package:tfc/miInfo/MyCommunities.dart';
+import '../graphiql/AnimeData.dart';
+import '../graphiql/AnimeModel.dart';
+import '../Firebase/Firebase_Manager.dart';
+import '../Profile/Profile.dart';
+import '../help/help.dart';
+import '../InterfaceAnimeManga/interfaceAnime.dart';
+import '../authenticator/login.dart';
+import '../main/main.dart';
 import 'myMangas.dart';
 
 Future<void> main() async {
@@ -25,17 +22,18 @@ class myAnimes extends StatefulWidget {
   myAnimesPage createState() => myAnimesPage();
 }
 
-class myAnimesPage extends State<myAnimes> {
+class myAnimesPage extends State<myAnimes> {//It works the same way in miMangasPage
   late FirebaseManager fm;
 
   late String userName = 'user name';
   late String userImg = 'https://cdn.pixabay.com/photo/2022/09/01/14/18/white-background-7425603_1280.jpg';
   List<int> medias = [];
 
-  int _selectedIndex = 0;
   List<Media> fetchedData = [];
   final AnimeData data = AnimeData();
-  final ScrollController _scrollController = ScrollController();
+  // Controller used to manage and listen to the scrolling of a scrollable widget.
+  final ScrollController scrollController = ScrollController();
+
 
   String? search = '';
 
@@ -49,7 +47,7 @@ class myAnimesPage extends State<myAnimes> {
 
   Future<void> fetchData() async {
     await Future.delayed(Duration(seconds: 1));
-    fetchedData = await data.getMyMedia(medias);
+    fetchedData = await data.getMyMedia(medias); //Gets all the animes you save in Firebase
     if (fetchedData != null) {
       setState(() {});
     } else {
@@ -59,11 +57,11 @@ class myAnimesPage extends State<myAnimes> {
 
   Future<void> fetchUserData() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    //await Future.delayed(Duration(seconds: 1));
 
     await fm.getUser();
     medias = await fm.getMyAnimes(false);
 
+    //It gets the user name and image so it loads in the page
     String fetchedUserName = preferences.getString("userName") ?? '';
     String fetchedUserImg = preferences.getString("ImgProfile") ?? '';
 
@@ -77,7 +75,7 @@ class myAnimesPage extends State<myAnimes> {
 
   Future<void> saveID(int id) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-
+    //It saves the id of the anime, so that it can do a request to graphql
     await preferences.setInt("idMedia", id);
 
     Navigator.push(context, MaterialPageRoute(builder: (context) => InterfaceAnimePage()));
@@ -221,9 +219,9 @@ class myAnimesPage extends State<myAnimes> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 20), // Ajusta el padding para que comience desde arriba
+            padding: EdgeInsets.only(top: 20), // Ajust the padding so that it starts from the top
             child: ListView.builder(
-              controller: _scrollController,
+              controller: scrollController,
               padding: EdgeInsets.symmetric(vertical: 25, horizontal: 30),
               itemCount: (fetchedData.length / 2).ceil(),
               itemBuilder: (context, index) {
@@ -238,7 +236,6 @@ class myAnimesPage extends State<myAnimes> {
                         child: GestureDetector(
                           onTap: () {
                             saveID(fetchedData[firstIndex].id);
-                            print('Tapped on ${fetchedData[firstIndex].romajiTitle}');
                           },
                           child: buildAnimeCard(fetchedData[firstIndex]),
                         ),
@@ -249,7 +246,6 @@ class myAnimesPage extends State<myAnimes> {
                           child: GestureDetector(
                             onTap: () {
                               saveID(fetchedData[secondIndex].id);
-                              print('Tapped on ${fetchedData[secondIndex].romajiTitle}');
                             },
                             child: buildAnimeCard(fetchedData[secondIndex]),
                           ),

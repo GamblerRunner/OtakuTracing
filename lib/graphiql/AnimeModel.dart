@@ -28,10 +28,13 @@ class AnimeModel {
 
 class MangaModel {
   final PageInfo pageInfo;
+
   final List<Manga> media;
 
+  // Constructor for `MangaModel pageInfo which contains pagination details, and media
   MangaModel({required this.pageInfo, required this.media});
 
+  // Factory constructor to create a `MangaModel` from a JSON map.
   factory MangaModel.fromJson(Map<String, dynamic> json) {
     return MangaModel(
       pageInfo: PageInfo.fromJson(json['pageInfo']),
@@ -39,6 +42,7 @@ class MangaModel {
     );
   }
 }
+
 
 class PageInfo {
   PageInfo({
@@ -98,6 +102,7 @@ class Media {
   final String? description;
 }
 
+//When we reach to InterfaceAnimePage, the info we are looking at, will be from here
 class Anime {
   Anime({
     required this.id,
@@ -175,6 +180,7 @@ class Anime {
   }
 }
 
+//When we reach to InterfaceMangaPage, the info we are looking at, will be from here
 class Manga {
   Manga({
     required this.id,
@@ -224,9 +230,8 @@ class Manga {
   final int? volumes;
   final int? chapters;
   final List<String>? genres;
-  //final String? suggestions;
 
-  // Método helper para convertir String a MangaStatus
+  // Método helper for converting String to MangaStatus
   static Status? _statusFromString(String? status) {
     switch (status?.toLowerCase()) {
       case 'releasing':

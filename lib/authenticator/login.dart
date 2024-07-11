@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'Firebase_Manager.dart';
+import '../Firebase/Firebase_Manager.dart';
 import 'register.dart';
-import 'main.dart';
+import '../main/main.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,7 +11,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class Login extends State<LoginPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // Key used to identify the form and validate its state
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
 
   String? email = '';
@@ -22,7 +23,6 @@ class Login extends State<LoginPage> {
 
   late FirebaseManager fm;
 
-  // METODOS
   @override
   void initState() {
     super.initState();
@@ -31,11 +31,11 @@ class Login extends State<LoginPage> {
   }
 
   Future<void> iniciarSesion() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save(); //It saves the text you wrote in the login page (without this, the text will be considered null)
       String? success = await fm.loginUser(email!, contrasenia!);
       if (success!='') {
-        Fluttertoast.showToast(
+        Fluttertoast.showToast( //In case the log in success, then it will pop a message
           msg: 'Successful login \nWelcome Otaku',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
@@ -44,7 +44,7 @@ class Login extends State<LoginPage> {
         );
         SharedPreferences preferences = await SharedPreferences.getInstance();
         await preferences.setString("uid", success!);
-        if(rememberEmailPassword){
+        if(rememberEmailPassword){ //Depending if the "Remember me" is checked, then it will save the email and password for future times getting into the app
           await preferences.setBool('rememberEmailPassword', true);
           await preferences.setString("email", email!);
           await preferences.setString("contrasenia", contrasenia!);
@@ -81,8 +81,7 @@ class Login extends State<LoginPage> {
       await Future.delayed(Duration(seconds: 1));
 
       String? success = await fm.loginUser(email!, contrasenia!);
-      print('jd que putada $success');
-      if (success != null) {
+      if (success != null) { //If the remember me it was checked in the past, it will go directly to the main page
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage(animeManga: false,)),
@@ -93,7 +92,6 @@ class Login extends State<LoginPage> {
     }
   }
 
-  // MAIN
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,7 +151,7 @@ class Login extends State<LoginPage> {
                 ],
               ),
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   children: <Widget>[
                     TextFormField(

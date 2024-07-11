@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tfc/MyCommunities.dart';
-import 'package:tfc/myAnimes.dart';
-import 'AnimeData.dart';
-import 'AnimeModel.dart';
-import 'Firebase_Manager.dart';
-import 'InterfaceManga.dart';
-import 'Profile.dart';
-import 'help.dart';
-import 'login.dart';
-import 'main.dart';
+import 'package:tfc/miInfo/MyCommunities.dart';
+import '../miInfo/myAnimes.dart';
+import '../graphiql/AnimeData.dart';
+import '../graphiql/AnimeModel.dart';
+import '../Firebase/Firebase_Manager.dart';
+import '../InterfaceAnimeManga/InterfaceManga.dart';
+import '../Profile/Profile.dart';
+import '../help/help.dart';
+import '../authenticator/login.dart';
+import '../main/main.dart';
 
 Future<void> main() async {
   runApp(MaterialApp(

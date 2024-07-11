@@ -3,18 +3,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 //Firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tfc/firebase_options.dart';
+import 'package:tfc/Firebase/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseManager {
+  // Constructor: Initializes Firebase when an instance of FirebaseManager is created.
   FirebaseManager() {
     initializeFirebase();
   }
 
+  // User details
   late String uid = '';
   late String userName = '';
   late String userImg = '';
 
+  /// Initializes Firebase with the platform-specific options.
   Future<void> initializeFirebase() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -23,30 +26,42 @@ class FirebaseManager {
 
   //AUTHFirebase
 
-  Future<bool> registerNewUser(String emailUser, String passwordUser,
-      String userName) async {
+  /// Registers a new user with the given email, password, and username.
+  ///
+  /// Returns true if the registration is successful, otherwise false.
+  Future<bool> registerNewUser(String emailUser, String passwordUser, String userName) async {
     bool create = false;
     try {
+      // Attempts to create a new user with the provided email and password.
       UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-          email: emailUser, password: passwordUser);
+          .createUserWithEmailAndPassword(email: emailUser, password: passwordUser);
+
+      // Extracts the user ID (UID) from the user credentials.
       String? uid = userCredential.user?.uid.toString();
+
+      // Calls a function to create a new user record in the Firestore database.
       CrearUsuarioCloud(userName, uid!);
       create = true;
-      // Hacer algo con userCredential si es necesario
+
+      // Additional handling of userCredential can be done here if necessary.
     } catch (e) {
       print(e);
     }
     return create;
   }
 
+  /// Logs in a user with the given email and password.
+  ///
+  /// Returns the user ID (UID) if the login is successful, otherwise null.
   Future<String?> loginUser(String emailUser, String passwordUser) async {
     String? uid = '';
     try {
+      // Attempts to sign in the user with the provided email and password.
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: emailUser, password: passwordUser);
+
+      // Extracts the user ID (UID) from the user credentials.
       uid = userCredential.user?.uid.toString();
-      print(uid);
     } catch (e) {
       print(e);
     }
@@ -55,20 +70,26 @@ class FirebaseManager {
 
   //Cloud Storage
 
+  /// Creates a new user record in the Firestore database.
+  ///
+  /// Takes the username and user ID (UID) as parameters.
   Future<void> CrearUsuarioCloud(String userName, String uid) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
 
+    // Data to be stored in the new user document.
     final newUserCloud = {
       "username": userName,
       "userimg": "https://wallpapers.com/images/featured/best-anime-syxejmngysolix9m.jpg",
     };
 
+    // Attempts to create a new document in the "users" collection with the given UID.
     db
         .collection("users")
         .doc(uid)
         .set(newUserCloud)
         .onError((e, _) => print("Error writing document: $e"));
   }
+
 
   Future<List<String>> changeImgProfile() async {
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -77,10 +98,10 @@ class FirebaseManager {
     final docRef = db.collection("assets").doc("img");
 
     try {
-      // Esperar a que se complete la operación de obtener el documento
+      // Waits to get the data from the document
       DocumentSnapshot doc = await docRef.get();
 
-      // Obtener los datos del documento
+      // Gets the data from the document
       final data = doc.data() as Map<String, dynamic>;
 
       data.forEach((key, value) {
@@ -105,9 +126,8 @@ class FirebaseManager {
       DocumentSnapshot doc = await docRef.get();
 
       final data = doc.data() as Map<String, dynamic>;
-      print('testeando $data');
 
-
+      //Sets the new userName and userImg for the user
       userName = data['username'] ?? 'empty';
       userImg = data['userimg'] ?? 'img';
 
@@ -119,43 +139,36 @@ class FirebaseManager {
   }
 
   Future<bool> getUserFavourite(int id, bool type) async {
-    print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
 
+    //Depending in witch interface you enter, it will give you the list of animes or mangas
     String am = "animes";
     if (type) {
       am = "mangas";
     }
-    print("holapapapa2");
     final docRef = db.collection("users")
         .doc(uidUser)
         .collection("follow")
         .doc("media");
-    print("BRUUUUUUUUUUUH");
     try {
-      // Esperar a que se complete la operación de obtener el documento
       DocumentSnapshot doc = await docRef.get();
-      print("holapapapa3");
       List<int> favouriteList = [];
       final data = doc.data() as Map<String, dynamic>;
-      print('testeando $data');
 
       if (data.isEmpty) {
         return false;
       }
-      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
+      // Makes sure that data is a list so that can convert to int
       if (data[am] is List<dynamic>) {
         favouriteList =
             (data[am] as List<dynamic>).map((item) => item as int).toList();
-        print("menos cosas $favouriteList");
         if (favouriteList.contains(id)) {
-          print("cosas");
           return await true;
         }
       }
     } catch (e) {
-      // Manejar errores al obtener el documento
+      // Manage errors
       print("Error getting document: $e");
     }
     return await false;
@@ -163,7 +176,7 @@ class FirebaseManager {
 
   Future<void> changeUserName(String userName, String userImg) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
-    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+    String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous'; //Gets the uid from the user that is currently using the app
 
     final data = {"username": userName, "userimg": userImg};
 
@@ -171,27 +184,23 @@ class FirebaseManager {
   }
 
   Future<void> addRemoveFavourite(int id, bool type, bool addOrRemove) async {
-    print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
 
     DocumentReference animeInstance = db.collection("users").doc(uidUser).collection("follow").doc("media");
 
-    print("BRUUUUUUUUUUUH");
-
     String typeMedia = "mangas";
     if (type) {
       typeMedia = "animes";
     }
-    print(addOrRemove);
     if (addOrRemove) {
-      final data = {
+      final data = { //in case the data already exists, then it won`t put it again, if not it will just add it to the list in firebase
         typeMedia: FieldValue.arrayUnion([id])
       };
-      await animeInstance.set(data, SetOptions(merge: true));
+      await animeInstance.set(data, SetOptions(merge: true));//pushes the changes
       return;
     }
-    final data = {
+    final data = {////in case the data already exists, then it won`t do anything, if not it will delete from the list in firebase
       typeMedia: FieldValue.arrayRemove([id])
     };
     await animeInstance.set(data, SetOptions(merge: true));
@@ -213,12 +222,9 @@ class FirebaseManager {
         .doc("media");
 
     try {
-      // Esperar a que se complete la operación de obtener el documento
       DocumentSnapshot doc = await docRef.get();
       final data = doc.data() as Map<String, dynamic>;
-      print('testeando $data');
 
-      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
       if (data[am] is List<dynamic>) {
         userMedia =
             (data[am] as List<dynamic>).map((item) => item as int).toList();
@@ -226,9 +232,7 @@ class FirebaseManager {
         userMedia = [];
       }
 
-      print(userMedia);
     } catch (e) {
-      // Manejar errores al obtener el documento
       print("Error getting document: $e");
     }
     return await userMedia;
@@ -237,30 +241,18 @@ class FirebaseManager {
   Future<List<String>> getComunities() async {
     await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
-    print("Hola1");
 
     final collectionRef = db.collection("communities");
-    print("Hola2");
     try {
-      // Obtener todos los documentos en la colección
       QuerySnapshot querySnapshot = await collectionRef.get();
-      print("Hola3");
-      // Crear una lista para almacenar los nombres de usuario
+      // Create a list to save the user names
       List<String> chatRooms = [];
-      print("Hola4");
-      // Iterar sobre los documentos y extraer los nombres de usuario
-      print(querySnapshot.docs);
+      // // Add the document and extract the names from the firebase
       for (var doc in querySnapshot.docs) {
-        //Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        print("jajajaj");
         chatRooms.add(doc.id);
-        print('jaja $doc');
       }
-      print("Hola5");
-      print(chatRooms);
       return chatRooms;
     } catch (e) {
-      // Manejar errores al obtener los documentos
       print("Error getting documents: $e");
       return [];
     }
@@ -270,47 +262,37 @@ class FirebaseManager {
     await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-    print(uidUser);
     final docRef = db.collection("users")
         .doc(uidUser)
         .collection("follow")
         .doc("media");
-    print("Hola2");
     try {
 
-    // Esperar a que se complete la operación de obtener el documento
     DocumentSnapshot doc = await docRef.get();
-    print("holapapapa3");
     List<String> favouriteList = [];
     final data = doc.data() as Map<String, dynamic>;
-    print('testeando $data');
 
     if (data.isEmpty) {
     return [];
     }
-    // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
     if (data['comunities'] is List<dynamic>) {
     favouriteList =
     (data['comunities'] as List<dynamic>).map((item) => item as String).toList();
-    print("menos cosas $favouriteList");
     }
 
     return favouriteList;
     } catch (e) {
-      // Manejar errores al obtener los documentos
       print("Error getting documents: $e");
       return [];
     }
   }
 
   Future<void> addRemoveFavouriteComunity(String comunityName, bool addOrRemove) async {
-    print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
 
     DocumentReference animeInstance = db.collection("users").doc(uidUser).collection("follow").doc("media");
 
-    print(addOrRemove);
     if (addOrRemove) {
       final data = {
         "comunities": FieldValue.arrayUnion([comunityName])
@@ -325,7 +307,6 @@ class FirebaseManager {
   }
 
   Future<bool> getUserFavouriteComunity(String comunityName) async {
-    print("holapapapa");
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
 
@@ -333,26 +314,19 @@ class FirebaseManager {
         .doc(uidUser)
         .collection("follow")
         .doc("media");
-    print("BRUUUUUUUUUUUH");
     try {
-      // Esperar a que se complete la operación de obtener el documento
       DocumentSnapshot doc = await docRef.get();
-      print("holapapapa3");
       List<String> favouriteList = [];
       final data = doc.data() as Map<String, dynamic>;
-      print('testeando $data');
 
       if (data.isEmpty) {
         return false;
       }
-      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
       if (data["comunities"] is List<dynamic>) {
         favouriteList = (data["comunities"] as List<dynamic>)
             .map((item) => item as String)
             .toList();
-        print("menos cosas $favouriteList");
         if (favouriteList.contains(comunityName)) {
-          print("cosas");
           return await true;
         }
       }
@@ -409,20 +383,18 @@ class FirebaseManager {
   }
 
   Future<void> saveDuration(String name, int episode, int second) async {
-    print("Guardando duración final del episodio");
 
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-    print(uidUser);
 
     DocumentReference animeInstance = db.collection("users")
-        .doc(uidUser) // Use the actual user's UID instead of a hardcoded value
+        .doc(uidUser) // Use the actual user's UID
         .collection("follow")
         .doc("watchingAnime")
         .collection("watching")
         .doc(name);
 
-    final data = {
+    final data = {//Saves in firebase the second in wich the user left the video, so that if he comes back, it will give the user the moment he left it
       episode.toString(): second
     };
 
@@ -431,57 +403,64 @@ class FirebaseManager {
 
 
 
+  /// Retrieves a list of watched episodes or chapters for a specific anime or manga.
+  ///
+  /// If [am] is true, it refers to manga; otherwise, it refers to anime.
+  /// Returns a list of integers representing the watched episodes or chapters.
   Future<List<int>> getSeenMedia(String name, bool am) async {
+    // Simulates a delay of 1 second.
     await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-    print("Hola1");
 
-    String type= 'watchingAnime';
+    // Set parameters based on whether it's anime or manga.
+    String type = 'watchingAnime';
     String bp = 'episodes';
-    if(am){
+    if (am) {
       type = 'watchingManga';
       bp = 'chapters';
     }
-    DocumentReference animeInstance = db.collection("users").doc(uidUser).collection("follow").doc(
-        type).collection("watched").doc(name);
-    print("Hola2");
+
+    // Reference to the document in Firestore.
+    DocumentReference animeInstance = db.collection("users")
+        .doc(uidUser)
+        .collection("follow")
+        .doc(type)
+        .collection("watched")
+        .doc(name);
+
     try {
+      // Get the document from Firestore.
       DocumentSnapshot doc = await animeInstance.get();
 
+      // Extract the data and convert it to a list of integers.
       final data = doc.data() as Map<String, dynamic>;
-      print('testeando $data');
-
       List<dynamic> dynamicList = data[bp] ?? [];
       List<int> infoEpisodes = dynamicList.cast<int>();
-      print("Hola3");
-      // Crear una lista para almacenar los nombres de usuario
-      print("Hola5");
-      print(infoEpisodes);
       return infoEpisodes;
     } catch (e) {
-      // Manejar errores al obtener los documentos
       print("Error getting documents: $e");
       return [];
     }
   }
 
+  /// Retrieves a list of episodes that the user is currently watching for a specific anime.
   Future<List<int>> getEpisodeWatching(String name) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-    print(uidUser);
 
+    // Reference to the document in Firestore.
     DocumentReference animeInstance = db.collection("users")
-        .doc(uidUser) // Use the actual user's UID instead of a hardcoded value
+        .doc(uidUser)
         .collection("follow")
         .doc("watchingAnime")
         .collection("watching")
         .doc(name);
 
     DocumentSnapshot documentSnapshot = await animeInstance.get();
-
     List<int> episodeKeys = [];
 
+    // Check if the document exists and extract the keys.
     if (documentSnapshot.exists) {
       Map<String, dynamic>? data = documentSnapshot.data() as Map<String, dynamic>?;
       if (data != null) {
@@ -492,85 +471,79 @@ class FirebaseManager {
     return episodeKeys;
   }
 
+  /// Retrieves a list of chapters that the user is currently reading for a specific manga.
   Future<List<int>> getChapterWatching(String name) async {
-    print('caca');
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-    print(uidUser);
 
+    // Reference to the document in Firestore.
     DocumentReference animeInstance = db.collection("users")
-        .doc(uidUser) // Use the actual user's UID instead of a hardcoded value
+        .doc(uidUser)
         .collection("follow")
         .doc("watchingManga")
         .collection("watching")
         .doc(name);
 
-    print('maricarmen estuvo aqui');
     DocumentSnapshot documentSnapshot = await animeInstance.get();
-    print('maricarmen estuvo aqui');
     List<int> chapters = [];
 
-    if(!documentSnapshot.exists){
+    // Check if the document exists and extract the chapters.
+    if (!documentSnapshot.exists) {
       return [];
     }
     final data = documentSnapshot.data() as Map<String, dynamic>;
-    print('testeando $data');
-
     List<dynamic> dynamicList = data['chapters'] ?? [];
     chapters = dynamicList.cast<int>();
 
-    print('testeando $data');
-
-    print(chapters);
     return chapters;
   }
 
-  Future<int> getEpiodeSecond(String name, int episode) async {
+  /// Retrieves the exact second where the user stopped watching a specific episode of an anime.
+  Future<int> getEpisodeSecond(String name, int episode) async {
+    // Simulates a delay of 1 second.
     await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
     String? uidUser = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-    int second =0;
+    int second = 0;
 
+    // Reference to the document in Firestore.
     DocumentReference animeInstance = db.collection("users")
-        .doc(uidUser) // Use the actual user's UID instead of a hardcoded value
+        .doc(uidUser)
         .collection("follow")
         .doc("watchingAnime")
         .collection("watching")
         .doc(name);
 
     try {
-      // Esperar a que se complete la operación de obtener el documento
+      // Get the document from Firestore.
       DocumentSnapshot doc = await animeInstance.get();
 
-      // Obtener los datos del documento
+      // Extract the exact second from the data.
       final data = doc.data() as Map<String, dynamic>;
-      print('testeando $data');
-
-
       second = data[episode.toString()] ?? 0;
     } catch (e) {
-      // Manejar errores al obtener el documento
       print("Error getting document: $e");
     }
     return second;
   }
 
+  /// Retrieves a list of episodes for a specific anime.
   Future<List<String>> getEpisodes(String name) async {
+    // Simulates a delay of 1 second.
     await Future.delayed(Duration(seconds: 1));
     FirebaseFirestore db = FirebaseFirestore.instance;
     var docRef = db.collection("multimedia")
         .doc("animes")
         .collection(name)
         .doc("Episodes");
-    print("Hola2");
-    try {
 
-      // Esperar a que se complete la operación de obtener el documento
+    try {
+      // Get the document from Firestore.
       DocumentSnapshot doc = await docRef.get();
 
-      print("holapapapa3");
       List<String> episodesList = [];
-      if(!doc.exists){
+      if (!doc.exists) {
+        // If it doesn't exist, use a default value.
         docRef = db.collection("multimedia")
             .doc("animes")
             .collection("CalicoElectronico")
@@ -579,40 +552,38 @@ class FirebaseManager {
       }
       final data = doc.data() as Map<String, dynamic>;
       if (data.isEmpty) {
-        if (data.isEmpty) {
-          return [];
-        }
+        return [];
       }
-      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
       if (data['IDs'] is List<dynamic>) {
-        episodesList =
-            (data['IDs'] as List<dynamic>).map((item) => item as String).toList();
-        print("menos cosas $episodesList");
+        episodesList = (data['IDs'] as List<dynamic>).map((item) => item as String).toList();
       }
 
       return episodesList;
     } catch (e) {
-      // Manejar errores al obtener los documentos
       print("Error getting documents: $e");
       return [];
     }
   }
 
+  /// Retrieves the number of chapters available for a specific manga.
   Future<int> getChapters(String name, int chapters) async {
+    // Simulates a delay of 1 second.
     await Future.delayed(Duration(seconds: 1));
     SharedPreferences preferences = await SharedPreferences.getInstance();
     FirebaseFirestore db = FirebaseFirestore.instance;
     var docRef = db.collection("multimedia")
         .doc("mangas")
         .collection(name);
-    print("Hola2");
+
     try {
+      // Get the collection of documents.
       var querySnapshot = await docRef.get();
       if (querySnapshot.docs.isEmpty) {
+        // If there are no documents, use a default manga based on the conditions.
         String getName = 'BlackCobra';
-        if(chapters % 2 ==0){
+        if (chapters % 2 == 0) {
           getName = 'Fantastic';
-        }else if(chapters % 3 ==0){
+        } else if (chapters % 3 == 0) {
           getName = 'The Flame';
         }
         await preferences.setString("newNameChapter", getName);
@@ -620,7 +591,6 @@ class FirebaseManager {
             .doc("mangas")
             .collection(getName);
         querySnapshot = await defaultCollectionRef.get();
-        await preferences.setString("newNameChapter", getName);
       }
 
       return querySnapshot.docs.length;
@@ -630,48 +600,44 @@ class FirebaseManager {
     }
   }
 
+  /// Retrieves a list of pages for a specific chapter of a manga.
   Future<List<String>> getPages(String chapter) async {
+    // Simulates a delay of 1 second.
     await Future.delayed(Duration(seconds: 1));
     SharedPreferences preferences = await SharedPreferences.getInstance();
     FirebaseFirestore db = FirebaseFirestore.instance;
     String getName = await preferences.getString("newNameChapter") ?? 'The Flame';
-    print(getName);
-    print(chapter);
     var docRef = db.collection("multimedia")
         .doc("mangas")
         .collection(getName)
         .doc(chapter);
-    print("Hola209");
-    try {
 
-      // Esperar a que se complete la operación de obtener el documento
+    try {
+      // Get the document from Firestore.
       DocumentSnapshot doc = await docRef.get();
 
-      print("holapapapa3");
       List<String> pagesList = [];
       final data = doc.data() as Map<String, dynamic>;
       if (data.isEmpty) {
         return [];
       }
-      // Asegurarte de que 'animes' sea una lista y convertir los elementos a int
       if (data['Pages'] is List<dynamic>) {
-        pagesList =
-            (data['Pages'] as List<dynamic>).map((item) => item as String).toList();
-        print("menos cosas $pagesList");
+        pagesList = (data['Pages'] as List<dynamic>).map((item) => item as String).toList();
       }
 
       return pagesList;
     } catch (e) {
-      // Manejar errores al obtener los documentos
       print("Error getting documents: $e");
       return [];
     }
   }
 
+
   Future<void> sendMessage(String communityId, String message, String senderName, String userImg) async {
     var user = await FirebaseAuth.instance.currentUser;
     if (user != null) {
       FirebaseFirestore db = FirebaseFirestore.instance;
+      //With the information of the user and the String that it will send, it will travel to the firebase and the rest of the users could see it in real time
       await db.collection('communities').doc(communityId).collection('messages').add({
         'message': message,
         'senderId': user.uid,
@@ -682,9 +648,23 @@ class FirebaseManager {
     }
   }
 
+  /// Retrieves a stream of messages from a specific community.
+  ///
+  /// This function returns a stream of `QuerySnapshot` objects, which contain
+  /// messages from the specified community, ordered by their timestamp in ascending order.
   Stream<QuerySnapshot> getMessages(String communityId) {
+    // Initialize Firestore instance.
     FirebaseFirestore db = FirebaseFirestore.instance;
-    return db.collection('communities').doc(communityId).collection('messages').orderBy('timestamp', descending: false).snapshots();
+
+    // Return a stream of snapshots from the 'messages' collection within the specified community,
+    // ordered by the 'timestamp' field in ascending order.
+    return db
+        .collection('communities')
+        .doc(communityId)
+        .collection('messages')
+        .orderBy('timestamp', descending: false)
+        .snapshots();
   }
+
 
 }
